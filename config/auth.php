@@ -37,8 +37,14 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'session',
+            'driver'   => 'session',
             'provider' => 'users',
+        ],
+
+        // Passport-powered guard used by all /admin/* API routes
+        'api' => [
+            'driver'   => 'passport',
+            'provider' => 'admins',
         ],
     ],
 
@@ -62,7 +68,13 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model'  => env('AUTH_MODEL', App\Models\User::class),
+        ],
+
+        // Provider used by the 'api' guard — points to the Admin model
+        'admins' => [
+            'driver' => 'eloquent',
+            'model'  => App\Models\Admin::class,
         ],
 
         // 'users' => [
