@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Event;
+use App\Models\Gallery;
 use App\Models\HomeSection;
 use App\Models\Layout;
 use App\Models\NavbarConfig;
@@ -13,6 +14,7 @@ use App\Models\Portfolio;
 use App\Models\Service;
 use App\Models\SiteSetting;
 use App\Models\TeamMember;
+use App\Models\Testimonial;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -318,6 +320,54 @@ class AdminModuleController extends Controller
                 ],
                 'total' => $members->count(),
                 'members' => $members,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Module 9: Testimonials and Reviews
+     * GET /api/admin/modules/testimonials
+     */
+    public function getTestimonials(Request $request): JsonResponse
+    {
+        $layoutRecord = Layout::find('testimonialsPageLayout');
+        $testimonials = Testimonial::orderBy('order', 'asc')->orderBy('id', 'asc')->get()->map(fn ($t) => $t->toAdminPayload());
+
+        return response()->json([
+            'success' => true,
+            'module' => 'testimonials',
+            'data' => [
+                'layout' => [
+                    'key' => 'testimonialsPageLayout',
+                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'allowed' => Layout::allowedFor('testimonialsPageLayout'),
+                ],
+                'total' => $testimonials->count(),
+                'testimonials' => $testimonials,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Module 10: Gallery and Media
+     * GET /api/admin/modules/gallery
+     */
+    public function getGallery(Request $request): JsonResponse
+    {
+        $layoutRecord = Layout::find('galleryPageLayout');
+        $albums = Gallery::orderBy('order', 'asc')->orderBy('id', 'asc')->get()->map(fn ($g) => $g->toAdminPayload());
+
+        return response()->json([
+            'success' => true,
+            'module' => 'gallery',
+            'data' => [
+                'layout' => [
+                    'key' => 'galleryPageLayout',
+                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'allowed' => Layout::allowedFor('galleryPageLayout'),
+                ],
+                'total' => $albums->count(),
+                'albums' => $albums,
             ],
         ], 200);
     }

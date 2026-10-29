@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeSectionController;
 use App\Http\Controllers\LayoutController;
 use App\Http\Controllers\MediaUploadController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\SeoController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SiteSettingController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TestimonialController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,6 +70,14 @@ Route::prefix('public')->group(function () {
     // Module 8: Team
     Route::get('team', [TeamController::class, 'indexPublic']);
     Route::get('team/{id}', [TeamController::class, 'showPublic']);
+
+    // Module 9: Testimonials
+    Route::get('testimonials', [TestimonialController::class, 'indexPublic']);
+    Route::get('testimonials/{id}', [TestimonialController::class, 'showPublic']);
+
+    // Module 10: Gallery
+    Route::get('gallery', [GalleryController::class, 'indexPublic']);
+    Route::get('gallery/{id}', [GalleryController::class, 'showPublic']);
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -101,6 +111,8 @@ Route::prefix('admin')->group(function () {
         Route::get('events-feed', [AdminModuleController::class, 'getEvents']);
         Route::get('event-detail', [AdminModuleController::class, 'getEventDetail']);
         Route::get('team-feed', [AdminModuleController::class, 'getTeam']);
+        Route::get('testimonials-feed', [AdminModuleController::class, 'getTestimonials']);
+        Route::get('gallery-feed', [AdminModuleController::class, 'getGallery']);
 
         // Module-wise Admin GET APIs (Backward compatibility aliases)
         Route::prefix('modules')->group(function () {
@@ -119,6 +131,8 @@ Route::prefix('admin')->group(function () {
             Route::get('events', [AdminModuleController::class, 'getEvents']);
             Route::get('event-detail', [AdminModuleController::class, 'getEventDetail']);
             Route::get('team', [AdminModuleController::class, 'getTeam']);
+            Route::get('testimonials', [AdminModuleController::class, 'getTestimonials']);
+            Route::get('gallery', [AdminModuleController::class, 'getGallery']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
         });
@@ -223,5 +237,19 @@ Route::prefix('admin')->group(function () {
         Route::post('team', [TeamController::class, 'store']);
         Route::put('team/{id}', [TeamController::class, 'update']);
         Route::delete('team/{id}', [TeamController::class, 'destroy']);
+
+        // Module 9: Testimonials CRUD
+        Route::get('testimonials', [TestimonialController::class, 'indexAdmin']);
+        Route::get('testimonials/{id}', [TestimonialController::class, 'showAdmin']);
+        Route::post('testimonials', [TestimonialController::class, 'store']);
+        Route::put('testimonials/{id}', [TestimonialController::class, 'update']);
+        Route::delete('testimonials/{id}', [TestimonialController::class, 'destroy']);
+
+        // Module 10: Gallery CRUD
+        Route::get('gallery', [GalleryController::class, 'indexAdmin']);
+        Route::get('gallery/{id}', [GalleryController::class, 'showAdmin']);
+        Route::post('gallery', [GalleryController::class, 'store']);
+        Route::put('gallery/{id}', [GalleryController::class, 'update']);
+        Route::delete('gallery/{id}', [GalleryController::class, 'destroy']);
     });
 });

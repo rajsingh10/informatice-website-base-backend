@@ -144,6 +144,22 @@
                         <span class="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-bold">6</span>
                     </button>
 
+                    <button onclick="switchTab('testimonials')" id="tab-testimonials" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-star text-amber-500"></i>
+                            <span>Module 9: Testimonials</span>
+                        </span>
+                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">6</span>
+                    </button>
+
+                    <button onclick="switchTab('gallery')" id="tab-gallery" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-images text-indigo-500"></i>
+                            <span>Module 10: Gallery</span>
+                        </span>
+                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">5</span>
+                    </button>
+
                     <button onclick="switchTab('seo')" id="tab-seo" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
                         <span class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-magnifying-glass-chart text-purple-500"></i>
@@ -509,6 +525,36 @@
                     <p class="text-xs text-slate-600 mb-3">Module 8: Returns team layout (teamPageLayout) and all team members.</p>
                     <button onclick="sendApi('GET', '/api/admin/modules/team', null, true)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
                         <i class="fa-solid fa-users mr-1"></i> Fetch /api/admin/modules/team
+                    </button>
+                </div>
+
+                <!-- 9. Testimonials & Reviews -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/modules/testimonials</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 9: Returns testimonials layout (testimonialsPageLayout) and all client reviews.</p>
+                    <button onclick="sendApi('GET', '/api/admin/modules/testimonials', null, true)" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-star mr-1"></i> Fetch /api/admin/modules/testimonials
+                    </button>
+                </div>
+
+                <!-- 10. Gallery & Media -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/modules/gallery</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 10: Returns gallery layout (galleryPageLayout) and all photo albums.</p>
+                    <button onclick="sendApi('GET', '/api/admin/modules/gallery', null, true)" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-images mr-1"></i> Fetch /api/admin/modules/gallery
                     </button>
                 </div>
 
@@ -1780,6 +1826,339 @@
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- 2.9 TESTIMONIALS MODULE APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-testimonials" class="space-y-4 hidden">
+                <!-- 1. GET /api/public/testimonials -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/testimonials</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Public reviews feed (supports ?featured=1|0, ?rating=1..5, ?limit=). Returns published reviews sorted by order.</p>
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Featured Only?</label>
+                            <select id="testim-pub-feat" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="" selected>All Reviews</option>
+                                <option value="1">Featured Only</option>
+                                <option value="0">Standard Only</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Rating</label>
+                            <select id="testim-pub-rating" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="" selected>Any Rating</option>
+                                <option value="5">5 Stars only</option>
+                                <option value="4">4 Stars only</option>
+                                <option value="3">3 Stars only</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Limit</label>
+                            <input id="testim-pub-limit" type="number" placeholder="Limit" value="20" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        </div>
+                    </div>
+                    <button onclick="testPublicTestimonials()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-star"></i>
+                        <span>Fetch Public Testimonials</span>
+                    </button>
+                </div>
+
+                <!-- 2. GET /api/admin/testimonials & /api/admin/testimonials/:id -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/testimonials</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Admin list of all reviews (including drafts and unpublished) or single review by ID.</p>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <button onclick="testAdminTestimonials()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                            Fetch All Admin Reviews
+                        </button>
+                        <div class="flex space-x-1">
+                            <input id="testim-admin-fetch-id" type="number" value="1" placeholder="ID" class="w-16 text-xs border border-slate-200 rounded p-1.5 outline-none font-mono">
+                            <button onclick="testAdminTestimonialSingle()" class="flex-1 bg-amber-700 hover:bg-amber-800 text-white font-medium text-xs py-2 rounded-lg transition">
+                                Fetch By ID
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. POST /api/admin/testimonials (Create) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/testimonials</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Add review (author name, designation, company, rating 1-5, quote, videoUrl, metric, order).</p>
+                    <div class="space-y-2 mb-3">
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Client Name *</label>
+                                <input id="testim-create-name" type="text" value="Anil Deshmukh" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Designation</label>
+                                <input id="testim-create-desig" type="text" value="Chief Digital Officer" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Company</label>
+                                <input id="testim-create-company" type="text" value="FinEdge Global" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Rating (1 to 5) *</label>
+                                <select id="testim-create-rating" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                    <option value="5" selected>5 Stars (★★★★★)</option>
+                                    <option value="4">4 Stars (★★★★☆)</option>
+                                    <option value="3">3 Stars (★★★☆☆)</option>
+                                    <option value="2">2 Stars (★★☆☆☆)</option>
+                                    <option value="1">1 Star (★☆☆☆☆)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Featured?</label>
+                                <select id="testim-create-feat" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                    <option value="1" selected>Yes (Featured)</option>
+                                    <option value="0">No (Standard)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Status</label>
+                                <select id="testim-create-published" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                    <option value="1" selected>Published</option>
+                                    <option value="0">Draft</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Review Quote Text *</label>
+                            <textarea id="testim-create-text" rows="2" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">Informatic built our core trading application with zero latency degradation. Outstanding engineering quality.</textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Client Photo URL</label>
+                                <input id="testim-create-photo" type="url" value="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Video URL (optional)</label>
+                                <input id="testim-create-videourl" type="url" placeholder="https://youtube.com/..." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Metric Label (optional)</label>
+                                <input id="testim-create-metric-label" type="text" value="System Latency" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Metric Value (optional)</label>
+                                <input id="testim-create-metric-val" type="text" value="-70%" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Display Order</label>
+                                <input id="testim-create-order" type="number" value="7" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="testCreateTestimonial()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        Add Review
+                    </button>
+                </div>
+
+                <!-- 4. PUT & DELETE /api/admin/testimonials/:id -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="method-badge badge-del">DELETE</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/testimonials/:id</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Review ID</label>
+                            <input id="testim-manage-id" type="number" value="1" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Rating</label>
+                            <select id="testim-manage-rating" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                <option value="5" selected>5 Stars</option>
+                                <option value="4">4 Stars</option>
+                                <option value="3">3 Stars</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Featured?</label>
+                            <select id="testim-manage-feat" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                <option value="1" selected>Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testUpdateTestimonial()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                            Update Review
+                        </button>
+                        <button onclick="testDeleteTestimonial()" class="bg-red-600 hover:bg-red-700 text-white font-medium text-xs py-2 rounded-lg transition">
+                            Delete Review
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- 2.10 GALLERY MODULE APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-gallery" class="space-y-4 hidden">
+                <!-- 1. GET /api/public/gallery -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/gallery</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Public albums feed (supports ?category=, ?limit=). Returns published albums with photo items.</p>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Category</label>
+                            <select id="gallery-pub-cat" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="" selected>All Categories</option>
+                                <option value="Culture">Culture</option>
+                                <option value="Events">Events</option>
+                                <option value="Workplace">Workplace</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Limit</label>
+                            <input id="gallery-pub-limit" type="number" placeholder="Limit" value="20" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        </div>
+                    </div>
+                    <button onclick="testPublicGallery()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-images"></i>
+                        <span>Fetch Public Gallery Albums</span>
+                    </button>
+                </div>
+
+                <!-- 2. GET /api/admin/gallery & /api/admin/gallery/:id -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/gallery</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Admin list of all albums (including drafts and unpublished) or single album by ID.</p>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <button onclick="testAdminGallery()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                            Fetch All Admin Albums
+                        </button>
+                        <div class="flex space-x-1">
+                            <input id="gallery-admin-fetch-id" type="number" value="1" placeholder="ID" class="w-16 text-xs border border-slate-200 rounded p-1.5 outline-none font-mono">
+                            <button onclick="testAdminGallerySingle()" class="flex-1 bg-indigo-700 hover:bg-indigo-800 text-white font-medium text-xs py-2 rounded-lg transition">
+                                Fetch By ID
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. POST /api/admin/gallery (Create) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/gallery</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Create album with photo items (name, category, description, coverImage, images JSON, order).</p>
+                    <div class="space-y-2 mb-3">
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="col-span-2">
+                                <label class="text-xs font-medium text-slate-600">Album Name *</label>
+                                <input id="gallery-create-name" type="text" value="Community & Open Source Meetups" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Category</label>
+                                <input id="gallery-create-cat" type="text" value="Events" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Description</label>
+                            <input id="gallery-create-desc" type="text" value="Photos from community developer gatherings and technical workshops." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="col-span-2">
+                                <label class="text-xs font-medium text-slate-600">Cover Image URL</label>
+                                <input id="gallery-create-cover" type="url" value="https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Status</label>
+                                <select id="gallery-create-published" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                    <option value="1" selected>Published</option>
+                                    <option value="0">Draft</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Images Array (JSON)</label>
+                            <textarea id="gallery-create-images" rows="3" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">[
+  { "url": "https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200", "title": "Opening Talk", "caption": "Welcoming our community builders" },
+  { "url": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200", "title": "Networking Session", "caption": "Developers sharing code insights" }
+]</textarea>
+                        </div>
+                    </div>
+                    <button onclick="testCreateGallery()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        Create Gallery Album
+                    </button>
+                </div>
+
+                <!-- 4. PUT & DELETE /api/admin/gallery/:id -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="method-badge badge-del">DELETE</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/gallery/:id</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Album ID</label>
+                            <input id="gallery-manage-id" type="number" value="1" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-xs font-medium text-slate-600">Updated Name</label>
+                            <input id="gallery-manage-name" type="text" value="Office & Culture (Updated)" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testUpdateGallery()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                            Update Album
+                        </button>
+                        <button onclick="testDeleteGallery()" class="bg-red-600 hover:bg-red-700 text-white font-medium text-xs py-2 rounded-lg transition">
+                            Delete Album
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
             <!-- 3. SEO MODULE APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-seo" class="space-y-4 hidden">
@@ -1802,6 +2181,8 @@
                             <option value="events">events</option>
                             <option value="event-detail">event-detail</option>
                             <option value="team">team</option>
+                            <option value="testimonials">testimonials</option>
+                            <option value="gallery">gallery</option>
                             <option value="home">home</option>
                         </select>
                         <button onclick="testPublicSeo()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-xs font-medium">
@@ -2035,7 +2416,7 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-${name}`).classList.add('active');
 
-            ['auth', 'modules', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'events', 'team', 'seo', 'media', 'settings'].forEach(s => {
+            ['auth', 'modules', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'events', 'team', 'testimonials', 'gallery', 'seo', 'media', 'settings'].forEach(s => {
                 const el = document.getElementById(`section-${s}`);
                 if (el) el.classList.add('hidden');
             });
@@ -2509,6 +2890,102 @@
             const id = document.getElementById('team-manage-id').value;
             if (!confirm(`Delete team member ID ${id}?`)) return;
             await sendApi('DELETE', `/api/admin/team/${id}`, null, true);
+        }
+
+        // Testimonials Module JS
+        async function testPublicTestimonials() {
+            const feat = document.getElementById('testim-pub-feat').value;
+            const rating = document.getElementById('testim-pub-rating').value;
+            const limit = document.getElementById('testim-pub-limit').value || 20;
+            let path = `/api/public/testimonials?limit=${limit}`;
+            if (feat !== '') path += `&featured=${encodeURIComponent(feat)}`;
+            if (rating) path += `&rating=${encodeURIComponent(rating)}`;
+            await sendApi('GET', path);
+        }
+        async function testAdminTestimonials() {
+            await sendApi('GET', '/api/admin/testimonials', null, true);
+        }
+        async function testAdminTestimonialSingle() {
+            const id = document.getElementById('testim-admin-fetch-id').value;
+            if (!id) return alert('Enter review ID.');
+            await sendApi('GET', `/api/admin/testimonials/${id}`, null, true);
+        }
+        async function testCreateTestimonial() {
+            const isFeatured = document.getElementById('testim-create-feat').value === '1';
+            const isPublished = document.getElementById('testim-create-published').value === '1';
+            const body = {
+                name: document.getElementById('testim-create-name').value,
+                designation: document.getElementById('testim-create-desig').value,
+                company: document.getElementById('testim-create-company').value,
+                photo: document.getElementById('testim-create-photo').value,
+                rating: parseInt(document.getElementById('testim-create-rating').value) || 5,
+                text: document.getElementById('testim-create-text').value,
+                isFeatured: isFeatured,
+                videoUrl: document.getElementById('testim-create-videourl').value || '',
+                metric: {
+                    label: document.getElementById('testim-create-metric-label').value || '',
+                    value: document.getElementById('testim-create-metric-val').value || '',
+                },
+                order: parseInt(document.getElementById('testim-create-order').value) || 0,
+                isPublished: isPublished
+            };
+            await sendApi('POST', '/api/admin/testimonials', body, true);
+        }
+        async function testUpdateTestimonial() {
+            const id = document.getElementById('testim-manage-id').value;
+            const rating = parseInt(document.getElementById('testim-manage-rating').value) || 5;
+            const isFeatured = document.getElementById('testim-manage-feat').value === '1';
+            await sendApi('PUT', `/api/admin/testimonials/${id}`, { rating, isFeatured }, true);
+        }
+        async function testDeleteTestimonial() {
+            const id = document.getElementById('testim-manage-id').value;
+            if (!confirm(`Delete review ID ${id}?`)) return;
+            await sendApi('DELETE', `/api/admin/testimonials/${id}`, null, true);
+        }
+
+        // Gallery Module JS
+        async function testPublicGallery() {
+            const cat = document.getElementById('gallery-pub-cat').value;
+            const limit = document.getElementById('gallery-pub-limit').value || 20;
+            let path = `/api/public/gallery?limit=${limit}`;
+            if (cat) path += `&category=${encodeURIComponent(cat)}`;
+            await sendApi('GET', path);
+        }
+        async function testAdminGallery() {
+            await sendApi('GET', '/api/admin/gallery', null, true);
+        }
+        async function testAdminGallerySingle() {
+            const id = document.getElementById('gallery-admin-fetch-id').value;
+            if (!id) return alert('Enter album ID.');
+            await sendApi('GET', `/api/admin/gallery/${id}`, null, true);
+        }
+        async function testCreateGallery() {
+            let images = [];
+            try {
+                images = JSON.parse(document.getElementById('gallery-create-images').value);
+            } catch (e) {
+                return alert('Invalid images JSON format.');
+            }
+            const isPublished = document.getElementById('gallery-create-published').value === '1';
+            const body = {
+                name: document.getElementById('gallery-create-name').value,
+                category: document.getElementById('gallery-create-cat').value,
+                description: document.getElementById('gallery-create-desc').value,
+                coverImage: document.getElementById('gallery-create-cover').value,
+                images: images,
+                isPublished: isPublished
+            };
+            await sendApi('POST', '/api/admin/gallery', body, true);
+        }
+        async function testUpdateGallery() {
+            const id = document.getElementById('gallery-manage-id').value;
+            const name = document.getElementById('gallery-manage-name').value;
+            await sendApi('PUT', `/api/admin/gallery/${id}`, { name }, true);
+        }
+        async function testDeleteGallery() {
+            const id = document.getElementById('gallery-manage-id').value;
+            if (!confirm(`Delete album ID ${id}?`)) return;
+            await sendApi('DELETE', `/api/admin/gallery/${id}`, null, true);
         }
 
         // SEO
