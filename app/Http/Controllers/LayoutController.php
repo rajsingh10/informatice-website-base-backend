@@ -168,6 +168,11 @@ class LayoutController extends Controller
         $allowed = Layout::allowedFor($key);
         $templateId = $request->input('layout', $request->input('templateId'));
 
+        // [Contact Page API & Layouts] Normalize numeric layout (e.g. 1 -> layout1)
+        if (is_numeric($templateId) && in_array("layout{$templateId}", $allowed, true)) {
+            $templateId = "layout{$templateId}";
+        }
+
         if (! $templateId || ! in_array($templateId, $allowed)) {
             return response()->json([
                 'success' => false,

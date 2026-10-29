@@ -6,6 +6,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeSectionController;
+use App\Http\Controllers\InquiryController; // [Contact Page API]
 use App\Http\Controllers\LayoutController;
 use App\Http\Controllers\MediaUploadController;
 use App\Http\Controllers\NavbarController;
@@ -85,6 +86,10 @@ Route::prefix('public')->group(function () {
     Route::get('team', [TeamController::class, 'indexPublic']);
     Route::get('team/{id}', [TeamController::class, 'showPublic']);
 
+    // ─── Contact Page API (Module 11) ───
+    Route::get('contact', [InquiryController::class, 'getPublicContact']); // Contact Page API
+    Route::post('contact/inquiry', [InquiryController::class, 'submitInquiry']); // Contact Page API
+    Route::post('inquiry', [InquiryController::class, 'submitInquiry']); // Contact Page API
     // Module 9: Testimonials
     Route::get('testimonials', [TestimonialController::class, 'indexPublic']);
     Route::get('testimonials/{id}', [TestimonialController::class, 'showPublic']);
@@ -128,6 +133,11 @@ Route::prefix('admin')->group(function () {
         Route::get('testimonials-feed', [AdminModuleController::class, 'getTestimonials']);
         Route::get('gallery-feed', [AdminModuleController::class, 'getGallery']);
 
+        // Contact Page API (Module 11)
+        Route::get('contact', [AdminModuleController::class, 'getContact']); // Contact Page API
+        Route::match(['put', 'post'], 'contact', [InquiryController::class, 'updateContactInfo']); // Contact Page API
+        Route::match(['put', 'post'], 'contact/info', [InquiryController::class, 'updateContactInfo']); // Contact Page API
+
         // Module-wise Admin GET APIs (Backward compatibility aliases)
         Route::prefix('modules')->group(function () {
             Route::get('topbar', [AdminModuleController::class, 'getTopbar']);
@@ -147,6 +157,12 @@ Route::prefix('admin')->group(function () {
             Route::get('events', [AdminModuleController::class, 'getEvents']);
             Route::get('event-detail', [AdminModuleController::class, 'getEventDetail']);
             Route::get('team', [AdminModuleController::class, 'getTeam']);
+
+            // Contact Page API (Module 11)
+            Route::get('contact', [AdminModuleController::class, 'getContact']); // Contact Page API
+            Route::match(['put', 'post'], 'contact', [InquiryController::class, 'updateContactInfo']); // Contact Page API
+            Route::match(['put', 'post'], 'contact/info', [InquiryController::class, 'updateContactInfo']); // Contact Page API
+
             Route::get('testimonials', [AdminModuleController::class, 'getTestimonials']);
             Route::get('gallery', [AdminModuleController::class, 'getGallery']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
@@ -161,7 +177,7 @@ Route::prefix('admin')->group(function () {
 
         // 3.2 SEO
         Route::get('seo/{page}', [SeoController::class, 'showAdmin']);
-        Route::put('seo/{page}', [SeoController::class, 'update']);
+        Route::match(['put', 'post'], 'seo/{page}', [SeoController::class, 'update']);
 
         // 3.3 Media Uploads
         Route::post('uploads', [MediaUploadController::class, 'store']);
@@ -292,6 +308,11 @@ Route::prefix('admin')->group(function () {
         Route::put('team/{id}', [TeamController::class, 'update']);
         Route::delete('team/{id}', [TeamController::class, 'destroy']);
 
+        // ─── Contact Page API (Module 11: Inquiries Management) ───
+        Route::get('inquiries',                [InquiryController::class, 'index']); // Contact Page API
+        Route::get('inquiries/{id}',           [InquiryController::class, 'show']); // Contact Page API
+        Route::match(['put', 'patch', 'post'], 'inquiries/{id}', [InquiryController::class, 'updateStatus']); // Contact Page API
+        Route::delete('inquiries/{id}',        [InquiryController::class, 'destroy']); // Contact Page API
         // Module 9: Testimonials CRUD
         Route::get('testimonials', [TestimonialController::class, 'indexAdmin']);
         Route::get('testimonials/{id}', [TestimonialController::class, 'showAdmin']);
