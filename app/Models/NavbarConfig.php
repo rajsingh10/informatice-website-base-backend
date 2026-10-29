@@ -140,6 +140,28 @@ class NavbarConfig extends Model
     }
 
     /**
+     * Get navbar enabled/visible status.
+     */
+    public function isNavbarEnabled(): bool
+    {
+        if (is_array($this->cta) && isset($this->cta['_navbar_enabled'])) {
+            return (bool) $this->cta['_navbar_enabled'];
+        }
+        return true;
+    }
+
+    /**
+     * Set navbar enabled/visible status.
+     */
+    public function setNavbarEnabled(bool $enabled): void
+    {
+        $cta = is_array($this->cta) ? $this->cta : static::defaultCta();
+        $cta['_navbar_enabled'] = $enabled;
+        $this->cta = $cta;
+        $this->save();
+    }
+
+    /**
      * Format payload for public header (only enabled: true items).
      */
     public function toPublicPayload(): array
@@ -151,15 +173,19 @@ class NavbarConfig extends Model
         }));
 
         $activeBehavior = $this->getBehaviorForLayout();
-        $behaviorsMap = $this->getBehaviorsMap();
+        $isEnabled = $this->isNavbarEnabled();
+
+        $cleanCta = is_array($this->cta) ? $this->cta : static::defaultCta();
+        unset($cleanCta['_behaviors'], $cleanCta['_navbar_enabled']);
 
         return [
-            'behavior'        => $activeBehavior,
-            'headerBehavior'  => $activeBehavior,
-            'behaviors'       => $behaviorsMap,
-            'navbarBehaviors' => $behaviorsMap,
-            'cta'             => is_array($this->cta) ? $this->cta : static::defaultCta(),
-            'items'           => $enabledItems,
+            'enabled'        => $isEnabled,
+            'visible'        => $isEnabled,
+            'status'         => $isEnabled ? 'visible' : 'hidden',
+            'behavior'       => $activeBehavior,
+            'headerBehavior' => $activeBehavior,
+            'cta'            => $cleanCta,
+            'items'          => $enabledItems,
         ];
     }
 
@@ -169,15 +195,19 @@ class NavbarConfig extends Model
     public function toAdminPayload(): array
     {
         $activeBehavior = $this->getBehaviorForLayout();
-        $behaviorsMap = $this->getBehaviorsMap();
+        $isEnabled = $this->isNavbarEnabled();
+
+        $cleanCta = is_array($this->cta) ? $this->cta : static::defaultCta();
+        unset($cleanCta['_behaviors'], $cleanCta['_navbar_enabled']);
 
         return [
-            'behavior'        => $activeBehavior,
-            'headerBehavior'  => $activeBehavior,
-            'behaviors'       => $behaviorsMap,
-            'navbarBehaviors' => $behaviorsMap,
-            'cta'             => is_array($this->cta) ? $this->cta : static::defaultCta(),
-            'items'           => is_array($this->items) ? array_values($this->items) : static::defaultItems(),
+            'enabled'        => $isEnabled,
+            'visible'        => $isEnabled,
+            'status'         => $isEnabled ? 'visible' : 'hidden',
+            'behavior'       => $activeBehavior,
+            'headerBehavior' => $activeBehavior,
+            'cta'            => $cleanCta,
+            'items'          => is_array($this->items) ? array_values($this->items) : static::defaultItems(),
         ];
     }
 

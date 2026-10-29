@@ -51,7 +51,11 @@ class AdminModuleController extends Controller
     public function getNavbar(): JsonResponse
     {
         $layoutRecord = Layout::find('navbarLayout');
-        $navbar = NavbarConfig::getSingleton()->toAdminPayload();
+        $navbar = NavbarConfig::getSingleton();
+        $adminPayload = $navbar->toAdminPayload();
+        $currentTemplate = $layoutRecord?->templateId ?? 'layout1';
+        $activeBehavior = $navbar->getBehaviorForLayout($currentTemplate);
+        $isEnabled = $navbar->isNavbarEnabled();
 
         return response()->json([
             'success' => true,
@@ -59,10 +63,15 @@ class AdminModuleController extends Controller
             'data'    => [
                 'layout' => [
                     'key'        => 'navbarLayout',
-                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'templateId' => $currentTemplate,
+                    'layout'     => $currentTemplate,
+                    'behavior'   => $activeBehavior,
+                    'enabled'    => $isEnabled,
+                    'visible'    => $isEnabled,
+                    'status'     => $isEnabled ? 'visible' : 'hidden',
                     'allowed'    => Layout::allowedFor('navbarLayout'),
                 ],
-                'navigation' => $navbar,
+                'navigation' => $adminPayload,
             ],
         ], 200);
     }
@@ -273,9 +282,13 @@ class AdminModuleController extends Controller
             $current = $records->get($key)?->templateId ?? 'layout1';
 
             if ($key === 'navbarLayout') {
+                $isEnabled = $navbar->isNavbarEnabled();
                 $active[$key] = [
                     'layout'   => $current,
                     'behavior' => $navBehavior,
+                    'enabled'  => $isEnabled,
+                    'visible'  => $isEnabled,
+                    'status'   => $isEnabled ? 'visible' : 'hidden',
                 ];
             } else {
                 $active[$key] = $current;
