@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Event;
 use App\Models\HomeSection;
+use App\Models\Inquiry; // Contact Page API
 use App\Models\Layout;
 use App\Models\NavbarConfig;
 use App\Models\PageSeo;
@@ -252,61 +253,6 @@ class AdminModuleController extends Controller
     }
 
     /**
-     * Module 7: Events Feed & Catalog
-     * GET /api/admin/modules/events
-     */
-    public function getEvents(Request $request): JsonResponse
-    {
-        $layoutRecord = Layout::find('eventsPageLayout');
-        $events = Event::orderBy('date', 'desc')->orderBy('id', 'desc')->get()->map(fn ($e) => $e->toAdminPayload());
-
-        return response()->json([
-            'success' => true,
-            'module' => 'events',
-            'data' => [
-                'layout' => [
-                    'key' => 'eventsPageLayout',
-                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
-                    'allowed' => Layout::allowedFor('eventsPageLayout'),
-                ],
-                'total' => $events->count(),
-                'events' => $events,
-            ],
-        ], 200);
-    }
-
-    /**
-     * Module 7.1: Event Detail
-     * GET /api/admin/modules/event-detail
-     */
-    public function getEventDetail(): JsonResponse
-    {
-        $layoutRecord = Layout::find('eventDetailPageLayout');
-        $defaultSeo = PageSeo::find('event-detail')?->toPayload();
-
-        return response()->json([
-            'success' => true,
-            'module' => 'event-detail',
-            'data' => [
-                'layout' => [
-                    'key' => 'eventDetailPageLayout',
-                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
-                    'allowed' => Layout::allowedFor('eventDetailPageLayout'),
-                ],
-                'defaultSeo' => $defaultSeo,
-            ],
-        ], 200);
-    }
-
-    /**
-     * Module 8: Team Members
-     * GET /api/admin/modules/team
-     */
-    public function getTeam(Request $request): JsonResponse
-    {
-        $layoutRecord = Layout::find('teamPageLayout');
-        $members = TeamMember::orderBy('order', 'asc')->orderBy('id', 'asc')->get()->map(fn ($m) => $m->toAdminPayload());
-
         return response()->json([
             'success' => true,
             'module' => 'team',
@@ -318,6 +264,57 @@ class AdminModuleController extends Controller
                 ],
                 'total' => $members->count(),
                 'members' => $members,
+            ],
+        ], 200);
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Contact Page API (Module 11)
+    // ─────────────────────────────────────────────────────────────
+    /**
+     * Module 11: Contact Page and Inquiry Forms
+     * GET /api/admin/modules/contact & /api/admin/contact
+     */
+    public function getContact(): JsonResponse
+    {
+        $layoutRecord = Layout::find('contactPageLayout');
+        $currentTemplate = $layoutRecord?->templateId ?? 'layout1';
+        $setting = SiteSetting::getSingleton();
+        $defaultSeo = PageSeo::find('contact')?->toPayload() ?? PageSeo::defaults('contact');
+
+        $templatesMeta = Layout::templatesFor('contactPageLayout');
+        $templates = [];
+        foreach ($templatesMeta as $id => $name) {
+            $templates[] = [
+                'id'     => $id,
+                'name'   => $name,
+                'active' => $id === $currentTemplate,
+            ];
+        }
+
+        $counts = [
+            'total'    => Inquiry::count(),
+            'new'      => Inquiry::where('status', 'new')->count(),
+            'read'     => Inquiry::where('status', 'read')->count(),
+            'replied'  => Inquiry::where('status', 'replied')->count(),
+            'archived' => Inquiry::where('status', 'archived')->count(),
+        ];
+
+        return response()->json([
+            'success' => true,
+            'module'  => 'contact',
+            'data'    => [
+                'layout' => [
+                    'key'        => 'contactPageLayout',
+                    'templateId' => $currentTemplate,
+                    'allowed'    => Layout::allowedFor('contactPageLayout'),
+                    'templates'  => $templates,
+                ],
+                'seo'         => $defaultSeo,
+                'contactInfo' => $setting->toContactInfo(),
+                'siteInfo'    => $setting->toContactInfo(),
+                'stats'       => $counts,
+                'recent'     => Inquiry::orderBy('id', 'desc')->take(5)->get()->map->toPayload(),
             ],
         ], 200);
     }
