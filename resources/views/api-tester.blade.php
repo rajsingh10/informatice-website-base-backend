@@ -128,6 +128,14 @@
                         <span class="text-xs bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-bold">7</span>
                     </button>
 
+                    <button onclick="switchTab('events')" id="tab-events" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-calendar-days text-amber-500"></i>
+                            <span>Module 7: Events</span>
+                        </span>
+                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">7</span>
+                    </button>
+
                     <button onclick="switchTab('seo')" id="tab-seo" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
                         <span class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-magnifying-glass-chart text-purple-500"></i>
@@ -448,6 +456,36 @@
                     <p class="text-xs text-slate-600 mb-3">Module 6.1: Returns Blog article layout and article SEO metadata.</p>
                     <button onclick="sendApi('GET', '/api/admin/blog-detail', null, true)" class="w-full bg-rose-700 hover:bg-rose-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
                         <i class="fa-solid fa-newspaper mr-1"></i> Fetch /api/admin/blog-detail
+                    </button>
+                </div>
+
+                <!-- 7. Events Feed -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/modules/events</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 7: Returns events feed layout (eventsPageLayout) and all events list.</p>
+                    <button onclick="sendApi('GET', '/api/admin/modules/events', null, true)" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-calendar-days mr-1"></i> Fetch /api/admin/modules/events
+                    </button>
+                </div>
+
+                <!-- 7.1 Event Detail -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/modules/event-detail</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 7.1: Returns event detail layout (eventDetailPageLayout) and default SEO metadata.</p>
+                    <button onclick="sendApi('GET', '/api/admin/modules/event-detail', null, true)" class="w-full bg-amber-700 hover:bg-amber-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-calendar-days mr-1"></i> Fetch /api/admin/modules/event-detail
                     </button>
                 </div>
 
@@ -1016,6 +1054,207 @@
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- 2.5 EVENTS MODULE APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-events" class="space-y-4 hidden">
+                <!-- 1. GET /api/public/events -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/events</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Public feed (defaults to upcoming events; supports ?when=upcoming|past|all, ?type=, ?online=1|0, ?limit=). Returns compact cards list.</p>
+                    <div class="grid grid-cols-4 gap-2 mb-3">
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">When</label>
+                            <select id="event-pub-when" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="upcoming" selected>Upcoming</option>
+                                <option value="past">Past</option>
+                                <option value="all">All</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Type</label>
+                            <input id="event-pub-type" type="text" placeholder="e.g. conference" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Online</label>
+                            <select id="event-pub-online" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="">Any</option>
+                                <option value="1">Online only</option>
+                                <option value="0">In-person only</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Limit</label>
+                            <input id="event-pub-limit" type="number" placeholder="Limit" value="10" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        </div>
+                    </div>
+                    <button onclick="testPublicEvents()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span>Fetch Public Events Feed</span>
+                    </button>
+                </div>
+
+                <!-- 2. GET /api/public/events/:slug -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/events/:slug</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Single event detail by slug (adds longDescription, agenda, totalSeats, availableSeats, onlineUrl, resolved SEO).</p>
+                    <div class="flex space-x-2 mb-3">
+                        <input id="event-pub-slug" type="text" value="cloud-native-summit-2027" placeholder="e.g. cloud-native-summit-2027" class="flex-1 text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                        <button onclick="testPublicEventDetail()" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-xs font-medium">
+                            Fetch Event
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. GET /api/admin/events -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/events</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Admin list of all events (draft, published, cancelled, completed), sorted by event date ascending.</p>
+                    <button onclick="testAdminEvents()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                        Fetch All Admin Events
+                    </button>
+                </div>
+
+                <!-- 4. POST /api/admin/events (Create) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/events</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Create new event (validates dates, venue, onlineUrl, seats, and price >= 0; auto-generates slug).</p>
+                    <div class="space-y-2 mb-3">
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="col-span-2">
+                                <label class="text-xs font-medium text-slate-600">Title *</label>
+                                <input id="event-create-title" type="text" value="AI Agent Hackathon 2027" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Type *</label>
+                                <select id="event-create-type" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                    <option value="hackathon" selected>hackathon</option>
+                                    <option value="conference">conference</option>
+                                    <option value="workshop">workshop</option>
+                                    <option value="webinar">webinar</option>
+                                    <option value="meetup">meetup</option>
+                                    <option value="seminar">seminar</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Start Date *</label>
+                                <input id="event-create-date" type="date" value="2027-05-10" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">End Date</label>
+                                <input id="event-create-enddate" type="date" value="2027-05-11" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Start Time</label>
+                                <input id="event-create-starttime" type="text" value="09:00 AM" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">End Time</label>
+                                <input id="event-create-endtime" type="text" value="06:00 PM" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Is Online?</label>
+                                <select id="event-create-online" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                    <option value="0">In-Person</option>
+                                    <option value="1">Online</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Venue *</label>
+                                <input id="event-create-venue" type="text" value="Tech Hub Innovation Center, Austin, TX" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Online URL (if online)</label>
+                                <input id="event-create-onlineurl" type="url" placeholder="https://..." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Price (0 = Free) *</label>
+                                <input id="event-create-price" type="number" step="0.01" value="0" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Total Seats</label>
+                                <input id="event-create-totalseats" type="number" value="120" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Available Seats</label>
+                                <input id="event-create-availseats" type="number" value="120" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Short Description *</label>
+                            <input id="event-create-short" type="text" value="48-hour buildathon for developers creating next-gen autonomous agent workflows." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Long Description (HTML or markdown)</label>
+                            <textarea id="event-create-long" rows="3" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">&lt;h2&gt;About the Hackathon&lt;/h2&gt;&lt;p&gt;Join top builders, engineers, and researchers to design, train, and deploy autonomous LLM agents.&lt;/p&gt;</textarea>
+                        </div>
+                    </div>
+                    <button onclick="testCreateEvent()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        Create Event
+                    </button>
+                </div>
+
+                <!-- 5. PUT & DELETE /api/admin/events/:id -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="method-badge badge-del">DELETE</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/events/:id</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Event ID</label>
+                            <input id="event-manage-id" type="number" value="1" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-xs font-medium text-slate-600">Updated Title</label>
+                            <input id="event-manage-title" type="text" value="Cloud Native Architecture Summit 2027 (Updated)" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testUpdateEvent()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                            Update Event
+                        </button>
+                        <button onclick="testDeleteEvent()" class="bg-red-600 hover:bg-red-700 text-white font-medium text-xs py-2 rounded-lg transition">
+                            Delete Event
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
             <!-- 3. SEO MODULE APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-seo" class="space-y-4 hidden">
@@ -1035,6 +1274,8 @@
                             <option value="service-detail">service-detail</option>
                             <option value="blog">blog</option>
                             <option value="blog-detail">blog-detail</option>
+                            <option value="events">events</option>
+                            <option value="event-detail">event-detail</option>
                             <option value="home">home</option>
                         </select>
                         <button onclick="testPublicSeo()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-xs font-medium">
@@ -1268,7 +1509,7 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-${name}`).classList.add('active');
 
-            ['auth', 'modules', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'seo', 'media', 'settings'].forEach(s => {
+            ['auth', 'modules', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'events', 'seo', 'media', 'settings'].forEach(s => {
                 const el = document.getElementById(`section-${s}`);
                 if (el) el.classList.add('hidden');
             });
@@ -1527,6 +1768,58 @@
             const id = document.getElementById('blog-manage-id').value;
             if (!confirm(`Delete blog post ID ${id}?`)) return;
             await sendApi('DELETE', `/api/admin/blog/${id}`, null, true);
+        }
+
+        // Events Module JS
+        async function testPublicEvents() {
+            const when = document.getElementById('event-pub-when').value;
+            const type = document.getElementById('event-pub-type').value.trim();
+            const online = document.getElementById('event-pub-online').value;
+            const limit = document.getElementById('event-pub-limit').value || 10;
+            let path = `/api/public/events?limit=${limit}`;
+            if (when) path += `&when=${encodeURIComponent(when)}`;
+            if (type) path += `&type=${encodeURIComponent(type)}`;
+            if (online !== '') path += `&online=${encodeURIComponent(online)}`;
+            await sendApi('GET', path);
+        }
+        async function testPublicEventDetail() {
+            const slug = document.getElementById('event-pub-slug').value.trim();
+            if (!slug) return alert('Enter event slug.');
+            await sendApi('GET', `/api/public/events/${slug}`);
+        }
+        async function testAdminEvents() {
+            await sendApi('GET', '/api/admin/events', null, true);
+        }
+        async function testCreateEvent() {
+            const isOnline = document.getElementById('event-create-online').value === '1';
+            const body = {
+                title: document.getElementById('event-create-title').value,
+                type: document.getElementById('event-create-type').value,
+                date: document.getElementById('event-create-date').value,
+                endDate: document.getElementById('event-create-enddate').value || null,
+                startTime: document.getElementById('event-create-starttime').value || null,
+                endTime: document.getElementById('event-create-endtime').value || null,
+                venue: document.getElementById('event-create-venue').value,
+                isOnline: isOnline,
+                onlineUrl: document.getElementById('event-create-onlineurl').value || null,
+                price: parseFloat(document.getElementById('event-create-price').value) || 0,
+                totalSeats: parseInt(document.getElementById('event-create-totalseats').value) || null,
+                availableSeats: parseInt(document.getElementById('event-create-availseats').value) || null,
+                shortDescription: document.getElementById('event-create-short').value,
+                longDescription: document.getElementById('event-create-long').value,
+                status: 'published'
+            };
+            await sendApi('POST', '/api/admin/events', body, true);
+        }
+        async function testUpdateEvent() {
+            const id = document.getElementById('event-manage-id').value;
+            const title = document.getElementById('event-manage-title').value;
+            await sendApi('PUT', `/api/admin/events/${id}`, { title }, true);
+        }
+        async function testDeleteEvent() {
+            const id = document.getElementById('event-manage-id').value;
+            if (!confirm(`Delete event ID ${id}?`)) return;
+            await sendApi('DELETE', `/api/admin/events/${id}`, null, true);
         }
 
         // SEO
