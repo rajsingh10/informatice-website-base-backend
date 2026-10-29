@@ -147,15 +147,6 @@
                         <span class="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-bold">6</span>
                     </button>
 
-                    <!-- Contact Page API (Module 11) -->
-                    <button onclick="switchTab('contact')" id="tab-contact" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
-                        <span class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-envelope-open-text text-indigo-500"></i>
-                            <span>Module 11: Contact</span>
-                        </span>
-                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">8</span>
-                    </button>
-                    <!-- End Contact Page API -->
                     <button onclick="switchTab('testimonials')" id="tab-testimonials" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
                         <span class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-star text-amber-500"></i>
@@ -170,6 +161,15 @@
                             <span>Module 10: Gallery</span>
                         </span>
                         <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">5</span>
+                    </button>
+
+                    <!-- Module 11: Contact -->
+                    <button onclick="switchTab('contact')" id="tab-contact" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-envelope-open-text text-indigo-500"></i>
+                            <span>Module 11: Contact</span>
+                        </span>
+                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">8</span>
                     </button>
 
                     <button onclick="switchTab('seo')" id="tab-seo" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
@@ -1857,185 +1857,8 @@
                 </div>
             </div>
 
+
             <!-- ══════════════════════════════════════════════════════════ -->
-            <!-- Contact Page API (Module 11)                              -->
-            <!-- ══════════════════════════════════════════════════════════ -->
-            <div id="section-contact" class="space-y-4 hidden">
-                <!-- Info banner -->
-                <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-xs text-indigo-900 leading-relaxed">
-                    <p class="font-bold mb-1"><i class="fa-solid fa-envelope-open-text mr-1 text-indigo-600"></i> Module 11: Contact Page & Inquiry Forms (Contact Page API)</p>
-                    <p>Includes public contact visitor submission with honeypot spam protection, 4 customizable layout templates (<code class="bg-indigo-100 px-1 py-0.5 rounded font-mono">contactPageLayout</code>), full admin inquiry management (list, view, status updates, deletion), contact info updates, and SEO configuration.</p>
-                </div>
-
-                <!-- 1. Layout Switching -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="method-badge badge-put">PUT</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/layouts/contactPageLayout</span>
-                        </div>
-                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
-                    </div>
-                    <p class="text-xs text-slate-600 mb-3">Switch between the 4 contact page templates: Split Form with Google Map, Modern Card with Social Hub, Corporate Multi-office, Minimal Quick Reach.</p>
-                    <div class="grid grid-cols-3 gap-2 mb-3">
-                        <div class="col-span-2">
-                            <label class="text-xs font-medium text-slate-600">Select Template</label>
-                            <select id="contact-layout-select" class="w-full text-xs border border-slate-200 rounded p-2 bg-white mt-0.5 font-medium">
-                                <option value="layout1">layout1: Split Form with Google Map</option>
-                                <option value="layout2">layout2: Modern Card with Social Hub</option>
-                                <option value="layout3">layout3: Corporate Multi-office</option>
-                                <option value="layout4">layout4: Minimal Quick Reach</option>
-                            </select>
-                        </div>
-                        <div class="flex items-end">
-                            <button onclick="testSwitchContactLayout()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
-                                Switch Layout
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. Public Visitor Submission -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="method-badge badge-post">POST</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/contact/inquiry</span>
-                        </div>
-                        <span class="text-xs text-slate-400">Public (No Auth)</span>
-                    </div>
-                    <p class="text-xs text-slate-600 mb-3">Visitor inquiry submission. Validates required fields, email format, max 2000 chars message, and silent honeypot discard.</p>
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Name *</label>
-                            <input id="contact-name" type="text" value="John Doe" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Email *</label>
-                            <input id="contact-email" type="email" value="john.doe@clientcompany.com" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Phone</label>
-                            <input id="contact-phone" type="text" value="+1 555 123 4567" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Service Interested</label>
-                            <input id="contact-service" type="text" value="Web Development" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
-                        </div>
-                    </div>
-                    <div class="mb-2">
-                        <label class="text-xs font-medium text-slate-600">Message (max 2000 chars) *</label>
-                        <textarea id="contact-message" rows="2" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">We would like to request a proposal for our redesign.</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="text-xs font-medium text-slate-500">Honeypot field (hidden from real users; bots fill this)</label>
-                        <input id="contact-website" type="text" placeholder="Leave empty for valid user submission" class="w-full text-xs border border-amber-200 rounded p-1.5 mt-0.5 outline-none bg-amber-50/50 font-mono">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="testSubmitInquiry(false)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
-                            <i class="fa-solid fa-paper-plane mr-1"></i> Send Valid Submission (201)
-                        </button>
-                        <button onclick="testSubmitInquiry(true)" class="bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm" title="Simulates a bot filling in the honeypot field. Returns 201 silently but does not store in DB.">
-                            <i class="fa-solid fa-robot mr-1"></i> Test Spambot Honeypot
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 3. Public Contact Info & Services -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center space-x-2">
-                            <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/contact</span>
-                        </div>
-                        <span class="text-xs text-slate-400">Public (No Auth)</span>
-                    </div>
-                    <p class="text-xs text-slate-600 mb-3">Fetch active contact layout, site contact details, published services (for dropdown), and SEO.</p>
-                    <button onclick="testGetContactPublic()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
-                        <i class="fa-solid fa-eye mr-1"></i> Fetch Public Contact Config
-                    </button>
-                </div>
-
-                <!-- 4. Admin List Inquiries -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/inquiries</span>
-                        </div>
-                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
-                    </div>
-                    <p class="text-xs text-slate-600 mb-3">List visitor inquiries with status filtering (?status=) and search (?q=).</p>
-                    <div class="grid grid-cols-3 gap-2 mb-3">
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Status Filter</label>
-                            <select id="inquiries-filter-status" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 bg-white outline-none">
-                                <option value="">All Statuses</option>
-                                <option value="new">new</option>
-                                <option value="read">read</option>
-                                <option value="replied">replied</option>
-                                <option value="archived">archived</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Search (?q=)</label>
-                            <input id="inquiries-filter-q" type="text" placeholder="Search name, email, keyword..." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
-                        </div>
-                        <div class="flex items-end">
-                            <button onclick="testListInquiries()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
-                                <i class="fa-solid fa-list mr-1"></i> List Inquiries
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 5. Single Inquiry Management (GET, PUT status, DELETE) -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="method-badge badge-get">GET</span>
-                            <span class="method-badge badge-put">PUT</span>
-                            <span class="method-badge badge-del">DELETE</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/inquiries/:id</span>
-                        </div>
-                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
-                    </div>
-                    <p class="text-xs text-slate-600 mb-3">View single inquiry, update status (new, read, replied, archived) with optional notes, or delete inquiry.</p>
-                    <div class="grid grid-cols-3 gap-2 mb-2">
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Inquiry ID *</label>
-                            <input id="inquiry-id" type="number" value="1" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 font-mono outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">New Status</label>
-                            <select id="inquiry-status-select" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 bg-white outline-none">
-                                <option value="read">read</option>
-                                <option value="replied">replied</option>
-                                <option value="archived">archived</option>
-                                <option value="new">new</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Admin Notes</label>
-                            <input id="inquiry-notes" type="text" placeholder="Internal follow-up notes" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="testGetSingleInquiry()" class="bg-slate-700 hover:bg-slate-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
-                            <i class="fa-solid fa-magnifying-glass mr-1"></i> Get Inquiry
-                        </button>
-                        <button onclick="testUpdateInquiryStatus()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
-                            <i class="fa-solid fa-pen-to-square mr-1"></i> Update Status
-                        </button>
-                        <button onclick="testDeleteInquiry()" class="bg-red-600 hover:bg-red-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
-                            <i class="fa-solid fa-trash mr-1"></i> Delete
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 6. Contact SEO -->
             <!-- 2.9 TESTIMONIALS MODULE APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-testimonials" class="space-y-4 hidden">
@@ -2237,103 +2060,6 @@
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="method-badge badge-put">PUT</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/seo/contact, /api/admin/seo/contact</span>
-                        </div>
-                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Public / Auth</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Meta Title</label>
-                            <input id="contact-seo-title" type="text" value="Contact Us | Informatic Tech Solutions" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Keywords</label>
-                            <input id="contact-seo-keywords" type="text" value="contact, inquiries, proposal, it services" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="text-xs font-medium text-slate-600">Meta Description</label>
-                        <input id="contact-seo-desc" type="text" value="Get in touch with our expert engineering team for project quotes and inquiries." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="testGetContactSeo()" class="bg-slate-700 hover:bg-slate-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
-                            <i class="fa-solid fa-eye mr-1"></i> Fetch Contact SEO
-                        </button>
-                        <button onclick="testUpdateContactSeo()" class="bg-purple-600 hover:bg-purple-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
-                            <i class="fa-solid fa-floppy-disk mr-1"></i> Update Contact SEO
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 7. Contact Info (Email, Phone, Address, Map, Offices, Socials) -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="method-badge badge-put">PUT</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/contact (contactInfo)</span>
-                        </div>
-                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
-                    </div>
-                    <p class="text-xs text-slate-600 mb-3">Add or update contact details, Google Map embed URL, multi-office locations array, and social media hub links.</p>
-
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Contact Email</label>
-                            <input id="contact-info-email" type="email" value="contact@clientcompany.com" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 font-mono outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Contact Phone</label>
-                            <input id="contact-info-phone" type="text" value="+1 555 123 4567" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2 mb-2">
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Primary Address</label>
-                            <input id="contact-info-address" type="text" value="742 Evergreen Terrace, Springfield, OR" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Google Map Embed URL</label>
-                            <input id="contact-info-map" type="text" value="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.183792036069!2d-73.98773128459418!3d40.75889497932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 font-mono outline-none">
-                        </div>
-                    </div>
-
-                    <div class="mb-2">
-                        <label class="text-xs font-medium text-slate-600">Offices List (JSON)</label>
-                        <textarea id="contact-info-offices" rows="4" class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 mt-0.5 outline-none">[
-  {
-    "name": "Springfield HQ",
-    "address": "742 Evergreen Terrace, Springfield, OR",
-    "phone": "+1 555 123 4567",
-    "email": "hq@clientcompany.com"
-  },
-  {
-    "name": "New York Branch",
-    "address": "350 5th Ave, New York, NY",
-    "phone": "+1 212 555 0199",
-    "email": "ny@clientcompany.com"
-  }
-]</textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="text-xs font-medium text-slate-600">Socials Links (JSON)</label>
-                        <textarea id="contact-info-socials" rows="3" class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 mt-0.5 outline-none">{
-  "facebook": "https://facebook.com/clientcompany",
-  "instagram": "https://instagram.com/clientcompany",
-  "linkedin": "https://linkedin.com/company/clientcompany",
-  "twitter": "https://twitter.com/clientcompany",
-  "youtube": "https://youtube.com/@clientcompany"
-}</textarea>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="testSaveContactInfo()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
-                            <i class="fa-solid fa-floppy-disk mr-1"></i> Save Contact Info
-                        </button>
-                        <button onclick="testFetchContactInfo()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
-                            <i class="fa-solid fa-arrows-rotate mr-1"></i> Reload Current Info
                             <span class="font-mono text-sm font-semibold text-slate-800">/api/public/gallery</span>
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
@@ -2464,9 +2190,293 @@
                     </div>
                 </div>
             </div>
-            <!-- End Contact Page API (Module 11) -->
 
             <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- MODULE 11: CONTACT PAGE AND INQUIRY FORMS               -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-contact" class="space-y-4 hidden">
+                <!-- Info banner -->
+                <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-xs text-indigo-900 leading-relaxed">
+                    <p class="font-bold mb-1"><i class="fa-solid fa-envelope-open-text mr-1 text-indigo-600"></i> Module 11: Contact Page & Inquiry Forms</p>
+                    <p>Includes public contact visitor submission with honeypot spam protection, 4 customizable layout templates (<code class="bg-indigo-100 px-1 py-0.5 rounded font-mono">contactPageLayout</code>), full admin inquiry management (list, view, status updates, deletion), and SEO configuration.</p>
+                </div>
+
+                <!-- 1. Layout Switching -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/layouts/contactPageLayout</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Switch between the 4 contact page templates: Split Form with Google Map, Modern Card with Social Hub, Corporate Multi-office, Minimal Quick Reach.</p>
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <div class="col-span-2">
+                            <label class="text-xs font-medium text-slate-600">Select Template</label>
+                            <select id="contact-layout-select" class="w-full text-xs border border-slate-200 rounded p-2 bg-white mt-0.5 font-medium">
+                                <option value="layout1">layout1: Split Form with Google Map</option>
+                                <option value="layout2">layout2: Modern Card with Social Hub</option>
+                                <option value="layout3">layout3: Corporate Multi-office</option>
+                                <option value="layout4">layout4: Minimal Quick Reach</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="testSwitchContactLayout()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                                Switch Layout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Public Visitor Submission -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/contact/inquiry</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Visitor inquiry submission. Validates required fields, email format, max 2000 chars message, and silent honeypot discard.</p>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Name *</label>
+                            <input id="contact-name" type="text" value="John Doe" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Email *</label>
+                            <input id="contact-email" type="email" value="john.doe@clientcompany.com" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Phone</label>
+                            <input id="contact-phone" type="text" value="+1 555 123 4567" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Service Interested</label>
+                            <input id="contact-service" type="text" value="Web Development" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="text-xs font-medium text-slate-600">Message (max 2000 chars) *</label>
+                        <textarea id="contact-message" rows="2" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">We would like to request a proposal for our redesign.</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-xs font-medium text-slate-500">Honeypot field (hidden from real users; bots fill this)</label>
+                        <input id="contact-website" type="text" placeholder="Leave empty for valid user submission" class="w-full text-xs border border-amber-200 rounded p-1.5 mt-0.5 outline-none bg-amber-50/50 font-mono">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testSubmitInquiry(false)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-paper-plane mr-1"></i> Send Valid Submission (201)
+                        </button>
+                        <button onclick="testSubmitInquiry(true)" class="bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm" title="Simulates a bot filling in the honeypot field. Returns 201 silently but does not store in DB.">
+                            <i class="fa-solid fa-robot mr-1"></i> Test Spambot Honeypot
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. Public Contact Info & Services -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/contact</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetch active contact layout, site contact details, published services (for dropdown), and SEO.</p>
+                    <button onclick="testGetContactPublic()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-eye mr-1"></i> Fetch Public Contact Config
+                    </button>
+                </div>
+
+                <!-- 4. Admin List Inquiries -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/inquiries</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">List visitor inquiries with status filtering (?status=) and search (?q=).</p>
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Status Filter</label>
+                            <select id="inquiries-filter-status" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 bg-white outline-none">
+                                <option value="">All Statuses</option>
+                                <option value="new">new</option>
+                                <option value="read">read</option>
+                                <option value="replied">replied</option>
+                                <option value="archived">archived</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Search (?q=)</label>
+                            <input id="inquiries-filter-q" type="text" placeholder="Search name, email, keyword..." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="testListInquiries()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                                <i class="fa-solid fa-list mr-1"></i> List Inquiries
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Single Inquiry Management (GET, PUT status, DELETE) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="method-badge badge-del">DELETE</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/inquiries/:id</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">View single inquiry, update status (new, read, replied, archived) with optional notes, or delete inquiry.</p>
+                    <div class="grid grid-cols-3 gap-2 mb-2">
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Inquiry ID *</label>
+                            <input id="inquiry-id" type="number" value="1" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 font-mono outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">New Status</label>
+                            <select id="inquiry-status-select" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 bg-white outline-none">
+                                <option value="read">read</option>
+                                <option value="replied">replied</option>
+                                <option value="archived">archived</option>
+                                <option value="new">new</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Admin Notes</label>
+                            <input id="inquiry-notes" type="text" placeholder="Internal follow-up notes" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="testGetSingleInquiry()" class="bg-slate-700 hover:bg-slate-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-magnifying-glass mr-1"></i> Get Inquiry
+                        </button>
+                        <button onclick="testUpdateInquiryStatus()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> Update Status
+                        </button>
+                        <button onclick="testDeleteInquiry()" class="bg-red-600 hover:bg-red-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-trash mr-1"></i> Delete
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 6. Contact SEO -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/seo/contact, /api/admin/seo/contact</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Public / Auth</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Meta Title</label>
+                            <input id="contact-seo-title" type="text" value="Contact Us | Informatic Tech Solutions" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Keywords</label>
+                            <input id="contact-seo-keywords" type="text" value="contact, inquiries, proposal, it services" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-xs font-medium text-slate-600">Meta Description</label>
+                        <input id="contact-seo-desc" type="text" value="Get in touch with our expert engineering team for project quotes and inquiries." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testGetContactSeo()" class="bg-slate-700 hover:bg-slate-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-eye mr-1"></i> Fetch Contact SEO
+                        </button>
+                        <button onclick="testUpdateContactSeo()" class="bg-purple-600 hover:bg-purple-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> Update Contact SEO
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 7. Contact Info (Email, Phone, Address, Map, Offices, Socials) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/contact (contactInfo)</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Add or update contact details, Google Map embed URL, multi-office locations array, and social media hub links.</p>
+
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Contact Email</label>
+                            <input id="contact-info-email" type="email" value="contact@clientcompany.com" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 font-mono outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Contact Phone</label>
+                            <input id="contact-info-phone" type="text" value="+1 555 123 4567" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Primary Address</label>
+                            <input id="contact-info-address" type="text" value="742 Evergreen Terrace, Springfield, OR" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Google Map Embed URL</label>
+                            <input id="contact-info-map" type="text" value="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.183792036069!2d-73.98773128459418!3d40.75889497932681!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1620000000000!5m2!1sen!2sus" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 font-mono outline-none">
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="text-xs font-medium text-slate-600">Offices List (JSON)</label>
+                        <textarea id="contact-info-offices" rows="4" class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 mt-0.5 outline-none">[
+  {
+    "name": "Springfield HQ",
+    "address": "742 Evergreen Terrace, Springfield, OR",
+    "phone": "+1 555 123 4567",
+    "email": "hq@clientcompany.com"
+  },
+  {
+    "name": "New York Branch",
+    "address": "350 5th Ave, New York, NY",
+    "phone": "+1 212 555 0199",
+    "email": "ny@clientcompany.com"
+  }
+]</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-xs font-medium text-slate-600">Socials Links (JSON)</label>
+                        <textarea id="contact-info-socials" rows="3" class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 mt-0.5 outline-none">{
+  "facebook": "https://facebook.com/clientcompany",
+  "instagram": "https://instagram.com/clientcompany",
+  "linkedin": "https://linkedin.com/company/clientcompany",
+  "twitter": "https://twitter.com/clientcompany",
+  "youtube": "https://youtube.com/@clientcompany"
+}</textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testSaveContactInfo()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i> Save Contact Info
+                        </button>
+                        <button onclick="testFetchContactInfo()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-arrows-rotate mr-1"></i> Reload Current Info
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+                        <!-- ══════════════════════════════════════════════════════════ -->
             <!-- 3. SEO MODULE APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-seo" class="space-y-4 hidden">
@@ -2752,7 +2762,7 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-${name}`).classList.add('active');
 
-            ['auth', 'modules', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'events', 'team','contact', 'testimonials', 'gallery', 'seo', 'media', 'settings'].forEach(s => {
+            ['auth', 'modules', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'events', 'team', 'testimonials', 'gallery', 'contact', 'seo', 'media', 'settings'].forEach(s => {
                 const el = document.getElementById(`section-${s}`);
                 if (el) el.classList.add('hidden');
             });
