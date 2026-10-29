@@ -33,7 +33,9 @@ Route::prefix('public')->group(function () {
     Route::get('settings', [SiteSettingController::class, 'show']);
 
     // Module 2: Navbar Navigation
-    Route::get('navigation/navbar', [NavbarController::class, 'showPublic']);
+    Route::get('navigation/navbar',                     [NavbarController::class, 'showPublic']);
+    Route::match(['put', 'post'], 'navigation/navbar',  [NavbarController::class, 'updateNavbar']);
+    Route::match(['put', 'post'], 'navbar',             [NavbarController::class, 'updateNavbar']);
 
     // Module 3: Home Sections
     Route::get('home-sections', [HomeSectionController::class, 'index']);
@@ -101,8 +103,8 @@ Route::prefix('admin')->group(function () {
         // Layouts (Modules 1, 2, 3, 4, 5 etc.)
         Route::get('layouts',                  [LayoutController::class, 'indexAdmin']);
         Route::post('layouts/save',            [LayoutController::class, 'save']);
-        Route::post('layouts',                 [LayoutController::class, 'store']);
-        Route::put('layouts/{key}',            [LayoutController::class, 'update']);
+        Route::match(['put', 'post'], 'layouts', [LayoutController::class, 'store']);
+        Route::match(['put', 'post'], 'layouts/{key}', [LayoutController::class, 'update']);
 
         // 3.2 SEO
         Route::get('seo/{page}',               [SeoController::class, 'showAdmin']);
@@ -118,6 +120,8 @@ Route::prefix('admin')->group(function () {
 
         // Module 2: Navbar Navigation
         Route::get('navigation/navbar',        [NavbarController::class, 'showAdmin']);
+        Route::match(['put', 'post'], 'navigation/navbar', [NavbarController::class, 'updateNavbar']);
+        Route::match(['put', 'post'], 'navbar',            [NavbarController::class, 'updateNavbar']);
         Route::put('navigation/navbar/behavior', [NavbarController::class, 'updateBehavior']);
         Route::put('navigation/navbar/items',  [NavbarController::class, 'updateItems']);
         Route::put('navigation/navbar/cta',    [NavbarController::class, 'updateCta']);

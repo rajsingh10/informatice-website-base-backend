@@ -559,6 +559,7 @@
             <!-- MODULE 2: NAVBAR NAVIGATION APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-navbar" class="space-y-4 hidden">
+                <!-- 1. GET Public Navbar -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
@@ -567,11 +568,52 @@
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
+                    <p class="text-xs text-slate-500 mb-3">Returns enabled items, CTA button, and navbar scroll behavior.</p>
                     <button onclick="testPublicNavbar()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
                         <span>Fetch Public Navbar Data</span>
                     </button>
                 </div>
 
+                <!-- 2. PUT / POST Update Navbar -->
+                <div class="bg-white rounded-xl border border-indigo-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-indigo-900">/api/public/navigation/navbar</span>
+                        </div>
+                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-bold">Public / Admin Update</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Update navbar scroll behavior, CTA button, and menu items in one call.</p>
+                    
+                    <div class="space-y-3 mb-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Scroll Behavior</label>
+                            <select id="navbar-update-behavior" class="w-full text-xs border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-indigo-500 font-mono">
+                                <option value="scroll">scroll (Default)</option>
+                                <option value="fixed">fixed</option>
+                                <option value="colored">colored</option>
+                                <option value="transparent">transparent</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">CTA Label</label>
+                                <input type="text" id="navbar-update-cta-label" value="Get a Quote" class="w-full text-xs border border-slate-300 rounded-lg p-2">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">CTA URL</label>
+                                <input type="text" id="navbar-update-cta-url" value="/contact" class="w-full text-xs border border-slate-300 rounded-lg p-2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="testUpdateNavbarQuick()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i>
+                        <span>Send PUT /api/public/navigation/navbar</span>
+                    </button>
+                </div>
+
+                <!-- 3. GET Admin Navbar -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
@@ -580,6 +622,7 @@
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
+                    <p class="text-xs text-slate-500 mb-3">Returns all items including disabled ones for administrative management.</p>
                     <button onclick="testAdminNavbar()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
                         Fetch Admin Navbar Config
                     </button>
@@ -1297,6 +1340,20 @@
 
         // Navbar
         async function testPublicNavbar() { await sendApi('GET', '/api/public/navigation/navbar'); }
+        async function testUpdateNavbarQuick() {
+            const behavior = document.getElementById('navbar-update-behavior').value;
+            const ctaLabel = document.getElementById('navbar-update-cta-label').value;
+            const ctaUrl = document.getElementById('navbar-update-cta-url').value;
+            const body = {
+                behavior: behavior,
+                cta: {
+                    enabled: true,
+                    label: ctaLabel,
+                    url: ctaUrl
+                }
+            };
+            await sendApi('PUT', '/api/public/navigation/navbar', body);
+        }
         async function testAdminNavbar() { await sendApi('GET', '/api/admin/navigation/navbar', null, true); }
 
         // Home
