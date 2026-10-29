@@ -33,23 +33,27 @@ class ServiceController extends Controller
 
         $total = $query->count();
 
-        // Ordering & Pagination
-        $limit = max(1, min(100, (int) $request->query('limit', 20)));
-        $page = max(1, (int) $request->query('page', 1));
-        $offset = ($page - 1) * $limit;
+        $query->orderBy('order', 'asc')->orderBy('id', 'asc');
 
-        $services = $query->orderBy('order', 'asc')
-                          ->orderBy('id', 'asc')
-                          ->skip($offset)
-                          ->take($limit)
-                          ->get();
+        if ($request->filled('limit')) {
+            $limit = max(1, min(100, (int) $request->query('limit')));
+            $page  = max(1, (int) $request->query('page', 1));
+            $services = $query->forPage($page, $limit)->get();
+        } else {
+            $page  = 1;
+            $limit = $total;
+            $services = $query->get();
+        }
+
+        $catalog = $services->map->toCatalogPayload()->values();
 
         return response()->json([
-            'success' => true,
-            'total'   => $total,
-            'page'    => $page,
-            'limit'   => $limit,
-            'data'    => $services->map->toCatalogPayload(),
+            'success'  => true,
+            'total'    => $total,
+            'page'     => $page,
+            'limit'    => $limit,
+            'services' => $catalog,
+            'data'     => $catalog,
         ], 200);
     }
 
@@ -105,10 +109,13 @@ class ServiceController extends Controller
                           ->orderBy('id', 'asc')
                           ->get();
 
+        $adminList = $services->map->toAdminPayload()->values();
+
         return response()->json([
-            'success' => true,
-            'total'   => $total,
-            'data'    => $services->map->toAdminPayload(),
+            'success'  => true,
+            'total'    => $total,
+            'services' => $adminList,
+            'data'     => $adminList,
         ], 200);
     }
 
@@ -174,7 +181,7 @@ class ServiceController extends Controller
             'features'         => $request->input('features', []),
             'deliverables'     => $request->input('deliverables', []),
             'order'            => (int) $request->input('order', 0),
-            'isPublished'      => $request->has('isPublished') ? (bool) $request->input('isPublished') : true,
+            'isPublished'      => $request->has('isPublished') ? filter_var($request->input('isPublished'), FILTER_VALIDATE_BOOLEAN) : true,
             'seo'              => $request->input('seo', []),
         ]);
 
@@ -227,9 +234,12 @@ class ServiceController extends Controller
             'features',
             'deliverables',
             'order',
-            'isPublished',
             'seo',
         ]);
+
+        if ($request->has('isPublished')) {
+            $data['isPublished'] = filter_var($request->input('isPublished'), FILTER_VALIDATE_BOOLEAN);
+        }
 
         if ($request->filled('slug')) {
             $data['slug'] = Service::generateSlug($request->input('slug'), $service->id);

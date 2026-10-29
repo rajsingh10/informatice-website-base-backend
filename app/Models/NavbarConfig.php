@@ -213,6 +213,7 @@ class NavbarConfig extends Model
 
     /**
      * Process array of items: assign ID if missing, preserve order, normalize boolean enabled.
+     * Supports label/name/title and url/path/href.
      */
     public static function processItems(array $rawItems): array
     {
@@ -220,7 +221,7 @@ class NavbarConfig extends Model
         $maxNum = 0;
 
         foreach ($rawItems as $item) {
-            if (! empty($item['id']) && preg_match('/^nav-(\d+)$/', $item['id'], $m)) {
+            if (! empty($item['id']) && preg_match('/^nav-(\d+)$/', (string) $item['id'], $m)) {
                 $num = (int) $m[1];
                 if ($num > $maxNum) {
                     $maxNum = $num;
@@ -238,15 +239,36 @@ class NavbarConfig extends Model
                 $id = "nav-{$maxNum}";
             }
 
+            $label = $item['label'] ?? ($item['name'] ?? ($item['title'] ?? 'Link'));
+            $url   = $item['url'] ?? ($item['path'] ?? ($item['href'] ?? '/'));
+
             $processed[] = [
-                'id'      => $id,
-                'label'   => (string) ($item['label'] ?? 'Link'),
-                'url'     => (string) ($item['url'] ?? '/'),
-                'enabled' => isset($item['enabled']) ? (bool) $item['enabled'] : true,
+                'id'      => (string) $id,
+                'label'   => (string) $label,
+                'url'     => (string) $url,
+                'enabled' => isset($item['enabled']) ? filter_var($item['enabled'], FILTER_VALIDATE_BOOLEAN) : true,
             ];
         }
 
         return $processed;
+    }
+
+    /**
+     * Get next available navigation item ID.
+     */
+    public function getNextItemId(): string
+    {
+        $items = is_array($this->items) ? $this->items : static::defaultItems();
+        $maxNum = 0;
+        foreach ($items as $item) {
+            if (! empty($item['id']) && preg_match('/^nav-(\d+)$/', (string) $item['id'], $m)) {
+                $num = (int) $m[1];
+                if ($num > $maxNum) {
+                    $maxNum = $num;
+                }
+            }
+        }
+        return 'nav-' . ($maxNum + 1);
     }
 }
 

@@ -22,6 +22,7 @@ class LayoutController extends Controller
         $currentNavbarTemplate = $layouts['navbarLayout'] ?? 'layout1';
         $activeBehavior = $navbar->getBehaviorForLayout($currentNavbarTemplate);
         $isEnabled = $navbar->isNavbarEnabled();
+        $navItems = is_array($navbar->items) ? array_values($navbar->items) : NavbarConfig::defaultItems();
 
         $layouts['navbarLayout'] = [
             'layout'   => $currentNavbarTemplate,
@@ -29,6 +30,7 @@ class LayoutController extends Controller
             'enabled'  => $isEnabled,
             'visible'  => $isEnabled,
             'status'   => $isEnabled ? 'visible' : 'hidden',
+            'items'    => $navItems,
         ];
 
         return response()->json([
@@ -53,12 +55,14 @@ class LayoutController extends Controller
 
             if ($key === 'navbarLayout') {
                 $isEnabled = $navbar->isNavbarEnabled();
+                $navItems = is_array($navbar->items) ? array_values($navbar->items) : NavbarConfig::defaultItems();
                 $active[$key] = [
                     'layout'   => $current,
                     'behavior' => $navbar->getBehaviorForLayout($current),
                     'enabled'  => $isEnabled,
                     'visible'  => $isEnabled,
                     'status'   => $isEnabled ? 'visible' : 'hidden',
+                    'items'    => $navItems,
                 ];
             } else {
                 $active[$key] = $current;
@@ -187,12 +191,21 @@ class LayoutController extends Controller
                 $st = $request->input('status');
                 $navbar->setNavbarEnabled(in_array($st, ['visible', 'on', 'true', '1', 1], true));
             }
+
+            if ($request->has('items') && is_array($request->input('items'))) {
+                $processed = NavbarConfig::processItems($request->input('items'));
+                $navbar->update(['items' => $processed]);
+            } elseif ($request->has('menu') && is_array($request->input('menu'))) {
+                $processed = NavbarConfig::processItems($request->input('menu'));
+                $navbar->update(['items' => $processed]);
+            }
         }
 
         // 5. Message names the module and the new template
         $moduleName = Layout::moduleName($key);
         $activeBehavior = $navbar->getBehaviorForLayout($templateId);
         $isEnabled = $navbar->isNavbarEnabled();
+        $navItems = is_array($navbar->fresh()->items) ? array_values($navbar->fresh()->items) : NavbarConfig::defaultItems();
 
         $responseData = [
             'layout'   => $templateId,
@@ -201,6 +214,10 @@ class LayoutController extends Controller
             'visible'  => $isEnabled,
             'status'   => $isEnabled ? 'visible' : 'hidden',
         ];
+
+        if ($key === 'navbarLayout') {
+            $responseData['items'] = $navItems;
+        }
 
         return response()->json([
             'success' => true,
@@ -231,13 +248,33 @@ class LayoutController extends Controller
             ], 422);
         }
 
-        // Handle navbarLayout passed as an object { layout: "layout5", behavior: "scroll" }
+        // Handle navbarLayout passed as an object { layout: "layout5", behavior: "scroll", items: [...] }
         if (isset($items['navbarLayout']) && is_array($items['navbarLayout'])) {
             $navData = $items['navbarLayout'];
             $items['navbarLayout'] = $navData['layout'] ?? ($navData['templateId'] ?? 'layout1');
             if (isset($navData['behavior'])) {
                 $items['behavior'] = $navData['behavior'];
             }
+            if (isset($navData['enabled'])) {
+                NavbarConfig::getSingleton()->setNavbarEnabled((bool) $navData['enabled']);
+            } elseif (isset($navData['visible'])) {
+                NavbarConfig::getSingleton()->setNavbarEnabled((bool) $navData['visible']);
+            }
+            if (isset($navData['items']) && is_array($navData['items'])) {
+                $processed = NavbarConfig::processItems($navData['items']);
+                NavbarConfig::getSingleton()->update(['items' => $processed]);
+            } elseif (isset($navData['menu']) && is_array($navData['menu'])) {
+                $processed = NavbarConfig::processItems($navData['menu']);
+                NavbarConfig::getSingleton()->update(['items' => $processed]);
+            }
+        }
+
+        if ($request->has('items') && is_array($request->input('items'))) {
+            $processed = NavbarConfig::processItems($request->input('items'));
+            NavbarConfig::getSingleton()->update(['items' => $processed]);
+        } elseif ($request->has('menu') && is_array($request->input('menu'))) {
+            $processed = NavbarConfig::processItems($request->input('menu'));
+            NavbarConfig::getSingleton()->update(['items' => $processed]);
         }
 
         if (isset($items['behavior'])) {
@@ -285,6 +322,7 @@ class LayoutController extends Controller
         $currTemplate = $saved['navbarLayout'] ?? 'layout1';
         $activeBehavior = $navbar->getBehaviorForLayout($currTemplate);
         $isEnabled = $navbar->isNavbarEnabled();
+        $navItems = is_array($navbar->fresh()->items) ? array_values($navbar->fresh()->items) : NavbarConfig::defaultItems();
 
         $saved['navbarLayout'] = [
             'layout'   => $currTemplate,
@@ -292,6 +330,7 @@ class LayoutController extends Controller
             'enabled'  => $isEnabled,
             'visible'  => $isEnabled,
             'status'   => $isEnabled ? 'visible' : 'hidden',
+            'items'    => $navItems,
         ];
 
         return response()->json([

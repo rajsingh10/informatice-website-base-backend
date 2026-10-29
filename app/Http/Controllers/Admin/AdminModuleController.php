@@ -356,12 +356,14 @@ class AdminModuleController extends Controller
 
             if ($key === 'navbarLayout') {
                 $isEnabled = $navbar->isNavbarEnabled();
+                $navItems = is_array($navbar->items) ? array_values($navbar->items) : NavbarConfig::defaultItems();
                 $active[$key] = [
                     'layout' => $current,
                     'behavior' => $navBehavior,
-                    'enabled' => $isEnabled,
-                    'visible' => $isEnabled,
-                    'status' => $isEnabled ? 'visible' : 'hidden',
+                    'enabled'  => $isEnabled,
+                    'visible'  => $isEnabled,
+                    'status'   => $isEnabled ? 'visible' : 'hidden',
+                    'items'    => $navItems,
                 ];
             } else {
                 $active[$key] = $current;
