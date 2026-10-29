@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeSectionController;
 use App\Http\Controllers\InquiryController; // [Contact Page API]
 use App\Http\Controllers\LayoutController;
@@ -14,11 +15,22 @@ use App\Http\Controllers\SeoController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SiteSettingController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TestimonialController;
 use App\Http\Middleware\ForceJsonResponse;
 use Illuminate\Support\Facades\Route;
 
-// Interactive API Testing Dashboard Page
-Route::get('/', function () {
+// Interactive API Testing Dashboard / Root Services API
+Route::get('/', function (\Illuminate\Http\Request $request) {
+    // If request wants JSON (API request, fetch, axios, or not a full browser page navigation)
+    $isBrowserDocument = str_contains($request->header('Accept', ''), 'text/html')
+        && ($request->header('Sec-Fetch-Dest', '') === 'document' || ! $request->hasHeader('Sec-Fetch-Dest'))
+        && ! $request->hasHeader('X-Requested-With')
+        && ! $request->has('json');
+
+    if (! $isBrowserDocument || $request->wantsJson() || $request->ajax() || $request->has('json')) {
+        return app(ServiceController::class)->indexPublic($request);
+    }
+
     return view('api-tester');
 });
 
@@ -26,17 +38,21 @@ Route::get('/api-tester', function () {
     return view('api-tester');
 });
 
-// Direct file serving for /services/public/... assets (mirrors production / Apache)
+// Direct file serving for /services/public/... assets (ONLY actual static files)
 Route::get('/services/public/{path}', function ($path) {
     $fullPath = public_path($path);
     if (! file_exists($fullPath) || is_dir($fullPath)) {
         abort(404);
     }
     return response()->file($fullPath);
-})->where('path', '.*');
+})->where('path', '.*\.(css|js|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf|eot|map)$');
 
 // Direct aliases without /api prefix
 Route::middleware([ForceJsonResponse::class])->group(function () {
+
+    // Direct services aliases
+    Route::get('/services', [ServiceController::class, 'indexPublic']);
+    Route::get('/services/{slug}', [ServiceController::class, 'showPublic']);
 
     // Public aliases
     Route::get('/public/layouts', [LayoutController::class, 'index']);
@@ -68,6 +84,13 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
     Route::get('/public/contact', [InquiryController::class, 'getPublicContact']); // Contact Page API
     Route::post('/public/contact/inquiry', [InquiryController::class, 'submitInquiry']); // Contact Page API
     Route::post('/public/inquiry', [InquiryController::class, 'submitInquiry']); // Contact Page API
+    // Module 9: Testimonials
+    Route::get('/public/testimonials', [TestimonialController::class, 'indexPublic']);
+    Route::get('/public/testimonials/{id}', [TestimonialController::class, 'showPublic']);
+
+    // Module 10: Gallery
+    Route::get('/public/gallery', [GalleryController::class, 'indexPublic']);
+    Route::get('/public/gallery/{id}', [GalleryController::class, 'showPublic']);
 
     // Admin Auth aliases (public)
     Route::post('/admin/login', [AuthController::class, 'login']);
@@ -95,6 +118,8 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
         Route::get('/admin/events-feed', [AdminModuleController::class, 'getEvents']);
         Route::get('/admin/event-detail', [AdminModuleController::class, 'getEventDetail']);
         Route::get('/admin/team-feed', [AdminModuleController::class, 'getTeam']);
+        Route::get('/admin/testimonials-feed', [AdminModuleController::class, 'getTestimonials']);
+        Route::get('/admin/gallery-feed', [AdminModuleController::class, 'getGallery']);
 
         // Contact Page API (Module 11)
         Route::get('/admin/contact', [AdminModuleController::class, 'getContact']); // Contact Page API
@@ -124,6 +149,8 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
             Route::match(['put', 'post'], 'contact', [InquiryController::class, 'updateContactInfo']); // Contact Page API
             Route::match(['put', 'post'], 'contact/info', [InquiryController::class, 'updateContactInfo']); // Contact Page API
 
+            Route::get('testimonials', [AdminModuleController::class, 'getTestimonials']);
+            Route::get('gallery', [AdminModuleController::class, 'getGallery']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
         });
@@ -227,5 +254,18 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
         Route::get('/admin/inquiries/{id}', [InquiryController::class, 'show']); // Contact Page API
         Route::match(['put', 'patch', 'post'], '/admin/inquiries/{id}', [InquiryController::class, 'updateStatus']); // Contact Page API
         Route::delete('/admin/inquiries/{id}', [InquiryController::class, 'destroy']); // Contact Page API
+        // Module 9 Testimonials
+        Route::get('/admin/testimonials', [TestimonialController::class, 'indexAdmin']);
+        Route::get('/admin/testimonials/{id}', [TestimonialController::class, 'showAdmin']);
+        Route::post('/admin/testimonials', [TestimonialController::class, 'store']);
+        Route::put('/admin/testimonials/{id}', [TestimonialController::class, 'update']);
+        Route::delete('/admin/testimonials/{id}', [TestimonialController::class, 'destroy']);
+
+        // Module 10 Gallery
+        Route::get('/admin/gallery', [GalleryController::class, 'indexAdmin']);
+        Route::get('/admin/gallery/{id}', [GalleryController::class, 'showAdmin']);
+        Route::post('/admin/gallery', [GalleryController::class, 'store']);
+        Route::put('/admin/gallery/{id}', [GalleryController::class, 'update']);
+        Route::delete('/admin/gallery/{id}', [GalleryController::class, 'destroy']);
     });
 });
