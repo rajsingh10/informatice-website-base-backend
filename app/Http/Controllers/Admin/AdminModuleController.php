@@ -12,6 +12,7 @@ use App\Models\PageSeo;
 use App\Models\Portfolio;
 use App\Models\Service;
 use App\Models\SiteSetting;
+use App\Models\TeamMember;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -293,6 +294,30 @@ class AdminModuleController extends Controller
                     'allowed' => Layout::allowedFor('eventDetailPageLayout'),
                 ],
                 'defaultSeo' => $defaultSeo,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Module 8: Team Members
+     * GET /api/admin/modules/team
+     */
+    public function getTeam(Request $request): JsonResponse
+    {
+        $layoutRecord = Layout::find('teamPageLayout');
+        $members = TeamMember::orderBy('order', 'asc')->orderBy('id', 'asc')->get()->map(fn ($m) => $m->toAdminPayload());
+
+        return response()->json([
+            'success' => true,
+            'module' => 'team',
+            'data' => [
+                'layout' => [
+                    'key' => 'teamPageLayout',
+                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'allowed' => Layout::allowedFor('teamPageLayout'),
+                ],
+                'total' => $members->count(),
+                'members' => $members,
             ],
         ], 200);
     }

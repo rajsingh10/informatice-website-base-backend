@@ -12,6 +12,7 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SiteSettingController;
+use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -58,6 +59,10 @@ Route::prefix('public')->group(function () {
     // Module 7: Events
     Route::get('events', [EventController::class, 'indexPublic']);
     Route::get('events/{slug}', [EventController::class, 'showPublic']);
+
+    // Module 8: Team
+    Route::get('team', [TeamController::class, 'indexPublic']);
+    Route::get('team/{id}', [TeamController::class, 'showPublic']);
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -90,6 +95,7 @@ Route::prefix('admin')->group(function () {
         Route::get('blog-detail', [AdminModuleController::class, 'getBlogDetail']);
         Route::get('events-feed', [AdminModuleController::class, 'getEvents']);
         Route::get('event-detail', [AdminModuleController::class, 'getEventDetail']);
+        Route::get('team-feed', [AdminModuleController::class, 'getTeam']);
 
         // Module-wise Admin GET APIs (Backward compatibility aliases)
         Route::prefix('modules')->group(function () {
@@ -107,6 +113,7 @@ Route::prefix('admin')->group(function () {
             Route::get('blog-detail', [AdminModuleController::class, 'getBlogDetail']);
             Route::get('events', [AdminModuleController::class, 'getEvents']);
             Route::get('event-detail', [AdminModuleController::class, 'getEventDetail']);
+            Route::get('team', [AdminModuleController::class, 'getTeam']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
         });
@@ -174,5 +181,12 @@ Route::prefix('admin')->group(function () {
         Route::post('events', [EventController::class, 'store']);
         Route::put('events/{id}', [EventController::class, 'update']);
         Route::delete('events/{id}', [EventController::class, 'destroy']);
+
+        // Module 8: Team CRUD
+        Route::get('team', [TeamController::class, 'indexAdmin']);
+        Route::get('team/{id}', [TeamController::class, 'showAdmin']);
+        Route::post('team', [TeamController::class, 'store']);
+        Route::put('team/{id}', [TeamController::class, 'update']);
+        Route::delete('team/{id}', [TeamController::class, 'destroy']);
     });
 });

@@ -136,6 +136,14 @@
                         <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">7</span>
                     </button>
 
+                    <button onclick="switchTab('team')" id="tab-team" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-users text-teal-600"></i>
+                            <span>Module 8: Team</span>
+                        </span>
+                        <span class="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-bold">6</span>
+                    </button>
+
                     <button onclick="switchTab('seo')" id="tab-seo" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
                         <span class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-magnifying-glass-chart text-purple-500"></i>
@@ -486,6 +494,21 @@
                     <p class="text-xs text-slate-600 mb-3">Module 7.1: Returns event detail layout (eventDetailPageLayout) and default SEO metadata.</p>
                     <button onclick="sendApi('GET', '/api/admin/modules/event-detail', null, true)" class="w-full bg-amber-700 hover:bg-amber-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
                         <i class="fa-solid fa-calendar-days mr-1"></i> Fetch /api/admin/modules/event-detail
+                    </button>
+                </div>
+
+                <!-- 8. Team Members -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/modules/team</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 8: Returns team layout (teamPageLayout) and all team members.</p>
+                    <button onclick="sendApi('GET', '/api/admin/modules/team', null, true)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-users mr-1"></i> Fetch /api/admin/modules/team
                     </button>
                 </div>
 
@@ -1255,6 +1278,184 @@
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- 2.8 TEAM MODULE APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-team" class="space-y-4 hidden">
+                <!-- 1. GET /api/public/team -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/team</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Public members list (supports ?department=, ?isLeadership=1|0, ?limit=). Returns published team members sorted by order.</p>
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Department</label>
+                            <select id="team-pub-dept" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="" selected>All Departments</option>
+                                <option value="Management">Management</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="Design">Design</option>
+                                <option value="Marketing">Marketing</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Leadership</label>
+                            <select id="team-pub-leadership" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="" selected>All Members</option>
+                                <option value="1">Leadership Only</option>
+                                <option value="0">Non-Leadership</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Limit</label>
+                            <input id="team-pub-limit" type="number" placeholder="Limit" value="20" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        </div>
+                    </div>
+                    <button onclick="testPublicTeam()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-users"></i>
+                        <span>Fetch Public Team List</span>
+                    </button>
+                </div>
+
+                <!-- 2. GET /api/admin/team & /api/admin/team/:id -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/team</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Admin list of all members (including drafts and hidden members) or single member by ID.</p>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <button onclick="testAdminTeam()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                            Fetch All Admin Team
+                        </button>
+                        <div class="flex space-x-1">
+                            <input id="team-admin-fetch-id" type="number" value="1" placeholder="ID" class="w-16 text-xs border border-slate-200 rounded p-1.5 outline-none font-mono">
+                            <button onclick="testAdminTeamSingle()" class="flex-1 bg-teal-700 hover:bg-teal-800 text-white font-medium text-xs py-2 rounded-lg transition">
+                                Fetch By ID
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. POST /api/admin/team (Create) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/team</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Add team member (name, designation, department, bio, social links, isLeadership, order).</p>
+                    <div class="space-y-2 mb-3">
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="col-span-2">
+                                <label class="text-xs font-medium text-slate-600">Full Name *</label>
+                                <input id="team-create-name" type="text" value="Dr. Arvind Sharma" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Department</label>
+                                <select id="team-create-dept" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                    <option value="Management">Management</option>
+                                    <option value="Engineering" selected>Engineering</option>
+                                    <option value="Design">Design</option>
+                                    <option value="Marketing">Marketing</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="col-span-2">
+                                <label class="text-xs font-medium text-slate-600">Designation *</label>
+                                <input id="team-create-desig" type="text" value="Principal AI Architect" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Leadership Spotlight?</label>
+                                <select id="team-create-leadership" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                    <option value="0">No</option>
+                                    <option value="1" selected>Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Photo URL</label>
+                            <input id="team-create-photo" type="url" value="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Bio</label>
+                            <textarea id="team-create-bio" rows="2" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">Pioneering neural search architectures and LLM distillation models for enterprise software systems.</textarea>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">LinkedIn URL</label>
+                                <input id="team-create-linkedin" type="url" value="https://linkedin.com/in/arvindsharma" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Twitter URL</label>
+                                <input id="team-create-twitter" type="url" value="https://x.com/arvindsharma" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">GitHub URL</label>
+                                <input id="team-create-github" type="url" value="https://github.com/arvindsharma" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Display Order</label>
+                                <input id="team-create-order" type="number" value="9" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Status</label>
+                                <select id="team-create-published" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                    <option value="1" selected>Published</option>
+                                    <option value="0">Draft</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="testCreateTeamMember()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        Add Team Member
+                    </button>
+                </div>
+
+                <!-- 4. PUT & DELETE /api/admin/team/:id -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="method-badge badge-del">DELETE</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/team/:id</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Member ID</label>
+                            <input id="team-manage-id" type="number" value="1" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-xs font-medium text-slate-600">Updated Designation</label>
+                            <input id="team-manage-desig" type="text" value="Founder & Chief Executive Officer" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testUpdateTeamMember()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                            Update Member
+                        </button>
+                        <button onclick="testDeleteTeamMember()" class="bg-red-600 hover:bg-red-700 text-white font-medium text-xs py-2 rounded-lg transition">
+                            Delete Member
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
             <!-- 3. SEO MODULE APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-seo" class="space-y-4 hidden">
@@ -1276,6 +1477,7 @@
                             <option value="blog-detail">blog-detail</option>
                             <option value="events">events</option>
                             <option value="event-detail">event-detail</option>
+                            <option value="team">team</option>
                             <option value="home">home</option>
                         </select>
                         <button onclick="testPublicSeo()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-xs font-medium">
@@ -1509,7 +1711,7 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-${name}`).classList.add('active');
 
-            ['auth', 'modules', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'events', 'seo', 'media', 'settings'].forEach(s => {
+            ['auth', 'modules', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'events', 'team', 'seo', 'media', 'settings'].forEach(s => {
                 const el = document.getElementById(`section-${s}`);
                 if (el) el.classList.add('hidden');
             });
@@ -1820,6 +2022,55 @@
             const id = document.getElementById('event-manage-id').value;
             if (!confirm(`Delete event ID ${id}?`)) return;
             await sendApi('DELETE', `/api/admin/events/${id}`, null, true);
+        }
+
+        // Team Module JS
+        async function testPublicTeam() {
+            const dept = document.getElementById('team-pub-dept').value;
+            const leadership = document.getElementById('team-pub-leadership').value;
+            const limit = document.getElementById('team-pub-limit').value || 20;
+            let path = `/api/public/team?limit=${limit}`;
+            if (dept) path += `&department=${encodeURIComponent(dept)}`;
+            if (leadership !== '') path += `&isLeadership=${encodeURIComponent(leadership)}`;
+            await sendApi('GET', path);
+        }
+        async function testAdminTeam() {
+            await sendApi('GET', '/api/admin/team', null, true);
+        }
+        async function testAdminTeamSingle() {
+            const id = document.getElementById('team-admin-fetch-id').value;
+            if (!id) return alert('Enter member ID.');
+            await sendApi('GET', `/api/admin/team/${id}`, null, true);
+        }
+        async function testCreateTeamMember() {
+            const isLeadership = document.getElementById('team-create-leadership').value === '1';
+            const isPublished = document.getElementById('team-create-published').value === '1';
+            const body = {
+                name: document.getElementById('team-create-name').value,
+                designation: document.getElementById('team-create-desig').value,
+                department: document.getElementById('team-create-dept').value,
+                photo: document.getElementById('team-create-photo').value,
+                bio: document.getElementById('team-create-bio').value,
+                social: {
+                    linkedin: document.getElementById('team-create-linkedin').value,
+                    twitter: document.getElementById('team-create-twitter').value,
+                    github: document.getElementById('team-create-github').value,
+                },
+                isLeadership: isLeadership,
+                order: parseInt(document.getElementById('team-create-order').value) || 0,
+                isPublished: isPublished
+            };
+            await sendApi('POST', '/api/admin/team', body, true);
+        }
+        async function testUpdateTeamMember() {
+            const id = document.getElementById('team-manage-id').value;
+            const designation = document.getElementById('team-manage-desig').value;
+            await sendApi('PUT', `/api/admin/team/${id}`, { designation }, true);
+        }
+        async function testDeleteTeamMember() {
+            const id = document.getElementById('team-manage-id').value;
+            if (!confirm(`Delete team member ID ${id}?`)) return;
+            await sendApi('DELETE', `/api/admin/team/${id}`, null, true);
         }
 
         // SEO
