@@ -21,10 +21,14 @@ class LayoutController extends Controller
 
         $currentNavbarTemplate = $layouts['navbarLayout'] ?? 'layout1';
         $activeBehavior = $navbar->getBehaviorForLayout($currentNavbarTemplate);
+        $isEnabled = $navbar->isNavbarEnabled();
 
         $layouts['navbarLayout'] = [
             'layout'   => $currentNavbarTemplate,
             'behavior' => $activeBehavior,
+            'enabled'  => $isEnabled,
+            'visible'  => $isEnabled,
+            'status'   => $isEnabled ? 'visible' : 'hidden',
         ];
 
         return response()->json([
@@ -48,9 +52,13 @@ class LayoutController extends Controller
             $current = $records->get($key)?->templateId ?? 'layout1';
 
             if ($key === 'navbarLayout') {
+                $isEnabled = $navbar->isNavbarEnabled();
                 $active[$key] = [
                     'layout'   => $current,
                     'behavior' => $navbar->getBehaviorForLayout($current),
+                    'enabled'  => $isEnabled,
+                    'visible'  => $isEnabled,
+                    'status'   => $isEnabled ? 'visible' : 'hidden',
                 ];
             } else {
                 $active[$key] = $current;
@@ -158,7 +166,7 @@ class LayoutController extends Controller
             ]
         );
 
-        // 4. If navbarLayout was updated, sync active behavior
+        // 4. If navbarLayout was updated, sync active behavior and enabled status
         $navbar = NavbarConfig::getSingleton();
         if ($key === 'navbarLayout') {
             if ($request->has('behavior')) {
@@ -170,15 +178,28 @@ class LayoutController extends Controller
                 $targetBehavior = $navbar->getBehaviorForLayout($templateId);
                 $navbar->update(['headerBehavior' => $targetBehavior]);
             }
+
+            if ($request->has('enabled')) {
+                $navbar->setNavbarEnabled((bool) $request->input('enabled'));
+            } elseif ($request->has('visible')) {
+                $navbar->setNavbarEnabled((bool) $request->input('visible'));
+            } elseif ($request->has('status')) {
+                $st = $request->input('status');
+                $navbar->setNavbarEnabled(in_array($st, ['visible', 'on', 'true', '1', 1], true));
+            }
         }
 
         // 5. Message names the module and the new template
         $moduleName = Layout::moduleName($key);
         $activeBehavior = $navbar->getBehaviorForLayout($templateId);
+        $isEnabled = $navbar->isNavbarEnabled();
 
         $responseData = [
             'layout'   => $templateId,
             'behavior' => $activeBehavior,
+            'enabled'  => $isEnabled,
+            'visible'  => $isEnabled,
+            'status'   => $isEnabled ? 'visible' : 'hidden',
         ];
 
         return response()->json([
@@ -263,10 +284,14 @@ class LayoutController extends Controller
         $navbar = NavbarConfig::getSingleton();
         $currTemplate = $saved['navbarLayout'] ?? 'layout1';
         $activeBehavior = $navbar->getBehaviorForLayout($currTemplate);
+        $isEnabled = $navbar->isNavbarEnabled();
 
         $saved['navbarLayout'] = [
             'layout'   => $currTemplate,
             'behavior' => $activeBehavior,
+            'enabled'  => $isEnabled,
+            'visible'  => $isEnabled,
+            'status'   => $isEnabled ? 'visible' : 'hidden',
         ];
 
         return response()->json([
