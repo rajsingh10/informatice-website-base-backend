@@ -8,25 +8,22 @@ use Illuminate\Database\Seeder;
 class LayoutSeeder extends Seeder
 {
     /**
-     * Seed every layout key with layout1 (default).
-     * Uses updateOrCreate so re-running is safe.
+     * Seed every layout key from the specification table with layout1.
      */
     public function run(): void
     {
-        $defaults = [
-            'topbarLayout'   => 'layout1',
-            'navbarLayout'   => 'layout1',
-            'homePageLayout' => 'layout1',
-            'footerLayout'   => 'layout1',
-        ];
+        $keys = Layout::validKeys();
 
-        foreach ($defaults as $key => $templateId) {
+        foreach ($keys as $key) {
             Layout::updateOrCreate(
                 ['key' => $key],
-                ['templateId' => $templateId, 'updatedAt' => now()]
+                [
+                    'templateId' => 'layout1',
+                    'updatedAt'  => now(),
+                ]
             );
         }
 
-        $this->command->info('Layout defaults seeded (all keys → layout1).');
+        $this->command->info(count($keys) . ' layout keys seeded with layout1.');
     }
 }

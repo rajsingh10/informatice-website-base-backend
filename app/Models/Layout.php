@@ -6,56 +6,143 @@ use Illuminate\Database\Eloquent\Model;
 
 class Layout extends Model
 {
-    /**
-     * The primary key for the model.
-     * We use the string 'key' column as the PK.
-     */
+ 
     protected $primaryKey = 'key';
-
-    /**
-     * The PK is a string, not an auto-incrementing integer.
-     */
     public $incrementing = false;
     protected $keyType   = 'string';
-
-    /**
-     * We manage updatedAt manually; disable created_at.
-     */
     public $timestamps = false;
-
     protected $fillable = ['key', 'templateId', 'updatedAt'];
-
-    // ──────────────────────────────────────────────────────────────────────
-    // Allowed templates per layout key.
-    // Add more values here as new templates are built.
-    // ──────────────────────────────────────────────────────────────────────
-    public static array $allowedTemplates = [
-        'topbarLayout'   => ['layout1', 'layout2', 'layout3'],
-        'navbarLayout'   => ['layout1', 'layout2', 'layout3'],
-        'homePageLayout' => ['layout1', 'layout2', 'layout3', 'layout4'],
-        'footerLayout'   => ['layout1', 'layout2', 'layout3'],
+    public static array $modules = [
+        'topbarLayout' => [
+            'name' => 'Topbar',
+            'min'  => 0,
+            'max'  => 4, // layout0 (hidden) to layout4
+        ],
+        'navbarLayout' => [
+            'name' => 'Navbar',
+            'min'  => 1,
+            'max'  => 5,
+        ],
+        'homePageLayout' => [
+            'name' => 'Home',
+            'min'  => 1,
+            'max'  => 10,
+        ],
+        'servicesPageLayout' => [
+            'name' => 'Services catalog',
+            'min'  => 1,
+            'max'  => 8,
+        ],
+        'serviceDetailPageLayout' => [
+            'name' => 'Service detail',
+            'min'  => 1,
+            'max'  => 4,
+        ],
+        'portfolioPageLayout' => [
+            'name' => 'Portfolio catalog',
+            'min'  => 1,
+            'max'  => 8,
+        ],
+        'portfolioDetailPageLayout' => [
+            'name' => 'Case study detail',
+            'min'  => 1,
+            'max'  => 4,
+        ],
+        'blogPageLayout' => [
+            'name' => 'Blog catalog',
+            'min'  => 1,
+            'max'  => 4,
+        ],
+        'blogDetailPageLayout' => [
+            'name' => 'Blog article',
+            'min'  => 1,
+            'max'  => 3,
+        ],
+        'eventsPageLayout' => [
+            'name' => 'Events feed',
+            'min'  => 1,
+            'max'  => 3,
+        ],
+        'eventDetailPageLayout' => [
+            'name' => 'Event detail',
+            'min'  => 1,
+            'max'  => 4,
+        ],
+        'teamPageLayout' => [
+            'name' => 'Team',
+            'min'  => 1,
+            'max'  => 5,
+        ],
+        'testimonialsPageLayout' => [
+            'name' => 'Testimonials',
+            'min'  => 1,
+            'max'  => 5,
+        ],
+        'galleryPageLayout' => [
+            'name' => 'Gallery',
+            'min'  => 1,
+            'max'  => 4,
+        ],
+        'contactPageLayout' => [
+            'name' => 'Contact',
+            'min'  => 1,
+            'max'  => 4,
+        ],
+        'footerLayout' => [
+            'name' => 'Footer',
+            'min'  => 1,
+            'max'  => 4,
+        ],
+        'careerPageLayout' => [
+            'name' => 'Career',
+            'min'  => 1,
+            'max'  => 4,
+        ],
+        'faqPageLayout' => [
+            'name' => 'FAQ',
+            'min'  => 1,
+            'max'  => 4,
+        ],
+        'termsPageLayout' => [
+            'name' => 'Terms',
+            'min'  => 1,
+            'max'  => 3,
+        ],
+        'privacyPageLayout' => [
+            'name' => 'Privacy',
+            'min'  => 1,
+            'max'  => 3,
+        ],
     ];
 
     /**
-     * Returns all valid layout keys (combining defaults and any custom ones in DB).
+     * All recognized keys from the specification table.
      */
     public static function validKeys(): array
     {
-        try {
-            $dbKeys = static::pluck('key')->toArray();
-        } catch (\Throwable $e) {
-            $dbKeys = [];
-        }
-        $defaultKeys = array_keys(static::$allowedTemplates);
-        return array_values(array_unique(array_merge($defaultKeys, $dbKeys)));
+        return array_keys(static::$modules);
     }
 
     /**
-     * Returns allowed template IDs for a given key.
+     * Returns allowed template IDs for a given key (e.g. layout0..layout4 or layout1..layoutN).
      */
     public static function allowedFor(string $key): array
     {
-        return static::$allowedTemplates[$key] ?? [];
+        if (! isset(static::$modules[$key])) {
+            return [];
+        }
+
+        $min = static::$modules[$key]['min'];
+        $max = static::$modules[$key]['max'];
+
+        return array_map(fn ($n) => "layout{$n}", range($min, $max));
+    }
+
+    /**
+     * Returns module display name for a key (e.g. 'topbarLayout' => 'Topbar').
+     */
+    public static function moduleName(string $key): string
+    {
+        return static::$modules[$key]['name'] ?? ucfirst(preg_replace('/Layout$/i', '', $key));
     }
 }
-

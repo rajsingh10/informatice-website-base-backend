@@ -10,8 +10,8 @@ use Illuminate\Validation\Rule;
 class LayoutController extends Controller
 {
     // ──────────────────────────────────────────────────────────────────────
-    // GET /api/public/layouts   — No Auth
-    // Returns all active layouts as a flat key → templateId object.
+    // GET /public/layouts & /api/public/layouts — No Auth
+    // Returns all active layouts in one object.
     // ──────────────────────────────────────────────────────────────────────
     public function index(): JsonResponse
     {
@@ -24,88 +24,88 @@ class LayoutController extends Controller
     }
 
     // ──────────────────────────────────────────────────────────────────────
-    // POST /api/admin/layouts   — Auth Required
-    // Create a new layout key with its templateId.
+    // PUT /admin/layouts/:key & /api/admin/layouts/:key — Auth Required
+    // Set active template for one key.
     // ──────────────────────────────────────────────────────────────────────
-    public function store(Request $request): JsonResponse
+    public function update(Request $request, string $key): JsonResponse
     {
-        $validated = $request->validate([
-            'key'        => 'required|string|max:100|unique:layouts,key',
-            'templateId' => 'required|string|max:100',
-        ], [
-            'key.unique' => 'This layout key already exists. Use PUT /api/admin/layouts/' . $request->input('key') . ' to update it.',
-        ]);
-
-        $key = $validated['key'];
-        $templateId = $validated['templateId'];
-
-        // If the key is one of the predefined ones, validate allowed templates
-        $allowed = Layout::allowedFor($key);
-        if (! empty($allowed) && ! in_array($templateId, $allowed)) {
+        // 1. :key must be in the specification table, otherwise 422
+        if (! in_array($key, Layout::validKeys())) {
             return response()->json([
                 'success' => false,
-                'message' => 'The templateId must be one of: ' . implode(', ', $allowed) . '.',
+                'message' => "Invalid layout key '{$key}'.",
                 'errors'  => [
-                    'templateId' => ['The templateId must be one of: ' . implode(', ', $allowed) . '.'],
+                    'key' => [
+                        'The key must be one of: ' . implode(', ', Layout::validKeys()) . '.',
+                    ],
                 ],
             ], 422);
         }
 
-        $layout = Layout::create([
-            'key'        => $key,
-            'templateId' => $templateId,
-            'updatedAt'  => now(),
+        // 2. templateId must be within that key's allowed range, otherwise 422
+        $allowed = Layout::allowedFor($key);
+        $request->validate([
+            'templateId' => [
+                'required',
+                'string',
+                Rule::in($allowed),
+            ],
+        ], [
+            'templateId.required' => 'The templateId field is required.',
+            'templateId.in'       => 'The templateId must be within the allowed range (' . implode(', ', $allowed) . ').',
         ]);
 
-        $moduleName = $this->humanize($key);
+        $templateId = $request->input('templateId');
+
+        // 3. Update or insert the layout key
+        Layout::updateOrCreate(
+            ['key' => $key],
+            [
+                'templateId' => $templateId,
+                'updatedAt'  => now(),
+            ]
+        );
+
+        // 4. Message names the module and the new template
+        $moduleName = Layout::moduleName($key);
 
         return response()->json([
             'success' => true,
-            'message' => "{$moduleName} layout created with {$templateId}",
-            'data'    => [
-                'key'        => $layout->key,
-                'templateId' => $layout->templateId,
-                'updatedAt'  => $layout->updatedAt,
-            ],
-        ], 201);
+            'message' => "{$moduleName} layout updated to {$templateId}",
+        ], 200);
     }
 
     // ──────────────────────────────────────────────────────────────────────
-    // POST /api/admin/layouts/save   — Auth Required
-    // Save / batch update one or multiple layout templates at once.
-    // Supports:
-    // 1) Single key-value: { "key": "topbarLayout", "templateId": "layout2" }
-    // 2) Batch object:     { "topbarLayout": "layout2", "navbarLayout": "layout1" }
-    // 3) Wrapped batch:    { "layouts": { "topbarLayout": "layout2", ... } }
+    // POST /api/admin/layouts/save — Auth Required (Batch or Single Save)
     // ──────────────────────────────────────────────────────────────────────
     public function save(Request $request): JsonResponse
     {
         $payload = $request->all();
 
-        // Case 1: single item with { "key": "...", "templateId": "..." }
+        // Single key/templateId payload
         if ($request->has('key') && $request->has('templateId')) {
             return $this->update($request, $request->input('key'));
         }
 
-        // Case 2: wrapped in { "layouts": { ... } }
         $items = $request->input('layouts', $payload);
 
         if (! is_array($items) || empty($items)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid data provided. Send a key-value map of layouts or { key, templateId }.',
+                'message' => 'Invalid data provided.',
             ], 422);
         }
 
-        $updated = [];
         foreach ($items as $key => $templateId) {
-            if (! is_string($key) || ! is_string($templateId)) {
-                continue;
+            if (! in_array($key, Layout::validKeys())) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Invalid layout key '{$key}'.",
+                ], 422);
             }
 
-            // If allowed range exists, check it
             $allowed = Layout::allowedFor($key);
-            if (! empty($allowed) && ! in_array($templateId, $allowed)) {
+            if (! in_array($templateId, $allowed)) {
                 return response()->json([
                     'success' => false,
                     'message' => "Invalid templateId '{$templateId}' for '{$key}'. Allowed: " . implode(', ', $allowed),
@@ -116,8 +116,6 @@ class LayoutController extends Controller
                 ['key' => $key],
                 ['templateId' => $templateId, 'updatedAt' => now()]
             );
-
-            $updated[$key] = $templateId;
         }
 
         return response()->json([
@@ -125,70 +123,5 @@ class LayoutController extends Controller
             'message' => 'Layout templates saved successfully.',
             'data'    => Layout::all()->pluck('templateId', 'key'),
         ], 200);
-    }
-
-    // ──────────────────────────────────────────────────────────────────────
-    // PUT /api/admin/layouts/:key   — Auth Required
-    // Set the active template for one layout key.
-    // ──────────────────────────────────────────────────────────────────────
-    public function update(Request $request, string $key): JsonResponse
-    {
-        // 1. Validate the :key param against valid keys
-        if (! in_array($key, Layout::validKeys())) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid layout key.',
-                'errors'  => [
-                    'key' => [
-                        'The key must be one of: ' . implode(', ', Layout::validKeys()) . '.',
-                    ],
-                ],
-            ], 422);
-        }
-
-        // 2. Validate templateId (if key has predefined range, validate it; otherwise max:100)
-        $allowed = Layout::allowedFor($key);
-        if (! empty($allowed)) {
-            $request->validate([
-                'templateId' => [
-                    'required',
-                    'string',
-                    Rule::in($allowed),
-                ],
-            ], [
-                'templateId.in' => 'The templateId must be one of: '
-                    . implode(', ', $allowed) . '.',
-            ]);
-        } else {
-            $request->validate([
-                'templateId' => ['required', 'string', 'max:100'],
-            ]);
-        }
-
-        $templateId = $request->input('templateId');
-
-        // 3. Upsert — create or update the row
-        Layout::updateOrCreate(
-            ['key' => $key],
-            ['templateId' => $templateId, 'updatedAt' => now()]
-        );
-
-        // 4. Build a human-readable module name (topbarLayout → Topbar)
-        $moduleName = $this->humanize($key);
-
-        return response()->json([
-            'success' => true,
-            'message' => "{$moduleName} layout updated to {$templateId}",
-        ], 200);
-    }
-
-    // ──────────────────────────────────────────────────────────────────────
-    // Helper: "topbarLayout" → "Topbar"
-    // ──────────────────────────────────────────────────────────────────────
-    private function humanize(string $key): string
-    {
-        // Remove trailing "Layout" and capitalise
-        $name = preg_replace('/Layout$/i', '', $key);
-        return ucfirst($name ?: $key);
     }
 }
