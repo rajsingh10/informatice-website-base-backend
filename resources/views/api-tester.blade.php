@@ -2347,7 +2347,8 @@
         };
 
         let currentToken = localStorage.getItem('api_admin_token') || '';
-        document.getElementById('baseUrlInput').value = window.location.origin;
+        // Use server-side APP_URL so subfolder deployments (e.g. /services/) work correctly
+        document.getElementById('baseUrlInput').value = '{{ rtrim(config("app.url"), "/") }}';
 
         function initLayoutSelects() {
             const keySelect = document.getElementById('layout-key-select');
