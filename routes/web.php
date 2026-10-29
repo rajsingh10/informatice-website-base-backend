@@ -42,6 +42,8 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
     Route::match(['put', 'post'], '/public/navigation/navbar', [NavbarController::class, 'updateNavbar']);
     Route::match(['put', 'post'], '/public/navbar', [NavbarController::class, 'updateNavbar']);
     Route::get('/public/home-sections', [HomeSectionController::class, 'index']);
+    Route::match(['put', 'post'], '/public/home-sections', [HomeSectionController::class, 'toggle']);
+    Route::match(['put', 'post'], '/public/home-sections/{sectionId}', [HomeSectionController::class, 'toggle']);
     Route::get('/public/services', [ServiceController::class, 'indexPublic']);
     Route::get('/public/services/{slug}', [ServiceController::class, 'showPublic']);
     Route::get('/public/portfolio', [PortfolioController::class, 'indexPublic']);
@@ -112,10 +114,14 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
         Route::put('/admin/navigation/navbar/cta', [NavbarController::class, 'updateCta']);
         Route::post('/admin/navigation/navbar/reset', [NavbarController::class, 'reset']);
 
-        // Module 3 Home Sections
-        Route::put('/admin/home-sections/batch', [HomeSectionController::class, 'batch']);
-        Route::post('/admin/home-sections/reset', [HomeSectionController::class, 'reset']);
-        Route::put('/admin/home-sections/{sectionId}', [HomeSectionController::class, 'update']);
+        // Module 3 Home Sections (GET & POST on/off toggle APIs)
+        Route::get('/admin/home-sections',                    [HomeSectionController::class, 'index']);
+        Route::match(['put', 'post'], '/admin/home-sections', [HomeSectionController::class, 'toggle']);
+        Route::match(['put', 'post'], '/admin/home-sections/toggle', [HomeSectionController::class, 'toggle']);
+        Route::match(['put', 'post'], '/admin/home-sections/batch',  [HomeSectionController::class, 'batch']);
+        Route::post('/admin/home-sections/reset',                    [HomeSectionController::class, 'reset']);
+        Route::match(['put', 'post'], '/admin/home-sections/{sectionId}', [HomeSectionController::class, 'toggle']);
+        Route::match(['put', 'post'], '/admin/home',                 [HomeSectionController::class, 'toggle']);
 
         // Module 4 Services
         Route::get('/admin/services', [ServiceController::class, 'indexAdmin']);
