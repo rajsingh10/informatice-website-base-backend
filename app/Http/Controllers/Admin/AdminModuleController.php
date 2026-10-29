@@ -256,9 +256,22 @@ class AdminModuleController extends Controller
         $modules = [];
         $active  = [];
 
+        $navbar = NavbarConfig::getSingleton();
+        $currNavLayout = $records->get('navbarLayout')?->templateId ?? 'layout1';
+        $navBehavior = $navbar->getBehaviorForLayout($currNavLayout);
+
         foreach (Layout::$modules as $key => $meta) {
             $current = $records->get($key)?->templateId ?? 'layout1';
-            $active[$key] = $current;
+
+            if ($key === 'navbarLayout') {
+                $active[$key] = [
+                    'layout'   => $current,
+                    'behavior' => $navBehavior,
+                ];
+            } else {
+                $active[$key] = $current;
+            }
+
             $modules[] = [
                 'key'        => $key,
                 'name'       => $meta['name'],

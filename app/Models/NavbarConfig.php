@@ -10,13 +10,15 @@ class NavbarConfig extends Model
 
     protected $fillable = [
         'headerBehavior',
+        'behaviors',
         'cta',
         'items',
     ];
 
     protected $casts = [
-        'cta'   => 'array',
-        'items' => 'array',
+        'behaviors' => 'array',
+        'cta'       => 'array',
+        'items'     => 'array',
     ];
 
     public static array $allowedBehaviors = [
@@ -25,6 +27,21 @@ class NavbarConfig extends Model
         'colored',
         'transparent',
     ];
+
+    /**
+     * Default behaviors per navbar layout template.
+     * Each layout has a different default behavior.
+     */
+    public static function defaultBehaviors(): array
+    {
+        return [
+            'layout1' => 'fixed',
+            'layout2' => 'transparent',
+            'layout3' => 'colored',
+            'layout4' => 'scroll',
+            'layout5' => 'fixed',
+        ];
+    }
 
     /**
      * Default navigation items.
@@ -79,6 +96,50 @@ class NavbarConfig extends Model
     }
 
     /**
+     * Get merged behaviors map for all navbar layout templates.
+     */
+    public function getBehaviorsMap(): array
+    {
+        $stored = is_array($this->behaviors) ? $this->behaviors : [];
+        return array_merge(static::defaultBehaviors(), $stored);
+    }
+
+    /**
+     * Get active behavior for a specific navbar layout (or current active navbarLayout).
+     */
+    public function getBehaviorForLayout(?string $layoutKey = null): string
+    {
+        if (! $layoutKey) {
+            $layoutRecord = \App\Models\Layout::find('navbarLayout');
+            $layoutKey = $layoutRecord?->templateId ?? 'layout1';
+        }
+
+        $map = $this->getBehaviorsMap();
+        return $map[$layoutKey] ?? ($this->headerBehavior ?: 'fixed');
+    }
+
+    /**
+     * Set behavior for a specific navbar layout template and update active behavior if it matches.
+     */
+    public function setBehaviorForLayout(string $behavior, ?string $layoutKey = null): void
+    {
+        $layoutRecord = \App\Models\Layout::find('navbarLayout');
+        $currentTemplate = $layoutRecord?->templateId ?? 'layout1';
+
+        $targetLayout = $layoutKey ?: $currentTemplate;
+
+        $map = $this->getBehaviorsMap();
+        $map[$targetLayout] = $behavior;
+        $this->behaviors = $map;
+
+        if ($targetLayout === $currentTemplate) {
+            $this->headerBehavior = $behavior;
+        }
+
+        $this->save();
+    }
+
+    /**
      * Format payload for public header (only enabled: true items).
      */
     public function toPublicPayload(): array
@@ -89,10 +150,16 @@ class NavbarConfig extends Model
             return ! empty($item['enabled']);
         }));
 
+        $activeBehavior = $this->getBehaviorForLayout();
+        $behaviorsMap = $this->getBehaviorsMap();
+
         return [
-            'headerBehavior' => (string) ($this->headerBehavior ?: 'fixed'),
-            'cta'            => is_array($this->cta) ? $this->cta : static::defaultCta(),
-            'items'          => $enabledItems,
+            'behavior'        => $activeBehavior,
+            'headerBehavior'  => $activeBehavior,
+            'behaviors'       => $behaviorsMap,
+            'navbarBehaviors' => $behaviorsMap,
+            'cta'             => is_array($this->cta) ? $this->cta : static::defaultCta(),
+            'items'           => $enabledItems,
         ];
     }
 
@@ -101,10 +168,16 @@ class NavbarConfig extends Model
      */
     public function toAdminPayload(): array
     {
+        $activeBehavior = $this->getBehaviorForLayout();
+        $behaviorsMap = $this->getBehaviorsMap();
+
         return [
-            'headerBehavior' => (string) ($this->headerBehavior ?: 'fixed'),
-            'cta'            => is_array($this->cta) ? $this->cta : static::defaultCta(),
-            'items'          => is_array($this->items) ? array_values($this->items) : static::defaultItems(),
+            'behavior'        => $activeBehavior,
+            'headerBehavior'  => $activeBehavior,
+            'behaviors'       => $behaviorsMap,
+            'navbarBehaviors' => $behaviorsMap,
+            'cta'             => is_array($this->cta) ? $this->cta : static::defaultCta(),
+            'items'           => is_array($this->items) ? array_values($this->items) : static::defaultItems(),
         ];
     }
 

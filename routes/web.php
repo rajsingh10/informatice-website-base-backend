@@ -39,6 +39,8 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
     Route::get('/public/seo/{page}', [SeoController::class, 'showPublic']);
     Route::get('/public/settings', [SiteSettingController::class, 'show']);
     Route::get('/public/navigation/navbar', [NavbarController::class, 'showPublic']);
+    Route::match(['put', 'post'], '/public/navigation/navbar', [NavbarController::class, 'updateNavbar']);
+    Route::match(['put', 'post'], '/public/navbar', [NavbarController::class, 'updateNavbar']);
     Route::get('/public/home-sections', [HomeSectionController::class, 'index']);
     Route::get('/public/services', [ServiceController::class, 'indexPublic']);
     Route::get('/public/services/{slug}', [ServiceController::class, 'showPublic']);
@@ -92,8 +94,8 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
         // Module Layouts
         Route::get('/admin/layouts',      [LayoutController::class, 'indexAdmin']);
         Route::post('/admin/layouts/save', [LayoutController::class, 'save']);
-        Route::post('/admin/layouts', [LayoutController::class, 'store']);
-        Route::put('/admin/layouts/{key}', [LayoutController::class, 'update']);
+        Route::match(['put', 'post'], '/admin/layouts', [LayoutController::class, 'store']);
+        Route::match(['put', 'post'], '/admin/layouts/{key}', [LayoutController::class, 'update']);
         Route::get('/admin/seo/{page}', [SeoController::class, 'showAdmin']);
         Route::put('/admin/seo/{page}', [SeoController::class, 'update']);
         Route::post('/admin/uploads', [MediaUploadController::class, 'store']);
@@ -103,6 +105,8 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
 
         // Module 2 Navbar
         Route::get('/admin/navigation/navbar', [NavbarController::class, 'showAdmin']);
+        Route::match(['put', 'post'], '/admin/navigation/navbar', [NavbarController::class, 'updateNavbar']);
+        Route::match(['put', 'post'], '/admin/navbar',            [NavbarController::class, 'updateNavbar']);
         Route::put('/admin/navigation/navbar/behavior', [NavbarController::class, 'updateBehavior']);
         Route::put('/admin/navigation/navbar/items', [NavbarController::class, 'updateItems']);
         Route::put('/admin/navigation/navbar/cta', [NavbarController::class, 'updateCta']);
