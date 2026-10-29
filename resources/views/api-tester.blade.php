@@ -109,7 +109,7 @@
                             <i class="fa-solid fa-briefcase text-teal-500"></i>
                             <span>Module 4: Services</span>
                         </span>
-                        <span class="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-bold">7</span>
+                        <span class="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-bold">11</span>
                     </button>
 
                     <button onclick="switchTab('portfolio')" id="tab-portfolio" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
@@ -665,6 +665,89 @@
                         Fetch Admin Navbar Config
                     </button>
                 </div>
+
+                <!-- 4. Navbar Menu Links Manager (List, Add, Edit, Toggle, Reorder, Delete) -->
+                <div class="bg-white rounded-xl border border-indigo-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="method-badge badge-del">DELETE</span>
+                            <span class="font-mono text-sm font-semibold text-indigo-900">/api/admin/navigation/navbar/items</span>
+                        </div>
+                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-bold">Menu Links Manager</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Add new links, rename existing links, change destination URLs, show/hide, reorder, or delete links from header navigation.</p>
+
+                    <!-- Fetch items button -->
+                    <div class="mb-4">
+                        <button onclick="testFetchNavbarItems()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-list mr-1"></i>
+                            <span>Fetch All Menu Links (GET /api/admin/navigation/navbar/items)</span>
+                        </button>
+                    </div>
+
+                    <!-- Add New Link Form -->
+                    <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 mb-4">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wide block mb-2">
+                            <i class="fa-solid fa-plus-circle text-indigo-600 mr-1"></i> Add New Navigation Link (POST)
+                        </span>
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <div>
+                                <label class="text-[11px] font-medium text-slate-600 block mb-0.5">Link Name *</label>
+                                <input type="text" id="nav-item-add-label" placeholder="e.g. Pricing, Docs, Career" value="Pricing" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-medium text-slate-600 block mb-0.5">URL Path *</label>
+                                <input type="text" id="nav-item-add-url" placeholder="e.g. /pricing, /docs" value="/pricing" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none font-mono">
+                            </div>
+                        </div>
+                        <button onclick="testAddNavbarItem()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-plus mr-1"></i>
+                            <span>+ Add Link (POST /api/admin/navigation/navbar/items)</span>
+                        </button>
+                    </div>
+
+                    <!-- Edit / Toggle / Move / Delete Form -->
+                    <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                        <span class="text-xs font-bold text-slate-700 uppercase tracking-wide block mb-2">
+                            <i class="fa-solid fa-pen-to-square text-indigo-600 mr-1"></i> Edit, Show/Hide, Reorder &amp; Delete Link
+                        </span>
+                        <div class="grid grid-cols-3 gap-2 mb-2">
+                            <div>
+                                <label class="text-[11px] font-medium text-slate-600 block mb-0.5">Item ID *</label>
+                                <input type="text" id="nav-item-edit-id" value="nav-1" placeholder="e.g. nav-1" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-medium text-slate-600 block mb-0.5">Updated Name</label>
+                                <input type="text" id="nav-item-edit-label" value="Home" placeholder="New label" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-medium text-slate-600 block mb-0.5">Updated URL</label>
+                                <input type="text" id="nav-item-edit-url" value="/" placeholder="New URL" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none font-mono">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="testUpdateNavbarItem()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition">
+                                <i class="fa-solid fa-check mr-1"></i> Edit / Save
+                            </button>
+                            <button onclick="testToggleNavbarItem()" class="bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition">
+                                <i class="fa-solid fa-eye mr-1"></i> Show/Hide
+                            </button>
+                            <div class="flex space-x-1">
+                                <button onclick="testMoveNavbarItem('up')" class="flex-1 bg-slate-700 hover:bg-slate-800 text-white text-xs py-2 rounded-lg transition" title="Move Up">
+                                    <i class="fa-solid fa-arrow-up"></i> Up
+                                </button>
+                                <button onclick="testMoveNavbarItem('down')" class="flex-1 bg-slate-700 hover:bg-slate-800 text-white text-xs py-2 rounded-lg transition" title="Move Down">
+                                    <i class="fa-solid fa-arrow-down"></i> Down
+                                </button>
+                            </div>
+                            <button onclick="testDeleteNavbarItem()" class="bg-red-600 hover:bg-red-700 text-white font-medium text-xs py-2 rounded-lg transition">
+                                <i class="fa-solid fa-trash mr-1"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
@@ -756,6 +839,54 @@
             <!-- MODULE 4: SERVICES APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-services" class="space-y-4 hidden">
+
+                <!-- 1. Layout Switching: Catalog & Detail -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/layouts/{key}</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Switch active template layout for Services catalog (layout1 to layout8) and Service detail (layout1 to layout4).</p>
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+                            <label class="text-xs font-semibold text-slate-700 block mb-1">Catalog Layout (1 - 8)</label>
+                            <div class="flex space-x-2">
+                                <select id="srv-layout-catalog" class="flex-1 text-xs border border-slate-300 rounded p-1.5 font-mono">
+                                    <option value="layout1">layout1</option>
+                                    <option value="layout2">layout2</option>
+                                    <option value="layout3">layout3</option>
+                                    <option value="layout4">layout4</option>
+                                    <option value="layout5">layout5</option>
+                                    <option value="layout6" selected>layout6</option>
+                                    <option value="layout7">layout7</option>
+                                    <option value="layout8">layout8</option>
+                                </select>
+                                <button onclick="switchServicesCatalogLayout()" class="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded text-xs font-medium transition">
+                                    Apply
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+                            <label class="text-xs font-semibold text-slate-700 block mb-1">Detail Layout (1 - 4)</label>
+                            <div class="flex space-x-2">
+                                <select id="srv-layout-detail" class="flex-1 text-xs border border-slate-300 rounded p-1.5 font-mono">
+                                    <option value="layout1" selected>layout1</option>
+                                    <option value="layout2">layout2</option>
+                                    <option value="layout3">layout3</option>
+                                    <option value="layout4">layout4</option>
+                                </select>
+                                <button onclick="switchServiceDetailLayout()" class="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded text-xs font-medium transition">
+                                    Apply
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. GET /api/public/services (Catalog list) -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
@@ -764,11 +895,19 @@
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
+                    <p class="text-xs text-slate-600 mb-3">Public services catalog. Supports query filtering by <code class="font-mono text-teal-700">?category=</code>, <code class="font-mono text-teal-700">?limit=</code>, and <code class="font-mono text-teal-700">?page=</code>. Returns id, title, slug, category, shortDescription, icon, image, features plus total.</p>
+                    <div class="grid grid-cols-3 gap-2 mb-3">
+                        <input id="srv-pub-cat" type="text" placeholder="Category (optional)" class="text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        <input id="srv-pub-limit" type="number" placeholder="Limit (e.g. 20)" value="20" class="text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        <input id="srv-pub-page" type="number" placeholder="Page (e.g. 1)" value="1" class="text-xs border border-slate-200 rounded p-1.5 outline-none">
+                    </div>
                     <button onclick="testPublicServices()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-layer-group"></i>
                         <span>Fetch Public Services Catalog</span>
                     </button>
                 </div>
 
+                <!-- 3. GET /api/public/services/:slug -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
@@ -777,13 +916,198 @@
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
+                    <p class="text-xs text-slate-600 mb-3">Returns the full service model: title, slug, category, shortDescription, fullDescription, icon, image, features, deliverables, order, isPublished, and resolved SEO.</p>
                     <div class="flex space-x-2 mb-3">
-                        <input id="srv-pub-slug" type="text" value="web-development" class="flex-1 text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                        <input id="srv-pub-slug" type="text" value="web-development" placeholder="Enter service slug..." class="flex-1 text-xs border border-slate-200 rounded p-2 outline-none font-mono">
                         <button onclick="testPublicServiceDetail()" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-xs font-medium">
                             Fetch Detail
                         </button>
                     </div>
                 </div>
+
+                <!-- 4. GET /api/admin/services (NEW) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/services</span>
+                            <span class="text-[10px] bg-teal-100 text-teal-700 font-bold px-1.5 py-0.5 rounded">NEW</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Admin full list of services including unpublished records, sorting order, and admin edit metadata.</p>
+                    <button onclick="testAdminServices()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <span>Fetch All Admin Services</span>
+                    </button>
+                </div>
+
+                <!-- 5. GET /api/admin/services/:id (NEW) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/services/:id</span>
+                            <span class="text-[10px] bg-teal-100 text-teal-700 font-bold px-1.5 py-0.5 rounded">NEW</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetch single service record by primary ID for admin edit form.</p>
+                    <div class="flex space-x-2">
+                        <input id="srv-admin-id" type="number" value="1" placeholder="Service ID" class="w-32 text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                        <button onclick="testAdminServiceById()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-medium transition flex items-center space-x-1">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <span>Fetch Service by ID</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 6. POST /api/admin/services (Create) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/services</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Create a new service. Required: <code class="font-mono text-teal-700 font-semibold">title</code>. Icon can be an icon name (e.g. Globe, Sparkles, Cpu, Layers) or image URL.</p>
+                    <div class="space-y-2 mb-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Title *</label>
+                                <input id="srv-create-title" type="text" value="Cloud Architecture & DevOps" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Category</label>
+                                <input id="srv-create-cat" type="text" value="Cloud & Infrastructure" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Icon</label>
+                                <input id="srv-create-icon" type="text" value="Globe" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Order</label>
+                                <input id="srv-create-order" type="number" value="3" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Published?</label>
+                                <select id="srv-create-pub" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                                    <option value="true" selected>True (Published)</option>
+                                    <option value="false">False (Draft)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Featured Image URL</label>
+                            <input id="srv-create-img" type="text" value="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Short Description</label>
+                            <input id="srv-create-short" type="text" value="Enterprise cloud migration, serverless microservices, and automated CI/CD pipelines." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Full Description (HTML)</label>
+                            <textarea id="srv-create-full" rows="2" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">&lt;p&gt;We design and manage scalable, secure multi-cloud architectures built for high resilience and zero-downtime deployments.&lt;/p&gt;</textarea>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Features (comma-separated)</label>
+                            <input id="srv-create-features" type="text" value="AWS & GCP Migration, Kubernetes Orchestration, 99.99% Uptime SLA" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Deliverables (comma-separated)</label>
+                            <input id="srv-create-deliverables" type="text" value="Infrastructure as Code, Auto-scaling Clusters, 24/7 Monitoring Alerting" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                    </div>
+                    <button onclick="testCreateService()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Create Service</span>
+                    </button>
+                </div>
+
+                <!-- 7. PUT /api/admin/services/:id & DELETE /api/admin/services/:id -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="method-badge badge-del">DELETE</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/services/:id</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Update or delete an existing service record.</p>
+                    <div class="space-y-2 mb-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Service ID *</label>
+                                <input id="srv-manage-id" type="number" value="1" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Updated Title</label>
+                                <input id="srv-manage-title" type="text" value="Web Development & Full-Stack Apps" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Updated Category</label>
+                                <input id="srv-manage-cat" type="text" value="Web & Cloud Development" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Published Status</label>
+                                <select id="srv-manage-pub" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                                    <option value="true" selected>Published</option>
+                                    <option value="false">Unpublished (Hidden)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Updated Short Description</label>
+                            <input id="srv-manage-short" type="text" value="Custom websites and robust scalable backend APIs built with modern technologies." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testUpdateService()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            <span>Update Service</span>
+                        </button>
+                        <button onclick="testDeleteService()" class="bg-red-600 hover:bg-red-700 text-white font-medium text-xs py-2 rounded-lg transition flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-trash"></i>
+                            <span>Delete Service</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 8. Services SEO Endpoints -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/seo/... &amp; /api/admin/seo/...</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Catalog &amp; Detail SEO</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Read or update dedicated SEO meta tags for Services Catalog and Service Detail pages.</p>
+                    <div class="grid grid-cols-2 gap-2 mb-2">
+                        <button onclick="sendApi('GET', '/api/public/seo/services')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-2 rounded-lg font-medium transition text-left px-3">
+                            <span class="font-bold text-teal-600">GET</span> /public/seo/services
+                        </button>
+                        <button onclick="testUpdateServicesSeo()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-2 rounded-lg font-medium transition text-left px-3">
+                            <span class="font-bold text-blue-600">PUT</span> /admin/seo/services
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="sendApi('GET', '/api/public/seo/service-detail')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-2 rounded-lg font-medium transition text-left px-3">
+                            <span class="font-bold text-teal-600">GET</span> /public/seo/service-detail
+                        </button>
+                        <button onclick="testUpdateServiceDetailSeo()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-2 rounded-lg font-medium transition text-left px-3">
+                            <span class="font-bold text-blue-600">PUT</span> /admin/seo/service-detail
+                        </button>
+                    </div>
+                </div>
+
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
@@ -1664,6 +1988,40 @@
         }
         async function testAdminNavbar() { await sendApi('GET', '/api/admin/navigation/navbar', null, true); }
 
+        // Navbar Menu Links Manager
+        async function testFetchNavbarItems() {
+            await sendApi('GET', '/api/admin/navigation/navbar/items', null, true);
+        }
+        async function testAddNavbarItem() {
+            const label = document.getElementById('nav-item-add-label').value.trim();
+            const url = document.getElementById('nav-item-add-url').value.trim();
+            if (!label || !url) return alert('Link name and URL are required.');
+            await sendApi('POST', '/api/admin/navigation/navbar/items', { label, url, enabled: true }, true);
+        }
+        async function testUpdateNavbarItem() {
+            const id = document.getElementById('nav-item-edit-id').value.trim();
+            const label = document.getElementById('nav-item-edit-label').value.trim();
+            const url = document.getElementById('nav-item-edit-url').value.trim();
+            if (!id) return alert('Enter Item ID (e.g. nav-1)');
+            await sendApi('PUT', `/api/admin/navigation/navbar/items/${id}`, { label, url }, true);
+        }
+        async function testToggleNavbarItem() {
+            const id = document.getElementById('nav-item-edit-id').value.trim();
+            if (!id) return alert('Enter Item ID');
+            await sendApi('POST', `/api/admin/navigation/navbar/items/${id}/toggle`, {}, true);
+        }
+        async function testMoveNavbarItem(direction) {
+            const id = document.getElementById('nav-item-edit-id').value.trim();
+            if (!id) return alert('Enter Item ID');
+            await sendApi('POST', `/api/admin/navigation/navbar/items/${id}/move-${direction}`, {}, true);
+        }
+        async function testDeleteNavbarItem() {
+            const id = document.getElementById('nav-item-edit-id').value.trim();
+            if (!id) return alert('Enter Item ID to delete');
+            if (!confirm(`Delete navbar link #${id}?`)) return;
+            await sendApi('DELETE', `/api/admin/navigation/navbar/items/${id}`, null, true);
+        }
+
         // Home
         async function testPublicHomeSections() { await sendApi('GET', '/api/public/home-sections'); }
         async function testToggleHomeSection() {
@@ -1675,11 +2033,91 @@
             await sendApi('POST', '/api/admin/home-sections/reset', {}, true);
         }
 
-        // Services
-        async function testPublicServices() { await sendApi('GET', '/api/public/services'); }
+        // Module 4: Services
+        async function switchServicesCatalogLayout() {
+            const layout = document.getElementById('srv-layout-catalog').value;
+            await sendApi('PUT', '/api/admin/layouts/servicesPageLayout', { layout }, true);
+        }
+        async function switchServiceDetailLayout() {
+            const layout = document.getElementById('srv-layout-detail').value;
+            await sendApi('PUT', '/api/admin/layouts/serviceDetailPageLayout', { layout }, true);
+        }
+        async function testPublicServices() {
+            const cat = document.getElementById('srv-pub-cat').value.trim();
+            const limit = document.getElementById('srv-pub-limit').value.trim();
+            const page = document.getElementById('srv-pub-page').value.trim();
+            let path = '/api/public/services';
+            const params = [];
+            if (cat) params.push(`category=${encodeURIComponent(cat)}`);
+            if (limit) params.push(`limit=${encodeURIComponent(limit)}`);
+            if (page) params.push(`page=${encodeURIComponent(page)}`);
+            if (params.length) path += '?' + params.join('&');
+            await sendApi('GET', path);
+        }
         async function testPublicServiceDetail() {
             const slug = document.getElementById('srv-pub-slug').value.trim();
+            if (!slug) return alert('Enter service slug');
             await sendApi('GET', `/api/public/services/${slug}`);
+        }
+        async function testAdminServices() {
+            await sendApi('GET', '/api/admin/services', null, true);
+        }
+        async function testAdminServiceById() {
+            const id = document.getElementById('srv-admin-id').value.trim();
+            if (!id) return alert('Enter service ID');
+            await sendApi('GET', `/api/admin/services/${id}`, null, true);
+        }
+        async function testCreateService() {
+            const title = document.getElementById('srv-create-title').value.trim();
+            if (!title) return alert('Title is required');
+            const features = document.getElementById('srv-create-features').value.split(',').map(s => s.trim()).filter(Boolean);
+            const deliverables = document.getElementById('srv-create-deliverables').value.split(',').map(s => s.trim()).filter(Boolean);
+            const body = {
+                title: title,
+                category: document.getElementById('srv-create-cat').value.trim(),
+                icon: document.getElementById('srv-create-icon').value.trim(),
+                image: document.getElementById('srv-create-img').value.trim(),
+                order: parseInt(document.getElementById('srv-create-order').value || '0', 10),
+                isPublished: document.getElementById('srv-create-pub').value === 'true',
+                shortDescription: document.getElementById('srv-create-short').value.trim(),
+                fullDescription: document.getElementById('srv-create-full').value.trim(),
+                features: features,
+                deliverables: deliverables,
+            };
+            await sendApi('POST', '/api/admin/services', body, true);
+        }
+        async function testUpdateService() {
+            const id = document.getElementById('srv-manage-id').value.trim();
+            if (!id) return alert('Enter service ID to update');
+            const body = {
+                title: document.getElementById('srv-manage-title').value.trim(),
+                category: document.getElementById('srv-manage-cat').value.trim(),
+                isPublished: document.getElementById('srv-manage-pub').value === 'true',
+                shortDescription: document.getElementById('srv-manage-short').value.trim(),
+            };
+            await sendApi('PUT', `/api/admin/services/${id}`, body, true);
+        }
+        async function testDeleteService() {
+            const id = document.getElementById('srv-manage-id').value.trim();
+            if (!id) return alert('Enter service ID to delete');
+            if (!confirm(`Are you sure you want to delete service #${id}?`)) return;
+            await sendApi('DELETE', `/api/admin/services/${id}`, null, true);
+        }
+        async function testUpdateServicesSeo() {
+            const body = {
+                title: 'Our Services - Enterprise Technology & Cloud',
+                description: 'Explore full suite of engineering, cloud transformation, and AI software services.',
+                keywords: 'services, enterprise engineering, cloud transformation',
+            };
+            await sendApi('PUT', '/api/admin/seo/services', body, true);
+        }
+        async function testUpdateServiceDetailSeo() {
+            const body = {
+                title: 'Service Detail - Enterprise Scalability',
+                description: 'In-depth breakdown of deliverables, architecture scope, and technical roadmap.',
+                keywords: 'service detail, deliverables, architecture',
+            };
+            await sendApi('PUT', '/api/admin/seo/service-detail', body, true);
         }
 
         // Module 5: Portfolio

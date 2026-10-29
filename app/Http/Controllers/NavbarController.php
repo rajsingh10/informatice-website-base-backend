@@ -162,21 +162,341 @@ class NavbarController extends Controller
     }
 
     /**
-     * PUT /admin/navigation/navbar/items — Auth Required
+     * GET /admin/navigation/navbar/items & /admin/navbar/items — Auth Required
+     * List all navbar menu items.
+     */
+    public function getItems(Request $request): JsonResponse
+    {
+        $config = NavbarConfig::getSingleton();
+        $items = is_array($config->items) ? array_values($config->items) : NavbarConfig::defaultItems();
+
+        return response()->json([
+            'success' => true,
+            'count'   => count($items),
+            'items'   => $items,
+            'data'    => $items,
+        ], 200);
+    }
+
+    /**
+     * POST /admin/navigation/navbar/items & /admin/navbar/items — Auth Required
+     * Add a single new menu link, or bulk update if 'items' array provided.
+     */
+    public function addItem(Request $request): JsonResponse
+    {
+        // If client passed full items array, perform bulk update
+        if ($request->has('items') && is_array($request->input('items'))) {
+            return $this->updateItems($request);
+        }
+
+        $label = $request->input('label', $request->input('name', $request->input('title')));
+        $url   = $request->input('url', $request->input('path', $request->input('href')));
+
+        if (empty($label)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The link name (label) field is required.',
+                'errors'  => ['label' => ['The link name/label field is required.']],
+            ], 422);
+        }
+
+        if (empty($url)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The URL path field is required.',
+                'errors'  => ['url' => ['The URL path field is required.']],
+            ], 422);
+        }
+
+        $enabled = $request->has('enabled')
+            ? filter_var($request->input('enabled'), FILTER_VALIDATE_BOOLEAN)
+            : true;
+
+        $config = NavbarConfig::getSingleton();
+        $items = is_array($config->items) ? array_values($config->items) : NavbarConfig::defaultItems();
+
+        $newItem = [
+            'id'      => $config->getNextItemId(),
+            'label'   => (string) $label,
+            'url'     => (string) $url,
+            'enabled' => $enabled,
+        ];
+
+        $items[] = $newItem;
+        $config->update(['items' => $items]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Navbar menu link '{$newItem['label']}' added successfully.",
+            'item'    => $newItem,
+            'items'   => $items,
+            'data'    => $items,
+        ], 201);
+    }
+
+    /**
+     * PUT|POST /admin/navigation/navbar/items/{id} — Auth Required
+     * Edit / update an existing menu link (label, url, enabled/visibility).
+     */
+    public function updateItem(Request $request, string $id): JsonResponse
+    {
+        $config = NavbarConfig::getSingleton();
+        $items = is_array($config->items) ? array_values($config->items) : NavbarConfig::defaultItems();
+
+        $foundIndex = -1;
+        foreach ($items as $idx => $item) {
+            if ((string) ($item['id'] ?? '') === (string) $id) {
+                $foundIndex = $idx;
+                break;
+            }
+        }
+
+        if ($foundIndex === -1 && is_numeric($id) && isset($items[(int) $id])) {
+            $foundIndex = (int) $id;
+        }
+
+        if ($foundIndex === -1) {
+            return response()->json([
+                'success' => false,
+                'message' => "Navbar menu link with ID '{$id}' not found.",
+            ], 404);
+        }
+
+        $item = $items[$foundIndex];
+
+        if ($request->has('label') || $request->has('name') || $request->has('title')) {
+            $item['label'] = (string) $request->input('label', $request->input('name', $request->input('title')));
+        }
+
+        if ($request->has('url') || $request->has('path') || $request->has('href')) {
+            $item['url'] = (string) $request->input('url', $request->input('path', $request->input('href')));
+        }
+
+        if ($request->has('enabled')) {
+            $item['enabled'] = filter_var($request->input('enabled'), FILTER_VALIDATE_BOOLEAN);
+        }
+
+        $items[$foundIndex] = $item;
+        $config->update(['items' => $items]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Navbar menu link '{$item['label']}' updated successfully.",
+            'item'    => $item,
+            'items'   => $items,
+            'data'    => $items,
+        ], 200);
+    }
+
+    /**
+     * POST|PUT /admin/navigation/navbar/items/{id}/toggle — Auth Required
+     * Toggle visibility (show/hide) of a menu link.
+     */
+    public function toggleItem(Request $request, string $id): JsonResponse
+    {
+        $config = NavbarConfig::getSingleton();
+        $items = is_array($config->items) ? array_values($config->items) : NavbarConfig::defaultItems();
+
+        $foundIndex = -1;
+        foreach ($items as $idx => $item) {
+            if ((string) ($item['id'] ?? '') === (string) $id) {
+                $foundIndex = $idx;
+                break;
+            }
+        }
+
+        if ($foundIndex === -1 && is_numeric($id) && isset($items[(int) $id])) {
+            $foundIndex = (int) $id;
+        }
+
+        if ($foundIndex === -1) {
+            return response()->json([
+                'success' => false,
+                'message' => "Navbar menu link with ID '{$id}' not found.",
+            ], 404);
+        }
+
+        $items[$foundIndex]['enabled'] = ! ($items[$foundIndex]['enabled'] ?? true);
+        $config->update(['items' => $items]);
+
+        $status = $items[$foundIndex]['enabled'] ? 'visible' : 'hidden';
+
+        return response()->json([
+            'success' => true,
+            'message' => "Navbar menu link '{$items[$foundIndex]['label']}' is now {$status}.",
+            'item'    => $items[$foundIndex],
+            'items'   => $items,
+            'data'    => $items,
+        ], 200);
+    }
+
+    /**
+     * DELETE|POST /admin/navigation/navbar/items/{id} — Auth Required
+     * Delete / remove a menu link from header navigation.
+     */
+    public function deleteItem(Request $request, string $id): JsonResponse
+    {
+        $config = NavbarConfig::getSingleton();
+        $items = is_array($config->items) ? array_values($config->items) : NavbarConfig::defaultItems();
+
+        $foundIndex = -1;
+        foreach ($items as $idx => $item) {
+            if ((string) ($item['id'] ?? '') === (string) $id) {
+                $foundIndex = $idx;
+                break;
+            }
+        }
+
+        if ($foundIndex === -1 && is_numeric($id) && isset($items[(int) $id])) {
+            $foundIndex = (int) $id;
+        }
+
+        if ($foundIndex === -1) {
+            return response()->json([
+                'success' => false,
+                'message' => "Navbar menu link with ID '{$id}' not found.",
+            ], 404);
+        }
+
+        $removed = $items[$foundIndex];
+        array_splice($items, $foundIndex, 1);
+        $items = array_values($items);
+
+        $config->update(['items' => $items]);
+
+        return response()->json([
+            'success'   => true,
+            'message'   => "Navbar menu link '{$removed['label']}' deleted successfully.",
+            'deletedId' => $id,
+            'items'     => $items,
+            'data'      => $items,
+        ], 200);
+    }
+
+    /**
+     * PUT|POST /admin/navigation/navbar/items/reorder — Auth Required
+     * Reorder menu links by list of IDs or array of items.
+     */
+    public function reorderItems(Request $request): JsonResponse
+    {
+        $config = NavbarConfig::getSingleton();
+        $items = is_array($config->items) ? array_values($config->items) : NavbarConfig::defaultItems();
+
+        $itemIds = $request->input('itemIds', $request->input('order', []));
+
+        if (! empty($itemIds) && is_array($itemIds)) {
+            $itemsById = [];
+            foreach ($items as $item) {
+                if (! empty($item['id'])) {
+                    $itemsById[$item['id']] = $item;
+                }
+            }
+
+            $reordered = [];
+            foreach ($itemIds as $id) {
+                if (isset($itemsById[$id])) {
+                    $reordered[] = $itemsById[$id];
+                    unset($itemsById[$id]);
+                }
+            }
+
+            foreach ($itemsById as $item) {
+                $reordered[] = $item;
+            }
+
+            $items = $reordered;
+            $config->update(['items' => $items]);
+        } elseif ($request->has('items') && is_array($request->input('items'))) {
+            return $this->updateItems($request);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Navbar menu links reordered successfully.',
+            'items'   => $items,
+            'data'    => $items,
+        ], 200);
+    }
+
+    /**
+     * POST|PUT /admin/navigation/navbar/items/{id}/move-up & /move-down — Auth Required
+     * Shift menu link order position up or down by 1.
+     */
+    public function moveItem(Request $request, string $id, string $direction = 'up'): JsonResponse
+    {
+        $config = NavbarConfig::getSingleton();
+        $items = is_array($config->items) ? array_values($config->items) : NavbarConfig::defaultItems();
+
+        $idx = -1;
+        foreach ($items as $i => $item) {
+            if ((string) ($item['id'] ?? '') === (string) $id) {
+                $idx = $i;
+                break;
+            }
+        }
+
+        if ($idx === -1) {
+            return response()->json([
+                'success' => false,
+                'message' => "Navbar menu link with ID '{$id}' not found.",
+            ], 404);
+        }
+
+        $targetIdx = ($direction === 'down') ? $idx + 1 : $idx - 1;
+
+        if ($targetIdx >= 0 && $targetIdx < count($items)) {
+            $temp = $items[$idx];
+            $items[$idx] = $items[$targetIdx];
+            $items[$targetIdx] = $temp;
+
+            $config->update(['items' => $items]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Navbar menu link moved {$direction}.",
+            'items'   => $items,
+            'data'    => $items,
+        ], 200);
+    }
+
+    /**
+     * POST|PUT /admin/navigation/navbar/items/{id}/move-up
+     */
+    public function moveUp(Request $request, string $id): JsonResponse
+    {
+        return $this->moveItem($request, $id, 'up');
+    }
+
+    /**
+     * POST|PUT /admin/navigation/navbar/items/{id}/move-down
+     */
+    public function moveDown(Request $request, string $id): JsonResponse
+    {
+        return $this->moveItem($request, $id, 'down');
+    }
+
+    /**
+     * PUT|POST /admin/navigation/navbar/items — Auth Required
      * Replace the full menu array. Server preserves array position order,
      * assigns ID to new items, deletes missing items.
      */
     public function updateItems(Request $request): JsonResponse
     {
-        $request->validate([
-            'items' => 'required|array',
-            'items.*.label' => 'required|string|max:100',
-            'items.*.url'   => 'required|string|max:255',
-            'items.*.enabled' => 'sometimes|boolean',
-            'items.*.id'    => 'sometimes|nullable|string',
-        ]);
+        // If single item fields provided instead of items array, redirect to addItem
+        if (! $request->has('items') && ($request->filled('label') || $request->filled('name'))) {
+            return $this->addItem($request);
+        }
 
-        $processed = NavbarConfig::processItems($request->input('items', []));
+        $rawItems = $request->input('items', []);
+        if (! is_array($rawItems)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The items field must be an array of menu links.',
+            ], 422);
+        }
+
+        $processed = NavbarConfig::processItems($rawItems);
 
         $config = NavbarConfig::getSingleton();
         $config->update(['items' => $processed]);
@@ -184,6 +504,7 @@ class NavbarController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Navbar menu items updated successfully.',
+            'items'   => $processed,
             'data'    => [
                 'items' => $processed,
             ],
