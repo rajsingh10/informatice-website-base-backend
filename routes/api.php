@@ -15,6 +15,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SiteSettingController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TestimonialController;
+use App\Http\Controllers\TopbarController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,7 +24,12 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Public direct aliases without prefix (e.g. /api/services)
+// Public direct aliases without prefix (e.g. /api/topbar, /api/services)
+Route::get('topbar', [TopbarController::class, 'showPublic']);
+Route::match(['put', 'post'], 'topbar', [TopbarController::class, 'saveTopbar']);
+Route::match(['put', 'post'], 'topbar/toggle', [TopbarController::class, 'toggle']);
+Route::get('topbar/items', [TopbarController::class, 'getItems']);
+Route::get('topbar/socials', [TopbarController::class, 'getItems']);
 Route::get('services', [ServiceController::class, 'indexPublic']);
 Route::get('services/{slug}', [ServiceController::class, 'showPublic']);
 
@@ -34,6 +40,14 @@ Route::prefix('public')->group(function () {
     // Layouts
     Route::get('layouts', [LayoutController::class, 'index']);
     Route::match(['put', 'post'], 'layouts', [LayoutController::class, 'save']);
+
+    // Module 1: Top Bar
+    Route::get('topbar', [TopbarController::class, 'showPublic']);
+    Route::match(['put', 'post'], 'topbar', [TopbarController::class, 'saveTopbar']);
+    Route::match(['put', 'post'], 'topbar/toggle', [TopbarController::class, 'toggle']);
+    Route::get('topbar/items', [TopbarController::class, 'getItems']);
+    Route::get('topbar/socials', [TopbarController::class, 'getItems']);
+    Route::get('navigation/topbar', [TopbarController::class, 'showPublic']);
 
     // 3.2 SEO
     Route::get('seo/{page}', [SeoController::class, 'showPublic']);
@@ -117,6 +131,8 @@ Route::prefix('admin')->group(function () {
         // Module-wise Admin GET APIs (Backward compatibility aliases)
         Route::prefix('modules')->group(function () {
             Route::get('topbar', [AdminModuleController::class, 'getTopbar']);
+            Route::get('topbar/items', [TopbarController::class, 'getItems']);
+            Route::get('topbar/socials', [TopbarController::class, 'getItems']);
             Route::get('navbar', [AdminModuleController::class, 'getNavbar']);
             Route::get('navigation/navbar', [AdminModuleController::class, 'getNavbar']);
             Route::get('home', [AdminModuleController::class, 'getHome']);
@@ -154,6 +170,44 @@ Route::prefix('admin')->group(function () {
         // 3.4 Site Settings
         Route::get('settings', [SiteSettingController::class, 'show']);
         Route::put('settings', [SiteSettingController::class, 'update']);
+
+        // Module 1: Top Bar (Admin CRUD, items, toggle, delete)
+        Route::get('topbar', [TopbarController::class, 'showAdmin']);
+        Route::match(['put', 'post', 'patch'], 'topbar', [TopbarController::class, 'saveTopbar']);
+        Route::delete('topbar', [TopbarController::class, 'destroy']);
+        Route::match(['put', 'post', 'patch'], 'topbar/toggle', [TopbarController::class, 'toggle']);
+
+        // Topbar specific sections
+        Route::match(['put', 'post', 'patch'], 'topbar/contact', [TopbarController::class, 'updateContact']);
+        Route::match(['put', 'post', 'patch'], 'topbar/notice', [TopbarController::class, 'updateNotice']);
+        Route::match(['put', 'post', 'patch'], 'topbar/announcement', [TopbarController::class, 'updateNotice']);
+        Route::match(['put', 'post', 'patch'], 'topbar/notice/toggle', [TopbarController::class, 'toggleNotice']);
+        Route::match(['put', 'post', 'patch'], 'topbar/cta', [TopbarController::class, 'updateCta']);
+        Route::match(['put', 'post', 'patch'], 'topbar/cta/toggle', [TopbarController::class, 'toggleCta']);
+
+        // Topbar items / socials CRUD (Add, Edit, Toggle, Delete)
+        Route::get('topbar/items', [TopbarController::class, 'getItems']);
+        Route::post('topbar/items', [TopbarController::class, 'addItem']);
+        Route::post('topbar/item', [TopbarController::class, 'addItem']);
+        Route::match(['put', 'post', 'patch'], 'topbar/items/{id}', [TopbarController::class, 'updateItem']);
+        Route::match(['put', 'post', 'patch'], 'topbar/item/{id}', [TopbarController::class, 'updateItem']);
+        Route::match(['put', 'post', 'patch'], 'topbar/items/{id}/toggle', [TopbarController::class, 'toggleItem']);
+        Route::match(['delete', 'post'], 'topbar/items/{id}', [TopbarController::class, 'deleteItem']);
+        Route::match(['delete', 'post'], 'topbar/items/{id}/delete', [TopbarController::class, 'deleteItem']);
+
+        // Socials alias routes
+        Route::get('topbar/socials', [TopbarController::class, 'getItems']);
+        Route::post('topbar/socials', [TopbarController::class, 'addItem']);
+        Route::post('topbar/social', [TopbarController::class, 'addItem']);
+        Route::match(['put', 'post', 'patch'], 'topbar/socials/{id}', [TopbarController::class, 'updateItem']);
+        Route::match(['put', 'post', 'patch'], 'topbar/socials/{id}/toggle', [TopbarController::class, 'toggleItem']);
+        Route::match(['delete', 'post'], 'topbar/socials/{id}', [TopbarController::class, 'deleteItem']);
+
+        // Navigation topbar aliases
+        Route::get('navigation/topbar', [TopbarController::class, 'showAdmin']);
+        Route::match(['put', 'post', 'patch'], 'navigation/topbar', [TopbarController::class, 'saveTopbar']);
+        Route::delete('navigation/topbar', [TopbarController::class, 'destroy']);
+        Route::match(['put', 'post', 'patch'], 'navigation/topbar/toggle', [TopbarController::class, 'toggle']);
 
         // Module 2: Navbar Navigation
         Route::get('navigation/navbar', [NavbarController::class, 'showAdmin']);

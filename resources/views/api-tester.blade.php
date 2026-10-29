@@ -88,6 +88,14 @@
                         <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">4</span>
                     </button>
 
+                    <button onclick="switchTab('topbar')" id="tab-topbar" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-window-minimize text-blue-500"></i>
+                            <span>Module 1: Top Bar</span>
+                        </span>
+                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">8</span>
+                    </button>
+
                     <button onclick="switchTab('navbar')" id="tab-navbar" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
                         <span class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-bars text-indigo-500"></i>
@@ -659,6 +667,240 @@
                     <button onclick="testBatchSaveLayouts()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2 rounded-lg transition">
                         Save Batch Sample Layouts
                     </button>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- MODULE 1: TOP BAR APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-topbar" class="space-y-4 hidden">
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-xs text-blue-900 leading-relaxed flex items-center justify-between">
+                    <div>
+                        <p class="font-bold mb-1"><i class="fa-solid fa-window-minimize mr-1 text-blue-600"></i> Module 1: Top Bar Header APIs</p>
+                        <p>Manage the top notification/contact bar (Email, Phone, Notice Badge/Text, Social Media Icons, CTA Button & Templates layout0–layout4).</p>
+                    </div>
+                    <button onclick="testToggleTopbar()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-3 py-1.5 rounded-lg transition shadow-sm whitespace-nowrap">
+                        <i class="fa-solid fa-power-off mr-1"></i> Toggle On / Off
+                    </button>
+                </div>
+
+                <!-- 1. GET Public & Admin Topbar Row -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="method-badge badge-get">GET</span>
+                                <span class="font-mono text-sm font-semibold text-slate-800">/api/public/topbar</span>
+                            </div>
+                            <span class="text-xs text-slate-400">Public (No Auth)</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-3">Fetch public topbar data: active template, email, phone, notice, socials & CTA button.</p>
+                        <button onclick="testPublicTopbar()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-arrow-down mr-1"></i>
+                            <span>Fetch Public Topbar</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="method-badge badge-get">GET</span>
+                                <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/topbar</span>
+                            </div>
+                            <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-3">Fetch full admin topbar config: includes disabled links & allowed templates.</p>
+                        <button onclick="testAdminTopbar()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-lock mr-1"></i>
+                            <span>Fetch Admin Topbar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. PUT / POST Edit Topbar Full Form -->
+                <div class="bg-white rounded-xl border border-blue-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-blue-900">/api/admin/topbar</span>
+                        </div>
+                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold">Edit / Update</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-4">Edit all Topbar components shown in the header (Email, Phone, Notice, CTA & Layout).</p>
+
+                    <div class="space-y-3 mb-4">
+                        <!-- Layout & Status -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Topbar Layout Template</label>
+                                <select id="topbar-edit-layout" class="w-full text-xs border border-slate-300 rounded-lg p-2 font-mono">
+                                    <option value="layout1">layout1 (Default Standard)</option>
+                                    <option value="layout2">layout2 (Compact)</option>
+                                    <option value="layout3">layout3 (Centered Notice)</option>
+                                    <option value="layout4">layout4 (Accent Background)</option>
+                                    <option value="layout0">layout0 (Hidden / Disabled)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Visibility Status</label>
+                                <select id="topbar-edit-enabled" class="w-full text-xs border border-slate-300 rounded-lg p-2 font-mono">
+                                    <option value="true">Enabled (Visible)</option>
+                                    <option value="false">Disabled (Hidden)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Contact Info -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1"><i class="fa-solid fa-envelope mr-1 text-slate-400"></i> Email Address</label>
+                                <input type="text" id="topbar-edit-email" value="hello@nexgensolutions.com" class="w-full text-xs border border-slate-300 rounded-lg p-2 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1"><i class="fa-solid fa-phone mr-1 text-slate-400"></i> Phone Number</label>
+                                <input type="text" id="topbar-edit-phone" value="+91 98765 43210" class="w-full text-xs border border-slate-300 rounded-lg p-2 font-mono">
+                            </div>
+                        </div>
+
+                        <!-- Notice / Announcement Bar -->
+                        <div class="border border-slate-200 rounded-lg p-3 bg-slate-50/50 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-bold text-slate-700"><i class="fa-solid fa-bullhorn mr-1 text-blue-500"></i> Center Notice / Announcement</label>
+                                <label class="flex items-center text-xs text-slate-600 space-x-1 cursor-pointer">
+                                    <input type="checkbox" id="topbar-edit-notice-enabled" checked class="rounded border-slate-300 text-blue-600">
+                                    <span>Enabled</span>
+                                </label>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-[11px] text-slate-500 mb-0.5">Badge Text</label>
+                                    <input type="text" id="topbar-edit-notice-badge" value="Notice" class="w-full text-xs border border-slate-300 rounded p-1.5">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="block text-[11px] text-slate-500 mb-0.5">Notice Headline / Text</label>
+                                    <input type="text" id="topbar-edit-notice-text" value="Transforming Ideas Into Digital Reality" class="w-full text-xs border border-slate-300 rounded p-1.5">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-500 mb-0.5">Destination URL (optional)</label>
+                                <input type="text" id="topbar-edit-notice-url" value="/contact" class="w-full text-xs border border-slate-300 rounded p-1.5 font-mono">
+                            </div>
+                        </div>
+
+                        <!-- CTA Button -->
+                        <div class="border border-slate-200 rounded-lg p-3 bg-slate-50/50 space-y-2">
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-bold text-slate-700"><i class="fa-solid fa-arrow-up-right-from-square mr-1 text-emerald-500"></i> Right Action / CTA Button</label>
+                                <label class="flex items-center text-xs text-slate-600 space-x-1 cursor-pointer">
+                                    <input type="checkbox" id="topbar-edit-cta-enabled" checked class="rounded border-slate-300 text-blue-600">
+                                    <span>Enabled</span>
+                                </label>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[11px] text-slate-500 mb-0.5">Button Label</label>
+                                    <input type="text" id="topbar-edit-cta-label" value="Get a Quote" class="w-full text-xs border border-slate-300 rounded p-1.5">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] text-slate-500 mb-0.5">Button Destination URL</label>
+                                    <input type="text" id="topbar-edit-cta-url" value="/contact" class="w-full text-xs border border-slate-300 rounded p-1.5 font-mono">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="testUpdateTopbar()" class="col-span-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-floppy-disk mr-1"></i>
+                            <span>Save Topbar Changes (PUT /api/admin/topbar)</span>
+                        </button>
+                        <button onclick="testDeleteTopbar()" class="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-medium text-xs py-2.5 rounded-lg transition">
+                            <i class="fa-solid fa-trash-can mr-1"></i> Delete / Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. Topbar Social Links & Items Manager -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="method-badge badge-del">DELETE</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/topbar/items</span>
+                        </div>
+                        <button onclick="testFetchTopbarItems()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1 rounded-md transition font-medium">
+                            <i class="fa-solid fa-rotate mr-1"></i> Fetch Items
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-4">Add, edit, toggle show/hide, or delete social media links & custom links in Topbar.</p>
+
+                    <!-- Add New Link Form -->
+                    <div class="border border-blue-200 bg-blue-50/40 rounded-xl p-3 mb-4 space-y-2">
+                        <h4 class="text-xs font-bold text-blue-900 flex items-center">
+                            <i class="fa-solid fa-plus-circle mr-1.5 text-blue-600"></i> Add New Topbar Link / Social
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+                            <div>
+                                <label class="block text-[11px] text-slate-600 mb-1">Platform</label>
+                                <select id="topbar-add-platform" onchange="topbarPlatformChanged()" class="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white">
+                                    <option value="facebook">Facebook</option>
+                                    <option value="twitter">Twitter / X</option>
+                                    <option value="instagram">Instagram</option>
+                                    <option value="linkedin">LinkedIn</option>
+                                    <option value="youtube">YouTube</option>
+                                    <option value="github">GitHub</option>
+                                    <option value="whatsapp">WhatsApp</option>
+                                    <option value="custom">Custom Link</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-600 mb-1">Label / Title</label>
+                                <input type="text" id="topbar-add-label" value="Facebook" class="w-full text-xs border border-slate-300 rounded-lg p-2 bg-white">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[11px] text-slate-600 mb-1">Destination URL</label>
+                                <div class="flex space-x-2">
+                                    <input type="text" id="topbar-add-url" value="https://facebook.com/nexgen" class="flex-1 text-xs border border-slate-300 rounded-lg p-2 bg-white font-mono">
+                                    <button onclick="testAddTopbarItem()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs px-4 py-2 rounded-lg transition whitespace-nowrap">
+                                        <i class="fa-solid fa-plus mr-1"></i> Add
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Manage Existing Link by ID -->
+                    <div class="border border-slate-200 rounded-xl p-3 space-y-2">
+                        <h4 class="text-xs font-bold text-slate-700 flex items-center">
+                            <i class="fa-solid fa-sliders mr-1.5 text-slate-500"></i> Manage Existing Link by ID (soc-1, soc-2, etc.)
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+                            <div>
+                                <label class="block text-[11px] text-slate-600 mb-1">Item ID / Platform</label>
+                                <input type="text" id="topbar-manage-id" value="soc-1" class="w-full text-xs border border-slate-300 rounded-lg p-2 font-mono">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] text-slate-600 mb-1">New Label (optional)</label>
+                                <input type="text" id="topbar-manage-label" placeholder="Leave empty to keep" class="w-full text-xs border border-slate-300 rounded-lg p-2">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-[11px] text-slate-600 mb-1">New Destination URL</label>
+                                <input type="text" id="topbar-manage-url" placeholder="https://..." class="w-full text-xs border border-slate-300 rounded-lg p-2 font-mono">
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2 pt-1">
+                            <button onclick="testUpdateTopbarItem()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs px-3 py-1.5 rounded-lg transition">
+                                <i class="fa-solid fa-pen-to-square mr-1"></i> Update Link
+                            </button>
+                            <button onclick="testToggleTopbarItem()" class="bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs px-3 py-1.5 rounded-lg transition">
+                                <i class="fa-solid fa-eye-slash mr-1"></i> Toggle Show / Hide
+                            </button>
+                            <button onclick="testDeleteTopbarItem()" class="bg-red-600 hover:bg-red-700 text-white font-medium text-xs px-3 py-1.5 rounded-lg transition">
+                                <i class="fa-solid fa-trash mr-1"></i> Delete Link
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -2417,7 +2659,7 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-${name}`).classList.add('active');
 
-            ['auth', 'modules', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'events', 'team', 'testimonials', 'gallery', 'seo', 'media', 'settings'].forEach(s => {
+            ['auth', 'modules', 'layouts', 'topbar', 'navbar', 'home', 'services', 'portfolio', 'blog', 'events', 'team', 'testimonials', 'gallery', 'seo', 'media', 'settings'].forEach(s => {
                 const el = document.getElementById(`section-${s}`);
                 if (el) el.classList.add('hidden');
             });
@@ -2555,6 +2797,124 @@
         }
 
         // Navbar
+        // ══════════════════════════════════════════════════════════
+        // Module 1: Topbar Functions
+        // ══════════════════════════════════════════════════════════
+        async function testPublicTopbar() {
+            await sendApi('GET', '/api/public/topbar');
+        }
+
+        async function testAdminTopbar() {
+            await sendApi('GET', '/api/admin/topbar', null, true);
+        }
+
+        async function testUpdateTopbar() {
+            const layout = document.getElementById('topbar-edit-layout').value;
+            const enabled = document.getElementById('topbar-edit-enabled').value === 'true';
+            const email = document.getElementById('topbar-edit-email').value;
+            const phone = document.getElementById('topbar-edit-phone').value;
+
+            const noticeBadge = document.getElementById('topbar-edit-notice-badge').value;
+            const noticeText = document.getElementById('topbar-edit-notice-text').value;
+            const noticeUrl = document.getElementById('topbar-edit-notice-url').value;
+            const noticeEnabled = document.getElementById('topbar-edit-notice-enabled').checked;
+
+            const ctaLabel = document.getElementById('topbar-edit-cta-label').value;
+            const ctaUrl = document.getElementById('topbar-edit-cta-url').value;
+            const ctaEnabled = document.getElementById('topbar-edit-cta-enabled').checked;
+
+            const payload = {
+                layout: layout,
+                enabled: enabled,
+                email: email,
+                phone: phone,
+                announcement: {
+                    enabled: noticeEnabled,
+                    badge: noticeBadge,
+                    text: noticeText,
+                    url: noticeUrl
+                },
+                cta: {
+                    enabled: ctaEnabled,
+                    label: ctaLabel,
+                    url: ctaUrl
+                }
+            };
+
+            await sendApi('PUT', '/api/admin/topbar', payload, true);
+        }
+
+        async function testToggleTopbar() {
+            await sendApi('POST', '/api/admin/topbar/toggle', null, true);
+        }
+
+        async function testDeleteTopbar() {
+            if (!confirm('Are you sure you want to disable and reset Topbar?')) return;
+            await sendApi('DELETE', '/api/admin/topbar', null, true);
+        }
+
+        async function testFetchTopbarItems() {
+            await sendApi('GET', '/api/admin/topbar/items', null, true);
+        }
+
+        function topbarPlatformChanged() {
+            const plat = document.getElementById('topbar-add-platform').value;
+            const labelInput = document.getElementById('topbar-add-label');
+            const urlInput = document.getElementById('topbar-add-url');
+            const defaultUrls = {
+                facebook: 'https://facebook.com/nexgen',
+                twitter: 'https://twitter.com/nexgen',
+                instagram: 'https://instagram.com/nexgen',
+                linkedin: 'https://linkedin.com/company/nexgen',
+                youtube: 'https://youtube.com/@nexgen',
+                github: 'https://github.com/nexgen',
+                whatsapp: 'https://wa.me/919876543210',
+                custom: '/about'
+            };
+            labelInput.value = plat.charAt(0).toUpperCase() + plat.slice(1);
+            if (defaultUrls[plat]) urlInput.value = defaultUrls[plat];
+        }
+
+        async function testAddTopbarItem() {
+            const platform = document.getElementById('topbar-add-platform').value;
+            const label = document.getElementById('topbar-add-label').value;
+            const url = document.getElementById('topbar-add-url').value;
+            if (!url) return alert('Please enter destination URL');
+
+            await sendApi('POST', '/api/admin/topbar/items', {
+                platform: platform,
+                label: label,
+                url: url,
+                enabled: true
+            }, true);
+        }
+
+        async function testUpdateTopbarItem() {
+            const id = document.getElementById('topbar-manage-id').value;
+            if (!id) return alert('Please enter Item ID or platform name');
+            const label = document.getElementById('topbar-manage-label').value;
+            const url = document.getElementById('topbar-manage-url').value;
+
+            const payload = {};
+            if (label) payload.label = label;
+            if (url) payload.url = url;
+
+            await sendApi('PUT', `/api/admin/topbar/items/${id}`, payload, true);
+        }
+
+        async function testToggleTopbarItem() {
+            const id = document.getElementById('topbar-manage-id').value;
+            if (!id) return alert('Please enter Item ID or platform name');
+            await sendApi('POST', `/api/admin/topbar/items/${id}/toggle`, null, true);
+        }
+
+        async function testDeleteTopbarItem() {
+            const id = document.getElementById('topbar-manage-id').value;
+            if (!id) return alert('Please enter Item ID or platform name');
+            if (!confirm(`Delete topbar link '${id}'?`)) return;
+            await sendApi('DELETE', `/api/admin/topbar/items/${id}`, null, true);
+        }
+
         async function testPublicNavbar() { await sendApi('GET', '/api/public/navigation/navbar'); }
         async function testUpdateNavbarQuick() {
             const behavior = document.getElementById('navbar-update-behavior').value;
