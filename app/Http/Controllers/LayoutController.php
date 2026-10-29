@@ -24,6 +24,37 @@ class LayoutController extends Controller
     }
 
     // ──────────────────────────────────────────────────────────────────────
+    // GET /admin/layouts & /api/admin/layouts — Auth Required
+    // Returns detailed layout templates & allowed options for all modules.
+    // ──────────────────────────────────────────────────────────────────────
+    public function indexAdmin(): JsonResponse
+    {
+        $records = Layout::all()->keyBy('key');
+        $modules = [];
+        $active  = [];
+
+        foreach (Layout::$modules as $key => $meta) {
+            $current = $records->get($key)?->templateId ?? 'layout1';
+            $active[$key] = $current;
+            $modules[] = [
+                'key'        => $key,
+                'name'       => $meta['name'],
+                'templateId' => $current,
+                'allowed'    => Layout::allowedFor($key),
+                'updatedAt'  => $records->get($key)?->updatedAt,
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => [
+                'active'  => $active,
+                'modules' => $modules,
+            ],
+        ], 200);
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
     // PUT /admin/layouts/:key & /api/admin/layouts/:key — Auth Required
     // Set active template for one key.
     // ──────────────────────────────────────────────────────────────────────

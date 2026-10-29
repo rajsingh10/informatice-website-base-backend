@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\HomeSectionController;
@@ -62,7 +63,34 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
         Route::match(['put', 'post'], '/admin/change-password',      [AuthController::class, 'changePassword']);
         Route::match(['put', 'post'], '/admin/auth/change-password', [AuthController::class, 'changePassword']);
 
+        // Direct Module Admin GET API aliases without /modules/ prefix
+        Route::get('/admin/topbar',                   [AdminModuleController::class, 'getTopbar']);
+        Route::get('/admin/navbar',                   [AdminModuleController::class, 'getNavbar']);
+        Route::get('/admin/home',                     [AdminModuleController::class, 'getHome']);
+        Route::get('/admin/service-detail',           [AdminModuleController::class, 'getServiceDetail']);
+        Route::get('/admin/portfolio-detail',         [AdminModuleController::class, 'getPortfolioDetail']);
+        Route::get('/admin/blog-detail',              [AdminModuleController::class, 'getBlogDetail']);
+
+        // Module-wise Admin GET API aliases with /admin/modules/ prefix
+        Route::prefix('/admin/modules')->group(function () {
+            Route::get('topbar',                   [AdminModuleController::class, 'getTopbar']);
+            Route::get('navbar',                   [AdminModuleController::class, 'getNavbar']);
+            Route::get('navigation/navbar',        [AdminModuleController::class, 'getNavbar']);
+            Route::get('home',                     [AdminModuleController::class, 'getHome']);
+            Route::get('home-sections',            [AdminModuleController::class, 'getHome']);
+            Route::get('services',                 [AdminModuleController::class, 'getServices']);
+            Route::get('api/public/services',      [AdminModuleController::class, 'getServices']);
+            Route::get('service-detail',           [AdminModuleController::class, 'getServiceDetail']);
+            Route::get('portfolio',                [AdminModuleController::class, 'getPortfolio']);
+            Route::get('portfolio-detail',         [AdminModuleController::class, 'getPortfolioDetail']);
+            Route::get('blog',                     [AdminModuleController::class, 'getBlog']);
+            Route::get('blog-detail',              [AdminModuleController::class, 'getBlogDetail']);
+            Route::get('settings',                 [AdminModuleController::class, 'getSettings']);
+            Route::get('layouts',                  [AdminModuleController::class, 'getLayouts']);
+        });
+
         // Module Layouts
+        Route::get('/admin/layouts',      [LayoutController::class, 'indexAdmin']);
         Route::post('/admin/layouts/save', [LayoutController::class, 'save']);
         Route::post('/admin/layouts', [LayoutController::class, 'store']);
         Route::put('/admin/layouts/{key}', [LayoutController::class, 'update']);

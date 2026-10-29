@@ -72,6 +72,14 @@
                         <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">5</span>
                     </button>
 
+                    <button onclick="switchTab('modules')" id="tab-modules" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-cubes text-purple-600"></i>
+                            <span class="font-bold text-purple-900">Admin Modules (GET)</span>
+                        </span>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold">11</span>
+                    </button>
+
                     <button onclick="switchTab('layouts')" id="tab-layouts" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
                         <span class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-table-columns text-emerald-500"></i>
@@ -295,6 +303,186 @@
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- ADMIN MODULES (GET) - DIRECT /api/admin/... ENDPOINTS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-modules" class="space-y-4 hidden">
+                <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 text-xs text-purple-900 leading-relaxed">
+                    <p class="font-bold mb-1"><i class="fa-solid fa-circle-info mr-1 text-purple-600"></i> Direct Admin Module GET APIs</p>
+                    <p>Direct module endpoints under <code class="bg-purple-100 px-1 py-0.5 rounded font-mono font-bold">/api/admin/&lt;module&gt;</code> without any <code class="line-through text-red-500 font-mono">/modules/</code> prefix. All endpoints require an Admin Bearer token.</p>
+                </div>
+
+                <!-- 1. Top Bar -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/topbar</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 1: Returns Top Bar layout configuration and site contact/socials content.</p>
+                    <button onclick="sendApi('GET', '/api/admin/topbar', null, true)" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-arrow-down mr-1"></i> Fetch /api/admin/topbar
+                    </button>
+                </div>
+
+                <!-- 2. Navbar -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/navbar</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 2: Returns Navbar layout, scroll behavior, CTA button, and full menu items array.</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="sendApi('GET', '/api/admin/navbar', null, true)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-bars mr-1"></i> /api/admin/navbar
+                        </button>
+                        <button onclick="sendApi('GET', '/api/admin/navigation/navbar', null, true)" class="bg-slate-700 hover:bg-slate-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-bars mr-1"></i> /api/admin/navigation/navbar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. Home Sections -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/home</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 3: Returns Home Page layout and section visibility map.</p>
+                    <button onclick="sendApi('GET', '/api/admin/home', null, true)" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-house mr-1"></i> Fetch /api/admin/home
+                    </button>
+                </div>
+
+                <!-- 4. Services Catalog -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/services</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 4: Returns all admin service items.</p>
+                    <button onclick="sendApi('GET', '/api/admin/services', null, true)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-briefcase mr-1"></i> Fetch /api/admin/services
+                    </button>
+                </div>
+
+                <!-- 4.1 Service Detail -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/service-detail</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 4.1: Returns Service Detail layout and default service SEO configuration.</p>
+                    <button onclick="sendApi('GET', '/api/admin/service-detail', null, true)" class="w-full bg-teal-700 hover:bg-teal-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-file-lines mr-1"></i> Fetch /api/admin/service-detail
+                    </button>
+                </div>
+
+                <!-- 5. Portfolio Catalog -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/portfolio</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 5: Returns all portfolio projects.</p>
+                    <button onclick="sendApi('GET', '/api/admin/portfolio', null, true)" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-folder-open mr-1"></i> Fetch /api/admin/portfolio
+                    </button>
+                </div>
+
+                <!-- 5.1 Portfolio Detail -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/portfolio-detail</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 5.1: Returns Portfolio Detail layout and case study SEO metadata.</p>
+                    <button onclick="sendApi('GET', '/api/admin/portfolio-detail', null, true)" class="w-full bg-cyan-700 hover:bg-cyan-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-images mr-1"></i> Fetch /api/admin/portfolio-detail
+                    </button>
+                </div>
+
+                <!-- 6. Blog Feed -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/blog</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 6: Returns all blog articles.</p>
+                    <button onclick="sendApi('GET', '/api/admin/blog', null, true)" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-newspaper mr-1"></i> Fetch /api/admin/blog
+                    </button>
+                </div>
+
+                <!-- 6.1 Blog Detail -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/blog-detail</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 6.1: Returns Blog article layout and article SEO metadata.</p>
+                    <button onclick="sendApi('GET', '/api/admin/blog-detail', null, true)" class="w-full bg-rose-700 hover:bg-rose-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-newspaper mr-1"></i> Fetch /api/admin/blog-detail
+                    </button>
+                </div>
+
+                <!-- Settings -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/settings</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Site Settings: Returns full site settings payload.</p>
+                    <button onclick="sendApi('GET', '/api/admin/settings', null, true)" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-sliders mr-1"></i> Fetch /api/admin/settings
+                    </button>
+                </div>
+
+                <!-- Layouts -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/layouts</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Layouts: Returns all active template keys and allowed ranges.</p>
+                    <button onclick="sendApi('GET', '/api/admin/layouts', null, true)" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-table-columns mr-1"></i> Fetch /api/admin/layouts
+                    </button>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
             <!-- 2. LAYOUTS MODULE APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-layouts" class="space-y-4 hidden">
@@ -308,7 +496,21 @@
                     </div>
                     <button onclick="testPublicLayouts()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
                         <i class="fa-solid fa-arrows-rotate"></i>
-                        <span>Fetch All Active Layouts</span>
+                        <span>Fetch Public Active Layouts</span>
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/layouts</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Admin read all 20 module layouts with their allowed template options and metadata.</p>
+                    <button onclick="testAdminLayouts()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                        Fetch Admin Layouts & Allowed IDs
                     </button>
                 </div>
 
@@ -956,7 +1158,7 @@
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-${name}`).classList.add('active');
 
-            ['auth', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'seo', 'media', 'settings'].forEach(s => {
+            ['auth', 'modules', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'seo', 'media', 'settings'].forEach(s => {
                 const el = document.getElementById(`section-${s}`);
                 if (el) el.classList.add('hidden');
             });
@@ -1068,8 +1270,14 @@
             clearStoredToken();
         }
 
+        // Individual Module GET helpers
+        async function testAdminModule(moduleName) {
+            await sendApi('GET', `/api/admin/modules/${moduleName}`, null, true);
+        }
+
         // Layouts
         async function testPublicLayouts() { await sendApi('GET', '/api/public/layouts'); }
+        async function testAdminLayouts() { await sendApi('GET', '/api/admin/layouts', null, true); }
         async function testUpdateLayout() {
             const key = document.getElementById('layout-key-select').value;
             const templateId = document.getElementById('layout-template-select').value;
