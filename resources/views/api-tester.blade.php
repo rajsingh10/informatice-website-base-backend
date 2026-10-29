@@ -633,6 +633,7 @@
             <!-- MODULE 3: HERO & HOME SECTIONS APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-home" class="space-y-4 hidden">
+                <!-- 1. GET Public Home Sections -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
@@ -644,6 +645,72 @@
                     <button onclick="testPublicHomeSections()" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
                         <span>Fetch Home Sections Map</span>
                     </button>
+                </div>
+
+                <!-- 2. GET Admin Home Module & Sections -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/home-sections</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-3">Returns visibility status, 10 detailed section cards, and active count.</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="sendApi('GET', '/api/admin/home-sections', null, true)" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                            /api/admin/home-sections
+                        </button>
+                        <button onclick="sendApi('GET', '/api/admin/home', null, true)" class="bg-orange-700 hover:bg-orange-800 text-white font-medium text-xs py-2 rounded-lg transition">
+                            /api/admin/home
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. POST Toggle Section ON / OFF -->
+                <div class="bg-white rounded-xl border border-orange-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-orange-900">/api/admin/home-sections/:sectionId</span>
+                        </div>
+                        <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded font-bold">Toggle On / Off</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Toggle or set visibility for any of the 10 homepage sections.</p>
+
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Select Section</label>
+                            <select id="home-sec-select" class="w-full text-xs border border-slate-300 rounded-lg p-2 font-mono">
+                                <option value="hero">hero (Hero Section / Slider)</option>
+                                <option value="about">about (About & Brand Story)</option>
+                                <option value="services">services (Services Showcase)</option>
+                                <option value="portfolio">portfolio (Portfolio Stack)</option>
+                                <option value="stats">stats (Key Metrics & Achievements)</option>
+                                <option value="clients">clients (Client Logos & Marquee)</option>
+                                <option value="testimonials">testimonials (Reviews Wall)</option>
+                                <option value="blog">blog (Latest Insights & Bento)</option>
+                                <option value="faq">faq (FAQ & Accordion Questions)</option>
+                                <option value="cta">cta (Call-to-Action & Contact Banner)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 mb-1">Visibility State</label>
+                            <select id="home-sec-state" class="w-full text-xs border border-slate-300 rounded-lg p-2 font-mono">
+                                <option value="false">Disable / Off (Hidden)</option>
+                                <option value="true">Enable / On (Visible)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testToggleHomeSection()" class="bg-orange-600 hover:bg-orange-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-power-off mr-1"></i> Set Section State
+                        </button>
+                        <button onclick="testResetHomeSections()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Enable All (Reset 10/10)
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -1358,6 +1425,14 @@
 
         // Home
         async function testPublicHomeSections() { await sendApi('GET', '/api/public/home-sections'); }
+        async function testToggleHomeSection() {
+            const sec = document.getElementById('home-sec-select').value;
+            const state = document.getElementById('home-sec-state').value === 'true';
+            await sendApi('POST', `/api/admin/home-sections/${sec}`, { enabled: state }, true);
+        }
+        async function testResetHomeSections() {
+            await sendApi('POST', '/api/admin/home-sections/reset', {}, true);
+        }
 
         // Services
         async function testPublicServices() { await sendApi('GET', '/api/public/services'); }

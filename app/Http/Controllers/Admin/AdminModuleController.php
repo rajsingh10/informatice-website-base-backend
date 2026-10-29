@@ -74,18 +74,27 @@ class AdminModuleController extends Controller
     public function getHome(): JsonResponse
     {
         $layoutRecord = Layout::find('homePageLayout');
-        $sections = HomeSection::getSingleton()->getMap();
+        $home = HomeSection::getSingleton();
+        $sections = $home->getMap();
+        $activeCount = count(array_filter($sections));
 
         return response()->json([
-            'success' => true,
-            'module'  => 'home',
-            'data'    => [
+            'success'     => true,
+            'module'      => 'home',
+            'activeCount' => $activeCount,
+            'totalCount'  => count($sections),
+            'items'       => $home->getDetailedList(),
+            'sections'    => $sections,
+            'data'        => [
                 'layout' => [
                     'key'        => 'homePageLayout',
                     'templateId' => $layoutRecord?->templateId ?? 'layout1',
                     'allowed'    => Layout::allowedFor('homePageLayout'),
                 ],
-                'sections' => $sections,
+                'activeCount' => $activeCount,
+                'totalCount'  => count($sections),
+                'items'       => $home->getDetailedList(),
+                'sections'    => $sections,
             ],
         ], 200);
     }

@@ -38,7 +38,9 @@ Route::prefix('public')->group(function () {
     Route::match(['put', 'post'], 'navbar',             [NavbarController::class, 'updateNavbar']);
 
     // Module 3: Home Sections
-    Route::get('home-sections', [HomeSectionController::class, 'index']);
+    Route::get('home-sections',                         [HomeSectionController::class, 'index']);
+    Route::match(['put', 'post'], 'home-sections',      [HomeSectionController::class, 'toggle']);
+    Route::match(['put', 'post'], 'home-sections/{sectionId}', [HomeSectionController::class, 'toggle']);
 
     // Module 4: Services
     Route::get('services', [ServiceController::class, 'indexPublic']);
@@ -127,10 +129,14 @@ Route::prefix('admin')->group(function () {
         Route::put('navigation/navbar/cta',    [NavbarController::class, 'updateCta']);
         Route::post('navigation/navbar/reset', [NavbarController::class, 'reset']);
 
-        // Module 3: Home Sections
-        Route::put('home-sections/batch',      [HomeSectionController::class, 'batch']);
-        Route::post('home-sections/reset',     [HomeSectionController::class, 'reset']);
-        Route::put('home-sections/{sectionId}', [HomeSectionController::class, 'update']);
+        // Module 3: Home Sections (GET & POST on/off toggle APIs)
+        Route::get('home-sections',                    [HomeSectionController::class, 'index']);
+        Route::match(['put', 'post'], 'home-sections', [HomeSectionController::class, 'toggle']);
+        Route::match(['put', 'post'], 'home-sections/toggle', [HomeSectionController::class, 'toggle']);
+        Route::match(['put', 'post'], 'home-sections/batch',  [HomeSectionController::class, 'batch']);
+        Route::post('home-sections/reset',                    [HomeSectionController::class, 'reset']);
+        Route::match(['put', 'post'], 'home-sections/{sectionId}', [HomeSectionController::class, 'toggle']);
+        Route::match(['put', 'post'], 'home',                 [HomeSectionController::class, 'toggle']);
 
         // Module 4: Services CRUD
         Route::get('services',                 [ServiceController::class, 'indexAdmin']);
