@@ -37,7 +37,7 @@
                 </div>
                 <div>
                     <h1 class="text-lg font-bold text-slate-900 leading-tight">API Testing Dashboard</h1>
-                    <p class="text-xs text-slate-500">Laravel Passport & Layout Manager APIs</p>
+                    <p class="text-xs text-slate-500">All Modules: Auth, Layouts, SEO, Media, Settings</p>
                 </div>
             </div>
 
@@ -72,12 +72,37 @@
                         </span>
                         <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">5</span>
                     </button>
+
                     <button onclick="switchTab('layouts')" id="tab-layouts" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
                         <span class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-table-columns text-emerald-500"></i>
                             <span>Layouts</span>
                         </span>
                         <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">4</span>
+                    </button>
+
+                    <button onclick="switchTab('seo')" id="tab-seo" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-magnifying-glass-chart text-purple-500"></i>
+                            <span>3.2 SEO & ALT</span>
+                        </span>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold">3</span>
+                    </button>
+
+                    <button onclick="switchTab('media')" id="tab-media" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-cloud-arrow-up text-pink-500"></i>
+                            <span>3.3 Media Upload</span>
+                        </span>
+                        <span class="text-xs bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full font-bold">2</span>
+                    </button>
+
+                    <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-sliders text-amber-500"></i>
+                            <span>3.4 Site Settings</span>
+                        </span>
+                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">2</span>
                     </button>
                 </nav>
 
@@ -103,11 +128,9 @@
         <div class="lg:col-span-5 space-y-4">
 
             <!-- ══════════════════════════════════════════════════════════ -->
-            <!-- AUTH MODULE APIS -->
+            <!-- 1. AUTH MODULE APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-auth" class="space-y-4">
-
-                <!-- 1. POST /api/admin/login -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
@@ -133,7 +156,6 @@
                     </button>
                 </div>
 
-                <!-- 2. GET /api/admin/me -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
@@ -148,7 +170,6 @@
                     </button>
                 </div>
 
-                <!-- 3. PUT /api/admin/profile -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
@@ -157,7 +178,7 @@
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
-                    <p class="text-xs text-slate-600 mb-3">Update name, email, phone, bio or avatar.</p>
+                    <p class="text-xs text-slate-600 mb-3">Update name, email, phone, bio.</p>
                     <div class="grid grid-cols-2 gap-2 mb-3">
                         <div>
                             <label class="text-xs font-medium text-slate-600">Name</label>
@@ -181,7 +202,6 @@
                     </button>
                 </div>
 
-                <!-- 4. PUT /api/admin/change-password -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
@@ -190,7 +210,7 @@
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
-                    <p class="text-xs text-slate-600 mb-3">Change admin password (invalidates active tokens).</p>
+                    <p class="text-xs text-slate-600 mb-3">Change password (revokes token).</p>
                     <div class="space-y-2 mb-3">
                         <div>
                             <label class="text-xs font-medium text-slate-600">Current Password</label>
@@ -212,7 +232,6 @@
                     </button>
                 </div>
 
-                <!-- 5. POST /api/admin/logout -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
@@ -226,20 +245,17 @@
                         <i class="fa-solid fa-right-from-bracket"></i> Send POST /logout
                     </button>
                 </div>
-
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
-            <!-- LAYOUTS MODULE APIS -->
+            <!-- 2. LAYOUTS MODULE APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-layouts" class="space-y-4 hidden">
-
-                <!-- 1. GET /api/public/layouts -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/layouts</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/public/layouts</span>
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
@@ -250,41 +266,33 @@
                     </button>
                 </div>
 
-                <!-- 2. PUT /api/admin/layouts/:key -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-put">PUT</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/layouts/:key</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/layouts/:key</span>
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
                     <p class="text-xs text-slate-600 mb-3">Set active template for one key. Validates against allowed range (returns 422 if invalid).</p>
-
                     <div class="space-y-2 mb-3">
                         <div>
                             <label class="text-xs font-medium text-slate-600">Select Layout Key</label>
-                            <select id="layout-key-select" onchange="onLayoutKeyChanged()" class="w-full text-xs border border-slate-200 rounded p-2 mt-1 outline-none bg-white">
-                                <!-- Populated dynamically by JS -->
-                            </select>
+                            <select id="layout-key-select" onchange="onLayoutKeyChanged()" class="w-full text-xs border border-slate-200 rounded p-2 mt-1 outline-none bg-white"></select>
                         </div>
                         <div>
                             <div class="flex items-center justify-between">
                                 <label class="text-xs font-medium text-slate-600">Select Template ID</label>
                                 <span id="layout-allowed-hint" class="text-[11px] text-blue-600 font-medium"></span>
                             </div>
-                            <select id="layout-template-select" class="w-full text-xs border border-slate-200 rounded p-2 mt-1 outline-none bg-white">
-                                <!-- Populated dynamically by JS -->
-                            </select>
+                            <select id="layout-template-select" class="w-full text-xs border border-slate-200 rounded p-2 mt-1 outline-none bg-white"></select>
                         </div>
                     </div>
-
                     <button onclick="testUpdateLayout()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2.5 rounded-lg transition">
                         <i class="fa-solid fa-pen-to-square"></i> Send PUT /admin/layouts/:key
                     </button>
                 </div>
 
-                <!-- 3. POST /api/admin/layouts/save -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
@@ -303,32 +311,232 @@
                         <i class="fa-solid fa-floppy-disk"></i> Send POST /admin/layouts/save
                     </button>
                 </div>
+            </div>
 
-                <!-- 4. POST /api/admin/layouts -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- 3. SEO MODULE APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-seo" class="space-y-4 hidden">
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/public/seo/:page</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Read SEO & image ALT map for a page.</p>
+                    <div class="flex space-x-2 mb-3">
+                        <select id="seo-public-page" class="flex-1 text-xs border border-slate-200 rounded p-2 bg-white outline-none">
+                            <option value="home">home</option>
+                            <option value="services">services</option>
+                            <option value="service-detail">service-detail</option>
+                            <option value="portfolio">portfolio</option>
+                            <option value="portfolio-detail">portfolio-detail</option>
+                            <option value="blog">blog</option>
+                            <option value="blog-detail">blog-detail</option>
+                            <option value="events">events</option>
+                            <option value="event-detail">event-detail</option>
+                            <option value="team">team</option>
+                            <option value="contact">contact</option>
+                            <option value="career">career</option>
+                            <option value="testimonials">testimonials</option>
+                            <option value="gallery">gallery</option>
+                            <option value="faq">faq</option>
+                            <option value="terms">terms</option>
+                            <option value="privacy">privacy</option>
+                        </select>
+                        <button onclick="testPublicSeo()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-xs font-medium">
+                            <i class="fa-solid fa-search"></i> Read Public SEO
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/seo/:page</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Replace SEO metadata & image ALT mapping for a page.</p>
+
+                    <div class="space-y-2 mb-3">
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Select Page</label>
+                            <select id="seo-admin-page" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-1 bg-white outline-none">
+                                <option value="home">home</option>
+                                <option value="services">services</option>
+                                <option value="service-detail">service-detail</option>
+                                <option value="portfolio">portfolio</option>
+                                <option value="portfolio-detail">portfolio-detail</option>
+                                <option value="blog">blog</option>
+                                <option value="blog-detail">blog-detail</option>
+                                <option value="events">events</option>
+                                <option value="event-detail">event-detail</option>
+                                <option value="team">team</option>
+                                <option value="contact">contact</option>
+                                <option value="career">career</option>
+                                <option value="testimonials">testimonials</option>
+                                <option value="gallery">gallery</option>
+                                <option value="faq">faq</option>
+                                <option value="terms">terms</option>
+                                <option value="privacy">privacy</option>
+                            </select>
+                        </div>
+                        <div>
+                            <div class="flex justify-between">
+                                <label class="text-xs font-medium text-slate-600">Title</label>
+                                <span class="text-[10px] text-slate-400">max 70 chars</span>
+                            </div>
+                            <input id="seo-title" type="text" maxlength="70" value="NexGen Solutions - Transforming Ideas Into Digital Reality" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div>
+                            <div class="flex justify-between">
+                                <label class="text-xs font-medium text-slate-600">Description</label>
+                                <span class="text-[10px] text-slate-400">max 160 chars</span>
+                            </div>
+                            <input id="seo-desc" type="text" maxlength="160" value="Empowering businesses through cutting-edge digital experiences." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Keywords (comma-separated)</label>
+                            <input id="seo-keywords" type="text" value="web development, mobile apps, enterprise cloud" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">OG Title</label>
+                                <input id="seo-ogtitle" type="text" value="NexGen Solutions" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">OG Image URL</label>
+                                <input id="seo-ogimage" type="text" value="https://example.com/og.jpg" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Canonical URL</label>
+                            <input id="seo-canonical" type="text" value="https://example.com/" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Image ALT Map (JSON slot IDs -> ALT texts)</label>
+                            <textarea id="seo-altmap" rows="3" class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 mt-0.5 outline-none">{
+  "img-home-hero": "Modern digital workspace with AI dashboard",
+  "img-home-about": "Collaborative software engineering team"
+}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testAdminReadSeo()" class="bg-slate-700 hover:bg-slate-800 text-white font-medium text-xs py-2 rounded-lg transition">
+                            <i class="fa-solid fa-eye"></i> GET Admin Read
+                        </button>
+                        <button onclick="testUpdateSeo()" class="bg-purple-600 hover:bg-purple-700 text-white font-medium text-xs py-2 rounded-lg transition">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> PUT Replace SEO
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- 4. MEDIA UPLOAD APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-media" class="space-y-4 hidden">
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-post">POST</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/layouts</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/uploads</span>
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
-                    <p class="text-xs text-slate-600 mb-3">Create a new custom layout entry.</p>
-                    <div class="grid grid-cols-2 gap-2 mb-3">
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">New Key Name</label>
-                            <input id="new-layout-key" type="text" placeholder="e.g. sidebarLayout" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-1 outline-none">
-                        </div>
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Template ID</label>
-                            <input id="new-layout-template" type="text" placeholder="layout1" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-1 outline-none">
-                        </div>
+                    <p class="text-xs text-slate-600 mb-3">Upload image file (JPEG, PNG, WebP, SVG, GIF, max 5 MB). Returns permanent URL & dimensions.</p>
+
+                    <div class="mb-3">
+                        <input id="media-file-input" type="file" accept="image/*" class="w-full text-xs border border-slate-200 rounded p-2 outline-none bg-slate-50">
                     </div>
-                    <button onclick="testCreateLayout()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
-                        <i class="fa-solid fa-plus"></i> Send POST /admin/layouts
+
+                    <button onclick="testMediaUpload()" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-upload"></i>
+                        <span>Upload Image File</span>
                     </button>
                 </div>
 
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-del">DELETE</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/uploads/:id</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Remove an uploaded file from server disk and database.</p>
+
+                    <div class="flex space-x-2 mb-3">
+                        <input id="delete-file-id" type="text" placeholder="e.g. f_91ab" class="flex-1 text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                        <button onclick="testMediaDelete()" class="bg-red-600 hover:bg-red-700 text-white font-medium text-xs px-4 py-2 rounded-lg transition">
+                            <i class="fa-solid fa-trash-can"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- 5. SITE SETTINGS APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-settings" class="space-y-4 hidden">
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/public/settings</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetch site-wide details (contacts, logo, offices, socials, announcement).</p>
+                    <button onclick="testPublicSettings()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span>Fetch Site Settings</span>
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/settings</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Update site-wide details (JSON payload).</p>
+
+                    <textarea id="settings-json" rows="12" class="w-full text-xs font-mono border border-slate-200 rounded p-2 mb-3 outline-none">{
+  "siteName": "NexGen Solutions",
+  "logoUrl": "https://example.com/logo.png",
+  "faviconUrl": "https://example.com/favicon.ico",
+  "email": "contact@nexgensolutions.com",
+  "phone": "+1 (555) 019-2834",
+  "address": "100 Innovation Way, Silicon Valley, CA",
+  "mapEmbedUrl": "https://maps.google.com/embed?pb=...",
+  "offices": [
+    { "name": "Global HQ", "address": "100 Innovation Way", "phone": "+1-555-019-2834", "email": "hq@nexgen.com" }
+  ],
+  "socials": {
+    "facebook": "https://facebook.com/nexgen",
+    "instagram": "https://instagram.com/nexgen",
+    "linkedin": "https://linkedin.com/company/nexgen",
+    "twitter": "https://twitter.com/nexgen",
+    "youtube": "https://youtube.com/@nexgen"
+  },
+  "announcement": {
+    "enabled": true,
+    "text": "🎉 Big announcement: our next-gen platform is now live!",
+    "url": "https://nexgensolutions.com/explore"
+  }
+}</textarea>
+                    <button onclick="testUpdateSettings()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                        <i class="fa-solid fa-floppy-disk"></i> Send PUT /admin/settings
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -349,15 +557,13 @@
                     </div>
                 </div>
 
-                <!-- Request Info Preview -->
                 <div id="reqPreview" class="text-[11px] font-mono text-slate-500 mb-2 truncate">
                     Ready to send request...
                 </div>
 
-                <!-- Response Body Preview -->
                 <div class="bg-slate-900 rounded-lg p-3 overflow-hidden">
-                    <pre id="responseOutput" class="text-xs font-mono text-emerald-400 overflow-x-auto max-h-[500px] leading-relaxed whitespace-pre-wrap">{
-  "hint": "Click any button on the left to send an API request and inspect live output here."
+                    <pre id="responseOutput" class="text-xs font-mono text-emerald-400 overflow-x-auto max-h-[520px] leading-relaxed whitespace-pre-wrap">{
+  "hint": "Click any API button on the left to test live output here."
 }</pre>
                 </div>
             </div>
@@ -367,7 +573,6 @@
 
     <!-- JavaScript logic -->
     <script>
-        // Layouts Specification Map
         const LAYOUTS_SPEC = {
             'topbarLayout':              { name: 'Top bar',            min: 0, max: 4, hint: 'layout0 (hidden) to layout4' },
             'navbarLayout':              { name: 'Navbar',             min: 1, max: 5, hint: 'layout1 to layout5' },
@@ -391,11 +596,9 @@
             'privacyPageLayout':         { name: 'Privacy',            min: 1, max: 3, hint: 'layout1 to layout3' }
         };
 
-        // State Initialization
         let currentToken = localStorage.getItem('api_admin_token') || '';
         document.getElementById('baseUrlInput').value = window.location.origin;
 
-        // Populate Layout Keys Dropdown
         function initLayoutSelects() {
             const keySelect = document.getElementById('layout-key-select');
             keySelect.innerHTML = '';
@@ -425,7 +628,6 @@
             }
         }
 
-        // Token Badge update
         function updateTokenDisplay() {
             const badge = document.getElementById('tokenBadge');
             const badgeText = document.getElementById('tokenBadgeText');
@@ -460,35 +662,31 @@
             alert('Response JSON copied!');
         }
 
-        // Tab Switching
         function switchTab(name) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-${name}`).classList.add('active');
 
-            document.getElementById('section-auth').classList.add('hidden');
-            document.getElementById('section-layouts').classList.add('hidden');
+            ['auth', 'layouts', 'seo', 'media', 'settings'].forEach(s => {
+                const el = document.getElementById(`section-${s}`);
+                if (el) el.classList.add('hidden');
+            });
             document.getElementById(`section-${name}`).classList.remove('hidden');
         }
 
-        // Generic API Fetch Helper
-        async function sendApi(method, path, body = null, requireAuth = false) {
+        async function sendApi(method, path, body = null, requireAuth = false, isFormData = false) {
             const baseUrl = document.getElementById('baseUrlInput').value.replace(/\/+$/, '');
             const url = `${baseUrl}${path}`;
 
-            const headers = {
-                'Accept': 'application/json'
-            };
-
+            const headers = { 'Accept': 'application/json' };
             if (requireAuth && currentToken) {
                 headers['Authorization'] = `Bearer ${currentToken}`;
             }
 
-            const options = {
-                method: method,
-                headers: headers
-            };
+            const options = { method, headers };
 
-            if (body) {
+            if (isFormData) {
+                options.body = body; // Let browser set boundary automatically
+            } else if (body) {
                 headers['Content-Type'] = 'application/json';
                 options.body = JSON.stringify(body);
             }
@@ -530,13 +728,10 @@
             output.textContent = JSON.stringify(data, null, 2);
         }
 
-        // ══════════════════════════════════════════════════════════
-        // Auth API Handlers
-        // ══════════════════════════════════════════════════════════
+        // Auth
         async function testLogin() {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
-
             const res = await sendApi('POST', '/api/admin/login', { email, password });
             if (res && res.data && res.data.token) {
                 currentToken = res.data.token;
@@ -544,79 +739,103 @@
                 updateTokenDisplay();
             }
         }
-
-        async function testMe() {
-            if (!currentToken) return alert('Please login first to obtain Bearer token.');
-            await sendApi('GET', '/api/admin/me', null, true);
-        }
-
+        async function testMe() { await sendApi('GET', '/api/admin/me', null, true); }
         async function testUpdateProfile() {
-            if (!currentToken) return alert('Please login first.');
-            const name = document.getElementById('profile-name').value;
-            const email = document.getElementById('profile-email').value;
-            const phone = document.getElementById('profile-phone').value;
-            const bio = document.getElementById('profile-bio').value;
-
-            await sendApi('PUT', '/api/admin/profile', { name, email, phone, bio }, true);
-        }
-
-        async function testChangePassword() {
-            if (!currentToken) return alert('Please login first.');
-            const current_password = document.getElementById('pwd-current').value;
-            const password = document.getElementById('pwd-new').value;
-            const password_confirmation = document.getElementById('pwd-confirm').value;
-
-            await sendApi('PUT', '/api/admin/change-password', {
-                current_password,
-                password,
-                password_confirmation
+            await sendApi('PUT', '/api/admin/profile', {
+                name: document.getElementById('profile-name').value,
+                email: document.getElementById('profile-email').value,
+                phone: document.getElementById('profile-phone').value,
+                bio: document.getElementById('profile-bio').value
             }, true);
         }
-
+        async function testChangePassword() {
+            await sendApi('PUT', '/api/admin/change-password', {
+                current_password: document.getElementById('pwd-current').value,
+                password: document.getElementById('pwd-new').value,
+                password_confirmation: document.getElementById('pwd-confirm').value
+            }, true);
+        }
         async function testLogout() {
-            if (!currentToken) return alert('Not logged in.');
             await sendApi('POST', '/api/admin/logout', {}, true);
             clearStoredToken();
         }
 
-        // ══════════════════════════════════════════════════════════
-        // Layouts API Handlers
-        // ══════════════════════════════════════════════════════════
-        async function testPublicLayouts() {
-            await sendApi('GET', '/api/public/layouts');
-        }
-
+        // Layouts
+        async function testPublicLayouts() { await sendApi('GET', '/public/layouts'); }
         async function testUpdateLayout() {
-            if (!currentToken) return alert('Please login first to update layouts.');
             const key = document.getElementById('layout-key-select').value;
             const templateId = document.getElementById('layout-template-select').value;
-
-            await sendApi('PUT', `/api/admin/layouts/${key}`, { templateId }, true);
+            await sendApi('PUT', `/admin/layouts/${key}`, { templateId }, true);
         }
-
         async function testBatchSaveLayouts() {
-            if (!currentToken) return alert('Please login first.');
             try {
                 const body = JSON.parse(document.getElementById('batch-save-json').value);
                 await sendApi('POST', '/api/admin/layouts/save', body, true);
+            } catch (e) { alert('Invalid JSON: ' + e.message); }
+        }
+
+        // SEO
+        async function testPublicSeo() {
+            const page = document.getElementById('seo-public-page').value;
+            await sendApi('GET', `/public/seo/${page}`);
+        }
+        async function testAdminReadSeo() {
+            const page = document.getElementById('seo-admin-page').value;
+            await sendApi('GET', `/admin/seo/${page}`, null, true);
+        }
+        async function testUpdateSeo() {
+            const page = document.getElementById('seo-admin-page').value;
+            let imageAltMap = {};
+            try {
+                imageAltMap = JSON.parse(document.getElementById('seo-altmap').value);
             } catch (e) {
-                alert('Invalid JSON in textarea: ' + e.message);
+                return alert('Invalid JSON in Image ALT Map: ' + e.message);
+            }
+
+            const body = {
+                title: document.getElementById('seo-title').value,
+                description: document.getElementById('seo-desc').value,
+                keywords: document.getElementById('seo-keywords').value,
+                ogTitle: document.getElementById('seo-ogtitle').value,
+                ogDescription: document.getElementById('seo-desc').value,
+                ogImage: document.getElementById('seo-ogimage').value,
+                canonicalUrl: document.getElementById('seo-canonical').value,
+                robots: "index, follow",
+                imageAltMap: imageAltMap
+            };
+            await sendApi('PUT', `/admin/seo/${page}`, body, true);
+        }
+
+        // Media Upload
+        async function testMediaUpload() {
+            const fileInput = document.getElementById('media-file-input');
+            if (!fileInput.files.length) return alert('Please select an image file first.');
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            const res = await sendApi('POST', '/admin/uploads', formData, true, true);
+            if (res && res.data && res.data.data && res.data.data.id) {
+                document.getElementById('delete-file-id').value = res.data.data.id;
             }
         }
-
-        async function testCreateLayout() {
-            if (!currentToken) return alert('Please login first.');
-            const key = document.getElementById('new-layout-key').value.trim();
-            const templateId = document.getElementById('new-layout-template').value.trim();
-
-            if (!key || !templateId) return alert('Please enter both key name and template ID.');
-            await sendApi('POST', '/api/admin/layouts', { key, templateId }, true);
+        async function testMediaDelete() {
+            const id = document.getElementById('delete-file-id').value.trim();
+            if (!id) return alert('Enter file ID to delete.');
+            await sendApi('DELETE', `/admin/uploads/${id}`, null, true);
         }
 
-        // On Page Load
+        // Settings
+        async function testPublicSettings() { await sendApi('GET', '/public/settings'); }
+        async function testUpdateSettings() {
+            try {
+                const body = JSON.parse(document.getElementById('settings-json').value);
+                await sendApi('PUT', '/admin/settings', body, true);
+            } catch (e) { alert('Invalid JSON in settings: ' + e.message); }
+        }
+
         initLayoutSelects();
         updateTokenDisplay();
     </script>
 </body>
 </html>
-
