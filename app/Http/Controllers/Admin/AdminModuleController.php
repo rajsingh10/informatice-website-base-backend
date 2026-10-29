@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\Event;
 use App\Models\HomeSection;
 use App\Models\Layout;
 use App\Models\NavbarConfig;
@@ -27,17 +28,17 @@ class AdminModuleController extends Controller
 
         return response()->json([
             'success' => true,
-            'module'  => 'topbar',
-            'data'    => [
+            'module' => 'topbar',
+            'data' => [
                 'layout' => [
-                    'key'        => 'topbarLayout',
+                    'key' => 'topbarLayout',
                     'templateId' => $layoutRecord?->templateId ?? 'layout1',
-                    'allowed'    => Layout::allowedFor('topbarLayout'),
+                    'allowed' => Layout::allowedFor('topbarLayout'),
                 ],
                 'content' => [
-                    'email'        => $setting->email,
-                    'phone'        => $setting->phone,
-                    'socials'      => $setting->socials ?? [],
+                    'email' => $setting->email,
+                    'phone' => $setting->phone,
+                    'socials' => $setting->socials ?? [],
                     'announcement' => $setting->announcement ?? [],
                 ],
             ],
@@ -59,17 +60,17 @@ class AdminModuleController extends Controller
 
         return response()->json([
             'success' => true,
-            'module'  => 'navbar',
-            'data'    => [
+            'module' => 'navbar',
+            'data' => [
                 'layout' => [
-                    'key'        => 'navbarLayout',
+                    'key' => 'navbarLayout',
                     'templateId' => $currentTemplate,
-                    'layout'     => $currentTemplate,
-                    'behavior'   => $activeBehavior,
-                    'enabled'    => $isEnabled,
-                    'visible'    => $isEnabled,
-                    'status'     => $isEnabled ? 'visible' : 'hidden',
-                    'allowed'    => Layout::allowedFor('navbarLayout'),
+                    'layout' => $currentTemplate,
+                    'behavior' => $activeBehavior,
+                    'enabled' => $isEnabled,
+                    'visible' => $isEnabled,
+                    'status' => $isEnabled ? 'visible' : 'hidden',
+                    'allowed' => Layout::allowedFor('navbarLayout'),
                 ],
                 'navigation' => $adminPayload,
             ],
@@ -88,22 +89,22 @@ class AdminModuleController extends Controller
         $activeCount = count(array_filter($sections));
 
         return response()->json([
-            'success'     => true,
-            'module'      => 'home',
+            'success' => true,
+            'module' => 'home',
             'activeCount' => $activeCount,
-            'totalCount'  => count($sections),
-            'items'       => $home->getDetailedList(),
-            'sections'    => $sections,
-            'data'        => [
+            'totalCount' => count($sections),
+            'items' => $home->getDetailedList(),
+            'sections' => $sections,
+            'data' => [
                 'layout' => [
-                    'key'        => 'homePageLayout',
+                    'key' => 'homePageLayout',
                     'templateId' => $layoutRecord?->templateId ?? 'layout1',
-                    'allowed'    => Layout::allowedFor('homePageLayout'),
+                    'allowed' => Layout::allowedFor('homePageLayout'),
                 ],
                 'activeCount' => $activeCount,
-                'totalCount'  => count($sections),
-                'items'       => $home->getDetailedList(),
-                'sections'    => $sections,
+                'totalCount' => count($sections),
+                'items' => $home->getDetailedList(),
+                'sections' => $sections,
             ],
         ], 200);
     }
@@ -119,14 +120,14 @@ class AdminModuleController extends Controller
 
         return response()->json([
             'success' => true,
-            'module'  => 'services',
-            'data'    => [
+            'module' => 'services',
+            'data' => [
                 'layout' => [
-                    'key'        => 'servicesPageLayout',
+                    'key' => 'servicesPageLayout',
                     'templateId' => $layoutRecord?->templateId ?? 'layout1',
-                    'allowed'    => Layout::allowedFor('servicesPageLayout'),
+                    'allowed' => Layout::allowedFor('servicesPageLayout'),
                 ],
-                'total'    => $services->count(),
+                'total' => $services->count(),
                 'services' => $services,
             ],
         ], 200);
@@ -143,12 +144,12 @@ class AdminModuleController extends Controller
 
         return response()->json([
             'success' => true,
-            'module'  => 'service-detail',
-            'data'    => [
+            'module' => 'service-detail',
+            'data' => [
                 'layout' => [
-                    'key'        => 'serviceDetailPageLayout',
+                    'key' => 'serviceDetailPageLayout',
                     'templateId' => $layoutRecord?->templateId ?? 'layout1',
-                    'allowed'    => Layout::allowedFor('serviceDetailPageLayout'),
+                    'allowed' => Layout::allowedFor('serviceDetailPageLayout'),
                 ],
                 'defaultSeo' => $defaultSeo,
             ],
@@ -166,14 +167,14 @@ class AdminModuleController extends Controller
 
         return response()->json([
             'success' => true,
-            'module'  => 'portfolio',
-            'data'    => [
+            'module' => 'portfolio',
+            'data' => [
                 'layout' => [
-                    'key'        => 'portfolioPageLayout',
+                    'key' => 'portfolioPageLayout',
                     'templateId' => $layoutRecord?->templateId ?? 'layout1',
-                    'allowed'    => Layout::allowedFor('portfolioPageLayout'),
+                    'allowed' => Layout::allowedFor('portfolioPageLayout'),
                 ],
-                'total'     => $portfolio->count(),
+                'total' => $portfolio->count(),
                 'portfolio' => $portfolio,
             ],
         ], 200);
@@ -190,12 +191,12 @@ class AdminModuleController extends Controller
 
         return response()->json([
             'success' => true,
-            'module'  => 'portfolio-detail',
-            'data'    => [
+            'module' => 'portfolio-detail',
+            'data' => [
                 'layout' => [
-                    'key'        => 'portfolioDetailPageLayout',
+                    'key' => 'portfolioDetailPageLayout',
                     'templateId' => $layoutRecord?->templateId ?? 'layout1',
-                    'allowed'    => Layout::allowedFor('portfolioDetailPageLayout'),
+                    'allowed' => Layout::allowedFor('portfolioDetailPageLayout'),
                 ],
                 'defaultSeo' => $defaultSeo,
             ],
@@ -213,12 +214,12 @@ class AdminModuleController extends Controller
 
         return response()->json([
             'success' => true,
-            'module'  => 'blog',
-            'data'    => [
+            'module' => 'blog',
+            'data' => [
                 'layout' => [
-                    'key'        => 'blogPageLayout',
+                    'key' => 'blogPageLayout',
                     'templateId' => $layoutRecord?->templateId ?? 'layout1',
-                    'allowed'    => Layout::allowedFor('blogPageLayout'),
+                    'allowed' => Layout::allowedFor('blogPageLayout'),
                 ],
                 'total' => $blogs->count(),
                 'posts' => $blogs,
@@ -237,12 +238,59 @@ class AdminModuleController extends Controller
 
         return response()->json([
             'success' => true,
-            'module'  => 'blog-detail',
-            'data'    => [
+            'module' => 'blog-detail',
+            'data' => [
                 'layout' => [
-                    'key'        => 'blogDetailPageLayout',
+                    'key' => 'blogDetailPageLayout',
                     'templateId' => $layoutRecord?->templateId ?? 'layout1',
-                    'allowed'    => Layout::allowedFor('blogDetailPageLayout'),
+                    'allowed' => Layout::allowedFor('blogDetailPageLayout'),
+                ],
+                'defaultSeo' => $defaultSeo,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Module 7: Events Feed & Catalog
+     * GET /api/admin/modules/events
+     */
+    public function getEvents(Request $request): JsonResponse
+    {
+        $layoutRecord = Layout::find('eventsPageLayout');
+        $events = Event::orderBy('date', 'desc')->orderBy('id', 'desc')->get()->map(fn ($e) => $e->toAdminPayload());
+
+        return response()->json([
+            'success' => true,
+            'module' => 'events',
+            'data' => [
+                'layout' => [
+                    'key' => 'eventsPageLayout',
+                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'allowed' => Layout::allowedFor('eventsPageLayout'),
+                ],
+                'total' => $events->count(),
+                'events' => $events,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Module 7.1: Event Detail
+     * GET /api/admin/modules/event-detail
+     */
+    public function getEventDetail(): JsonResponse
+    {
+        $layoutRecord = Layout::find('eventDetailPageLayout');
+        $defaultSeo = PageSeo::find('event-detail')?->toPayload();
+
+        return response()->json([
+            'success' => true,
+            'module' => 'event-detail',
+            'data' => [
+                'layout' => [
+                    'key' => 'eventDetailPageLayout',
+                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'allowed' => Layout::allowedFor('eventDetailPageLayout'),
                 ],
                 'defaultSeo' => $defaultSeo,
             ],
@@ -259,8 +307,8 @@ class AdminModuleController extends Controller
 
         return response()->json([
             'success' => true,
-            'module'  => 'settings',
-            'data'    => $setting->toPayload(),
+            'module' => 'settings',
+            'data' => $setting->toPayload(),
         ], 200);
     }
 
@@ -272,7 +320,7 @@ class AdminModuleController extends Controller
     {
         $records = Layout::all()->keyBy('key');
         $modules = [];
-        $active  = [];
+        $active = [];
 
         $navbar = NavbarConfig::getSingleton();
         $currNavLayout = $records->get('navbarLayout')?->templateId ?? 'layout1';
@@ -284,30 +332,30 @@ class AdminModuleController extends Controller
             if ($key === 'navbarLayout') {
                 $isEnabled = $navbar->isNavbarEnabled();
                 $active[$key] = [
-                    'layout'   => $current,
+                    'layout' => $current,
                     'behavior' => $navBehavior,
-                    'enabled'  => $isEnabled,
-                    'visible'  => $isEnabled,
-                    'status'   => $isEnabled ? 'visible' : 'hidden',
+                    'enabled' => $isEnabled,
+                    'visible' => $isEnabled,
+                    'status' => $isEnabled ? 'visible' : 'hidden',
                 ];
             } else {
                 $active[$key] = $current;
             }
 
             $modules[] = [
-                'key'        => $key,
-                'name'       => $meta['name'],
+                'key' => $key,
+                'name' => $meta['name'],
                 'templateId' => $current,
-                'allowed'    => Layout::allowedFor($key),
-                'updatedAt'  => $records->get($key)?->updatedAt,
+                'allowed' => Layout::allowedFor($key),
+                'updatedAt' => $records->get($key)?->updatedAt,
             ];
         }
 
         return response()->json([
             'success' => true,
-            'module'  => 'layouts',
-            'data'    => [
-                'active'  => $active,
+            'module' => 'layouts',
+            'data' => [
+                'active' => $active,
                 'modules' => $modules,
             ],
         ], 200);

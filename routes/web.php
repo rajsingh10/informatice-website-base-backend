@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeSectionController;
 use App\Http\Controllers\LayoutController;
 use App\Http\Controllers\MediaUploadController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SiteSettingController;
+use App\Http\Middleware\ForceJsonResponse;
 use Illuminate\Support\Facades\Route;
 
 // Interactive API Testing Dashboard Page
@@ -28,11 +30,12 @@ Route::get('/services/public/{path}', function ($path) {
     if (! file_exists($fullPath) || is_dir($fullPath)) {
         abort(404);
     }
+
     return response()->file($fullPath);
 })->where('path', '.*');
 
 // Direct aliases without /api prefix
-Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(function () {
+Route::middleware([ForceJsonResponse::class])->group(function () {
 
     // Public aliases
     Route::get('/public/layouts', [LayoutController::class, 'index']);
@@ -51,6 +54,10 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
     Route::get('/public/blog', [BlogController::class, 'indexPublic']);
     Route::get('/public/blog/{slug}', [BlogController::class, 'showPublic']);
 
+    // Module 7: Events
+    Route::get('/public/events', [EventController::class, 'indexPublic']);
+    Route::get('/public/events/{slug}', [EventController::class, 'showPublic']);
+
     // Admin Auth aliases (public)
     Route::post('/admin/login', [AuthController::class, 'login']);
     Route::post('/admin/auth/login', [AuthController::class, 'login']);
@@ -58,43 +65,47 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
     // Admin aliases (protected)
     Route::middleware('auth:api')->group(function () {
         // Admin Auth & Profile
-        Route::post('/admin/logout',                              [AuthController::class, 'logout']);
-        Route::post('/admin/auth/logout',                         [AuthController::class, 'logout']);
-        Route::get('/admin/me',                                   [AuthController::class, 'me']);
-        Route::get('/admin/auth/me',                              [AuthController::class, 'me']);
-        Route::match(['put', 'post'], '/admin/profile',           [AuthController::class, 'updateProfile']);
-        Route::match(['put', 'post'], '/admin/auth/profile',      [AuthController::class, 'updateProfile']);
-        Route::match(['put', 'post'], '/admin/change-password',      [AuthController::class, 'changePassword']);
+        Route::post('/admin/logout', [AuthController::class, 'logout']);
+        Route::post('/admin/auth/logout', [AuthController::class, 'logout']);
+        Route::get('/admin/me', [AuthController::class, 'me']);
+        Route::get('/admin/auth/me', [AuthController::class, 'me']);
+        Route::match(['put', 'post'], '/admin/profile', [AuthController::class, 'updateProfile']);
+        Route::match(['put', 'post'], '/admin/auth/profile', [AuthController::class, 'updateProfile']);
+        Route::match(['put', 'post'], '/admin/change-password', [AuthController::class, 'changePassword']);
         Route::match(['put', 'post'], '/admin/auth/change-password', [AuthController::class, 'changePassword']);
 
         // Direct Module Admin GET API aliases without /modules/ prefix
-        Route::get('/admin/topbar',                   [AdminModuleController::class, 'getTopbar']);
-        Route::get('/admin/navbar',                   [AdminModuleController::class, 'getNavbar']);
-        Route::get('/admin/home',                     [AdminModuleController::class, 'getHome']);
-        Route::get('/admin/service-detail',           [AdminModuleController::class, 'getServiceDetail']);
-        Route::get('/admin/portfolio-detail',         [AdminModuleController::class, 'getPortfolioDetail']);
-        Route::get('/admin/blog-detail',              [AdminModuleController::class, 'getBlogDetail']);
+        Route::get('/admin/topbar', [AdminModuleController::class, 'getTopbar']);
+        Route::get('/admin/navbar', [AdminModuleController::class, 'getNavbar']);
+        Route::get('/admin/home', [AdminModuleController::class, 'getHome']);
+        Route::get('/admin/service-detail', [AdminModuleController::class, 'getServiceDetail']);
+        Route::get('/admin/portfolio-detail', [AdminModuleController::class, 'getPortfolioDetail']);
+        Route::get('/admin/blog-detail', [AdminModuleController::class, 'getBlogDetail']);
+        Route::get('/admin/events-feed', [AdminModuleController::class, 'getEvents']);
+        Route::get('/admin/event-detail', [AdminModuleController::class, 'getEventDetail']);
 
         // Module-wise Admin GET API aliases with /admin/modules/ prefix
         Route::prefix('/admin/modules')->group(function () {
-            Route::get('topbar',                   [AdminModuleController::class, 'getTopbar']);
-            Route::get('navbar',                   [AdminModuleController::class, 'getNavbar']);
-            Route::get('navigation/navbar',        [AdminModuleController::class, 'getNavbar']);
-            Route::get('home',                     [AdminModuleController::class, 'getHome']);
-            Route::get('home-sections',            [AdminModuleController::class, 'getHome']);
-            Route::get('services',                 [AdminModuleController::class, 'getServices']);
-            Route::get('api/public/services',      [AdminModuleController::class, 'getServices']);
-            Route::get('service-detail',           [AdminModuleController::class, 'getServiceDetail']);
-            Route::get('portfolio',                [AdminModuleController::class, 'getPortfolio']);
-            Route::get('portfolio-detail',         [AdminModuleController::class, 'getPortfolioDetail']);
-            Route::get('blog',                     [AdminModuleController::class, 'getBlog']);
-            Route::get('blog-detail',              [AdminModuleController::class, 'getBlogDetail']);
-            Route::get('settings',                 [AdminModuleController::class, 'getSettings']);
-            Route::get('layouts',                  [AdminModuleController::class, 'getLayouts']);
+            Route::get('topbar', [AdminModuleController::class, 'getTopbar']);
+            Route::get('navbar', [AdminModuleController::class, 'getNavbar']);
+            Route::get('navigation/navbar', [AdminModuleController::class, 'getNavbar']);
+            Route::get('home', [AdminModuleController::class, 'getHome']);
+            Route::get('home-sections', [AdminModuleController::class, 'getHome']);
+            Route::get('services', [AdminModuleController::class, 'getServices']);
+            Route::get('api/public/services', [AdminModuleController::class, 'getServices']);
+            Route::get('service-detail', [AdminModuleController::class, 'getServiceDetail']);
+            Route::get('portfolio', [AdminModuleController::class, 'getPortfolio']);
+            Route::get('portfolio-detail', [AdminModuleController::class, 'getPortfolioDetail']);
+            Route::get('blog', [AdminModuleController::class, 'getBlog']);
+            Route::get('blog-detail', [AdminModuleController::class, 'getBlogDetail']);
+            Route::get('events', [AdminModuleController::class, 'getEvents']);
+            Route::get('event-detail', [AdminModuleController::class, 'getEventDetail']);
+            Route::get('settings', [AdminModuleController::class, 'getSettings']);
+            Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
         });
 
         // Module Layouts
-        Route::get('/admin/layouts',      [LayoutController::class, 'indexAdmin']);
+        Route::get('/admin/layouts', [LayoutController::class, 'indexAdmin']);
         Route::post('/admin/layouts/save', [LayoutController::class, 'save']);
         Route::match(['put', 'post'], '/admin/layouts', [LayoutController::class, 'store']);
         Route::match(['put', 'post'], '/admin/layouts/{key}', [LayoutController::class, 'update']);
@@ -108,20 +119,20 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
         // Module 2 Navbar
         Route::get('/admin/navigation/navbar', [NavbarController::class, 'showAdmin']);
         Route::match(['put', 'post'], '/admin/navigation/navbar', [NavbarController::class, 'updateNavbar']);
-        Route::match(['put', 'post'], '/admin/navbar',            [NavbarController::class, 'updateNavbar']);
+        Route::match(['put', 'post'], '/admin/navbar', [NavbarController::class, 'updateNavbar']);
         Route::put('/admin/navigation/navbar/behavior', [NavbarController::class, 'updateBehavior']);
         Route::put('/admin/navigation/navbar/items', [NavbarController::class, 'updateItems']);
         Route::put('/admin/navigation/navbar/cta', [NavbarController::class, 'updateCta']);
         Route::post('/admin/navigation/navbar/reset', [NavbarController::class, 'reset']);
 
         // Module 3 Home Sections (GET & POST on/off toggle APIs)
-        Route::get('/admin/home-sections',                    [HomeSectionController::class, 'index']);
+        Route::get('/admin/home-sections', [HomeSectionController::class, 'index']);
         Route::match(['put', 'post'], '/admin/home-sections', [HomeSectionController::class, 'toggle']);
         Route::match(['put', 'post'], '/admin/home-sections/toggle', [HomeSectionController::class, 'toggle']);
-        Route::match(['put', 'post'], '/admin/home-sections/batch',  [HomeSectionController::class, 'batch']);
-        Route::post('/admin/home-sections/reset',                    [HomeSectionController::class, 'reset']);
+        Route::match(['put', 'post'], '/admin/home-sections/batch', [HomeSectionController::class, 'batch']);
+        Route::post('/admin/home-sections/reset', [HomeSectionController::class, 'reset']);
         Route::match(['put', 'post'], '/admin/home-sections/{sectionId}', [HomeSectionController::class, 'toggle']);
-        Route::match(['put', 'post'], '/admin/home',                 [HomeSectionController::class, 'toggle']);
+        Route::match(['put', 'post'], '/admin/home', [HomeSectionController::class, 'toggle']);
 
         // Module 4 Services
         Route::get('/admin/services', [ServiceController::class, 'indexAdmin']);
@@ -143,5 +154,12 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
         Route::post('/admin/blog', [BlogController::class, 'store']);
         Route::put('/admin/blog/{id}', [BlogController::class, 'update']);
         Route::delete('/admin/blog/{id}', [BlogController::class, 'destroy']);
+
+        // Module 7 Events
+        Route::get('/admin/events', [EventController::class, 'indexAdmin']);
+        Route::get('/admin/events/{id}', [EventController::class, 'showAdmin']);
+        Route::post('/admin/events', [EventController::class, 'store']);
+        Route::put('/admin/events/{id}', [EventController::class, 'update']);
+        Route::delete('/admin/events/{id}', [EventController::class, 'destroy']);
     });
 });
