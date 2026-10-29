@@ -103,17 +103,30 @@ class AuthController extends Controller
 
         $data = $request->only(['name', 'email', 'phone', 'bio']);
 
-        // Handle profile image file upload (accepts either field name: profile_image or avatar)
+        // Handle profile image file upload directly to public/avatars (no storage link needed)
+        $file = null;
         if ($request->hasFile('profile_image')) {
-            if ($admin->avatar && ! Str::startsWith($admin->avatar, ['http://', 'https://'])) {
-                Storage::disk('public')->delete($admin->avatar);
-            }
-            $data['avatar'] = $request->file('profile_image')->store('avatars', 'public');
+            $file = $request->file('profile_image');
         } elseif ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+        }
+
+        if ($file) {
+            // Delete old avatar from public folder if exists
             if ($admin->avatar && ! Str::startsWith($admin->avatar, ['http://', 'https://'])) {
-                Storage::disk('public')->delete($admin->avatar);
+                @unlink(public_path($admin->avatar));
             }
-            $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
+
+            $destDir = public_path('avatars');
+            if (! file_exists($destDir)) {
+                mkdir($destDir, 0755, true);
+            }
+
+            $extension = $file->guessExtension() ?: $file->getClientOriginalExtension() ?: 'png';
+            $filename  = time() . '_' . Str::random(10) . '.' . $extension;
+            $file->move($destDir, $filename);
+
+            $data['avatar'] = 'avatars/' . $filename;
         } elseif ($request->filled('profile_image')) {
             $data['avatar'] = $request->input('profile_image');
         } elseif ($request->filled('avatar')) {
@@ -171,7 +184,7 @@ class AuthController extends Controller
         if ($admin->avatar) {
             $avatarUrl = Str::startsWith($admin->avatar, ['http://', 'https://'])
                 ? $admin->avatar
-                : asset('storage/' . $admin->avatar);
+                : self::publicFileUrl($admin->avatar);
         }
 
         return [
@@ -186,6 +199,23 @@ class AuthController extends Controller
             'created_at'    => $admin->created_at,
             'updated_at'    => $admin->updated_at,
         ];
+    }
+
+    /**
+     * Resolve public asset URL without requiring /storage/ or symlinks.
+     * Maps directly to /services/public/PATH when APP_URL has /services,
+     * or /PATH for standard document roots.
+     */
+    public static function publicFileUrl(string $path): string
+    {
+        $path = ltrim($path, '/');
+        $appUrl = rtrim(config('app.url') ?: url('/'), '/');
+
+        if (str_contains($appUrl, '/services')) {
+            return rtrim($appUrl, '/') . '/public/' . $path;
+        }
+
+        return url($path);
     }
 }
 
