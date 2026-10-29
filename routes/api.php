@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\HomeSectionController;
+use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\LayoutController;
 use App\Http\Controllers\MediaUploadController;
 use App\Http\Controllers\NavbarController;
@@ -53,6 +54,11 @@ Route::prefix('public')->group(function () {
     // Module 6: Blog
     Route::get('blog', [BlogController::class, 'indexPublic']);
     Route::get('blog/{slug}', [BlogController::class, 'showPublic']);
+
+    // Module 11: Contact Page & Inquiry Forms
+    Route::get('contact', [InquiryController::class, 'getPublicContact']);
+    Route::post('contact/inquiry', [InquiryController::class, 'submitInquiry']);
+    Route::post('inquiry', [InquiryController::class, 'submitInquiry']);
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -83,6 +89,9 @@ Route::prefix('admin')->group(function () {
         Route::get('service-detail',           [AdminModuleController::class, 'getServiceDetail']);
         Route::get('portfolio-detail',         [AdminModuleController::class, 'getPortfolioDetail']);
         Route::get('blog-detail',              [AdminModuleController::class, 'getBlogDetail']);
+        Route::get('contact',                  [AdminModuleController::class, 'getContact']);
+        Route::match(['put', 'post'], 'contact', [InquiryController::class, 'updateContactInfo']);
+        Route::match(['put', 'post'], 'contact/info', [InquiryController::class, 'updateContactInfo']);
 
         // Module-wise Admin GET APIs (Backward compatibility aliases)
         Route::prefix('modules')->group(function () {
@@ -98,6 +107,9 @@ Route::prefix('admin')->group(function () {
             Route::get('portfolio-detail',         [AdminModuleController::class, 'getPortfolioDetail']);
             Route::get('blog',                     [AdminModuleController::class, 'getBlog']);
             Route::get('blog-detail',              [AdminModuleController::class, 'getBlogDetail']);
+            Route::get('contact',                  [AdminModuleController::class, 'getContact']);
+            Route::match(['put', 'post'], 'contact', [InquiryController::class, 'updateContactInfo']);
+            Route::match(['put', 'post'], 'contact/info', [InquiryController::class, 'updateContactInfo']);
             Route::get('settings',                 [AdminModuleController::class, 'getSettings']);
             Route::get('layouts',                  [AdminModuleController::class, 'getLayouts']);
         });
@@ -110,7 +122,7 @@ Route::prefix('admin')->group(function () {
 
         // 3.2 SEO
         Route::get('seo/{page}',               [SeoController::class, 'showAdmin']);
-        Route::put('seo/{page}',               [SeoController::class, 'update']);
+        Route::match(['put', 'post'], 'seo/{page}', [SeoController::class, 'update']);
 
         // 3.3 Media Uploads
         Route::post('uploads',                 [MediaUploadController::class, 'store']);
@@ -158,5 +170,11 @@ Route::prefix('admin')->group(function () {
         Route::post('blog',                    [BlogController::class, 'store']);
         Route::put('blog/{id}',                [BlogController::class, 'update']);
         Route::delete('blog/{id}',             [BlogController::class, 'destroy']);
+
+        // Module 11: Contact Inquiries CRUD
+        Route::get('inquiries',                [InquiryController::class, 'index']);
+        Route::get('inquiries/{id}',           [InquiryController::class, 'show']);
+        Route::match(['put', 'patch', 'post'], 'inquiries/{id}', [InquiryController::class, 'updateStatus']);
+        Route::delete('inquiries/{id}',        [InquiryController::class, 'destroy']);
     });
 });

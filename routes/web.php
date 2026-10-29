@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\HomeSectionController;
+use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\LayoutController;
 use App\Http\Controllers\MediaUploadController;
 use App\Http\Controllers\NavbarController;
@@ -51,6 +52,11 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
     Route::get('/public/blog', [BlogController::class, 'indexPublic']);
     Route::get('/public/blog/{slug}', [BlogController::class, 'showPublic']);
 
+    // Module 11: Contact Page & Inquiry
+    Route::get('/public/contact', [InquiryController::class, 'getPublicContact']);
+    Route::post('/public/contact/inquiry', [InquiryController::class, 'submitInquiry']);
+    Route::post('/public/inquiry', [InquiryController::class, 'submitInquiry']);
+
     // Admin Auth aliases (public)
     Route::post('/admin/login', [AuthController::class, 'login']);
     Route::post('/admin/auth/login', [AuthController::class, 'login']);
@@ -74,6 +80,9 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
         Route::get('/admin/service-detail',           [AdminModuleController::class, 'getServiceDetail']);
         Route::get('/admin/portfolio-detail',         [AdminModuleController::class, 'getPortfolioDetail']);
         Route::get('/admin/blog-detail',              [AdminModuleController::class, 'getBlogDetail']);
+        Route::get('/admin/contact',                  [AdminModuleController::class, 'getContact']);
+        Route::match(['put', 'post'], '/admin/contact', [InquiryController::class, 'updateContactInfo']);
+        Route::match(['put', 'post'], '/admin/contact/info', [InquiryController::class, 'updateContactInfo']);
 
         // Module-wise Admin GET API aliases with /admin/modules/ prefix
         Route::prefix('/admin/modules')->group(function () {
@@ -89,6 +98,9 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
             Route::get('portfolio-detail',         [AdminModuleController::class, 'getPortfolioDetail']);
             Route::get('blog',                     [AdminModuleController::class, 'getBlog']);
             Route::get('blog-detail',              [AdminModuleController::class, 'getBlogDetail']);
+            Route::get('contact',                  [AdminModuleController::class, 'getContact']);
+            Route::match(['put', 'post'], 'contact', [InquiryController::class, 'updateContactInfo']);
+            Route::match(['put', 'post'], 'contact/info', [InquiryController::class, 'updateContactInfo']);
             Route::get('settings',                 [AdminModuleController::class, 'getSettings']);
             Route::get('layouts',                  [AdminModuleController::class, 'getLayouts']);
         });
@@ -99,7 +111,7 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
         Route::match(['put', 'post'], '/admin/layouts', [LayoutController::class, 'store']);
         Route::match(['put', 'post'], '/admin/layouts/{key}', [LayoutController::class, 'update']);
         Route::get('/admin/seo/{page}', [SeoController::class, 'showAdmin']);
-        Route::put('/admin/seo/{page}', [SeoController::class, 'update']);
+        Route::match(['put', 'post'], '/admin/seo/{page}', [SeoController::class, 'update']);
         Route::post('/admin/uploads', [MediaUploadController::class, 'store']);
         Route::delete('/admin/uploads/{id}', [MediaUploadController::class, 'destroy']);
         Route::get('/admin/settings', [SiteSettingController::class, 'show']);
@@ -143,5 +155,11 @@ Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(functi
         Route::post('/admin/blog', [BlogController::class, 'store']);
         Route::put('/admin/blog/{id}', [BlogController::class, 'update']);
         Route::delete('/admin/blog/{id}', [BlogController::class, 'destroy']);
+
+        // Module 11: Contact Inquiries CRUD
+        Route::get('/admin/inquiries', [InquiryController::class, 'index']);
+        Route::get('/admin/inquiries/{id}', [InquiryController::class, 'show']);
+        Route::match(['put', 'patch', 'post'], '/admin/inquiries/{id}', [InquiryController::class, 'updateStatus']);
+        Route::delete('/admin/inquiries/{id}', [InquiryController::class, 'destroy']);
     });
 });

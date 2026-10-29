@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\HomeSection;
+use App\Models\Inquiry;
 use App\Models\Layout;
 use App\Models\NavbarConfig;
 use App\Models\PageSeo;
@@ -245,6 +246,54 @@ class AdminModuleController extends Controller
                     'allowed'    => Layout::allowedFor('blogDetailPageLayout'),
                 ],
                 'defaultSeo' => $defaultSeo,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Module 11: Contact Page and Inquiry Forms
+     * GET /api/admin/modules/contact & /api/admin/contact
+     */
+    public function getContact(): JsonResponse
+    {
+        $layoutRecord = Layout::find('contactPageLayout');
+        $currentTemplate = $layoutRecord?->templateId ?? 'layout1';
+        $setting = SiteSetting::getSingleton();
+        $defaultSeo = PageSeo::find('contact')?->toPayload() ?? PageSeo::defaults('contact');
+
+        $templatesMeta = Layout::templatesFor('contactPageLayout');
+        $templates = [];
+        foreach ($templatesMeta as $id => $name) {
+            $templates[] = [
+                'id'     => $id,
+                'name'   => $name,
+                'active' => $id === $currentTemplate,
+            ];
+        }
+
+        $counts = [
+            'total'    => Inquiry::count(),
+            'new'      => Inquiry::where('status', 'new')->count(),
+            'read'     => Inquiry::where('status', 'read')->count(),
+            'replied'  => Inquiry::where('status', 'replied')->count(),
+            'archived' => Inquiry::where('status', 'archived')->count(),
+        ];
+
+        return response()->json([
+            'success' => true,
+            'module'  => 'contact',
+            'data'    => [
+                'layout' => [
+                    'key'        => 'contactPageLayout',
+                    'templateId' => $currentTemplate,
+                    'allowed'    => Layout::allowedFor('contactPageLayout'),
+                    'templates'  => $templates,
+                ],
+                'seo'         => $defaultSeo,
+                'contactInfo' => $setting->toContactInfo(),
+                'siteInfo'    => $setting->toContactInfo(),
+                'stats'       => $counts,
+                'recent'     => Inquiry::orderBy('id', 'desc')->take(5)->get()->map->toPayload(),
             ],
         ], 200);
     }

@@ -95,5 +95,22 @@ class SiteSetting extends Model
             'announcement' => is_array($this->announcement) ? array_merge($defaults['announcement'], $this->announcement) : $defaults['announcement'],
         ];
     }
+
+    /**
+     * Format contact info payload.
+     */
+    public function toContactInfo(): array
+    {
+        $defaults = static::defaults();
+
+        return [
+            'email'       => (string) ($this->email ?? ''),
+            'phone'       => (string) ($this->phone ?? ''),
+            'address'     => (string) ($this->address ?? ''),
+            'mapEmbedUrl' => (string) ($this->mapEmbedUrl ?? ''),
+            'offices'     => is_array($this->offices) ? $this->offices : $defaults['offices'],
+            'socials'     => is_array($this->socials) ? array_merge($defaults['socials'], $this->socials) : $defaults['socials'],
+        ];
+    }
 }
 

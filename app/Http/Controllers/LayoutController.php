@@ -147,6 +147,10 @@ class LayoutController extends Controller
         $allowed = Layout::allowedFor($key);
         $templateId = $request->input('layout', $request->input('templateId'));
 
+        if (is_numeric($templateId) && in_array("layout{$templateId}", $allowed, true)) {
+            $templateId = "layout{$templateId}";
+        }
+
         if (! $templateId || ! in_array($templateId, $allowed)) {
             return response()->json([
                 'success' => false,
