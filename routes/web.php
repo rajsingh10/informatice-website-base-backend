@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeSectionController;
 use App\Http\Controllers\LayoutController;
 use App\Http\Controllers\MediaUploadController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\SeoController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SiteSettingController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\TestimonialController;
 use App\Http\Middleware\ForceJsonResponse;
 use Illuminate\Support\Facades\Route;
 
@@ -78,6 +80,14 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
     Route::get('/public/team', [TeamController::class, 'indexPublic']);
     Route::get('/public/team/{id}', [TeamController::class, 'showPublic']);
 
+    // Module 9: Testimonials
+    Route::get('/public/testimonials', [TestimonialController::class, 'indexPublic']);
+    Route::get('/public/testimonials/{id}', [TestimonialController::class, 'showPublic']);
+
+    // Module 10: Gallery
+    Route::get('/public/gallery', [GalleryController::class, 'indexPublic']);
+    Route::get('/public/gallery/{id}', [GalleryController::class, 'showPublic']);
+
     // Admin Auth aliases (public)
     Route::post('/admin/login', [AuthController::class, 'login']);
     Route::post('/admin/auth/login', [AuthController::class, 'login']);
@@ -104,6 +114,8 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
         Route::get('/admin/events-feed', [AdminModuleController::class, 'getEvents']);
         Route::get('/admin/event-detail', [AdminModuleController::class, 'getEventDetail']);
         Route::get('/admin/team-feed', [AdminModuleController::class, 'getTeam']);
+        Route::get('/admin/testimonials-feed', [AdminModuleController::class, 'getTestimonials']);
+        Route::get('/admin/gallery-feed', [AdminModuleController::class, 'getGallery']);
 
         // Module-wise Admin GET API aliases with /admin/modules/ prefix
         Route::prefix('/admin/modules')->group(function () {
@@ -122,6 +134,8 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
             Route::get('events', [AdminModuleController::class, 'getEvents']);
             Route::get('event-detail', [AdminModuleController::class, 'getEventDetail']);
             Route::get('team', [AdminModuleController::class, 'getTeam']);
+            Route::get('testimonials', [AdminModuleController::class, 'getTestimonials']);
+            Route::get('gallery', [AdminModuleController::class, 'getGallery']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
         });
@@ -218,5 +232,19 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
         Route::post('/admin/team', [TeamController::class, 'store']);
         Route::put('/admin/team/{id}', [TeamController::class, 'update']);
         Route::delete('/admin/team/{id}', [TeamController::class, 'destroy']);
+
+        // Module 9 Testimonials
+        Route::get('/admin/testimonials', [TestimonialController::class, 'indexAdmin']);
+        Route::get('/admin/testimonials/{id}', [TestimonialController::class, 'showAdmin']);
+        Route::post('/admin/testimonials', [TestimonialController::class, 'store']);
+        Route::put('/admin/testimonials/{id}', [TestimonialController::class, 'update']);
+        Route::delete('/admin/testimonials/{id}', [TestimonialController::class, 'destroy']);
+
+        // Module 10 Gallery
+        Route::get('/admin/gallery', [GalleryController::class, 'indexAdmin']);
+        Route::get('/admin/gallery/{id}', [GalleryController::class, 'showAdmin']);
+        Route::post('/admin/gallery', [GalleryController::class, 'store']);
+        Route::put('/admin/gallery/{id}', [GalleryController::class, 'update']);
+        Route::delete('/admin/gallery/{id}', [GalleryController::class, 'destroy']);
     });
 });
