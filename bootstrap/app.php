@@ -13,6 +13,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Exclude stateless API / direct alias routes from CSRF
+        $middleware->validateCsrfTokens(except: [
+            'admin/*',
+            'public/*',
+            'api/*',
+        ]);
+
         // Force JSON response for all /api/* routes
         $middleware->api(prepend: [
             \App\Http\Middleware\ForceJsonResponse::class,
