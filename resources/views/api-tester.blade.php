@@ -540,8 +540,22 @@
                     </button>
                 </div>
 
-                <!-- Contact Page API (Module 11) -->
                 <!-- 9. Testimonials & Reviews -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/modules/testimonials</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 9: Returns testimonials layout (testimonialsPageLayout) and all client reviews.</p>
+                    <button onclick="sendApi('GET', '/api/admin/modules/testimonials', null, true)" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-star mr-1"></i> Fetch /api/admin/modules/testimonials
+                    </button>
+                </div>
+
+                <!-- 11. Contact Page API (Module 11) -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center space-x-2">
@@ -559,16 +573,6 @@
                             <i class="fa-solid fa-envelope mr-1"></i> /admin/contact
                         </button>
                     </div>
-                </div>
-                <!-- End Contact Page API -->
-                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/modules/testimonials</span>
-                        </div>
-                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
-                    </div>
-                    <p class="text-xs text-slate-600 mb-3">Module 9: Returns testimonials layout (testimonialsPageLayout) and all client reviews.</p>
-                    <button onclick="sendApi('GET', '/api/admin/modules/testimonials', null, true)" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
-                        <i class="fa-solid fa-star mr-1"></i> Fetch /api/admin/modules/testimonials
-                    </button>
                 </div>
 
                 <!-- 10. Gallery & Media -->
