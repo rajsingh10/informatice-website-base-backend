@@ -16,8 +16,18 @@ use App\Http\Controllers\TeamController;
 use App\Http\Middleware\ForceJsonResponse;
 use Illuminate\Support\Facades\Route;
 
-// Interactive API Testing Dashboard Page
-Route::get('/', function () {
+// Interactive API Testing Dashboard / Root Services API
+Route::get('/', function (\Illuminate\Http\Request $request) {
+    // If request wants JSON (API request, fetch, axios, or not a full browser page navigation)
+    $isBrowserDocument = str_contains($request->header('Accept', ''), 'text/html')
+        && ($request->header('Sec-Fetch-Dest', '') === 'document' || ! $request->hasHeader('Sec-Fetch-Dest'))
+        && ! $request->hasHeader('X-Requested-With')
+        && ! $request->has('json');
+
+    if (! $isBrowserDocument || $request->wantsJson() || $request->ajax() || $request->has('json')) {
+        return app(ServiceController::class)->indexPublic($request);
+    }
+
     return view('api-tester');
 });
 
@@ -25,7 +35,7 @@ Route::get('/api-tester', function () {
     return view('api-tester');
 });
 
-// Direct file serving for /services/public/... assets (mirrors production / Apache)
+// Direct file serving for /services/public/... assets (ONLY actual static files)
 Route::get('/services/public/{path}', function ($path) {
     $fullPath = public_path($path);
     if (! file_exists($fullPath) || is_dir($fullPath)) {
@@ -33,10 +43,14 @@ Route::get('/services/public/{path}', function ($path) {
     }
 
     return response()->file($fullPath);
-})->where('path', '.*');
+})->where('path', '.*\.(css|js|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf|eot|map)$');
 
 // Direct aliases without /api prefix
 Route::middleware([ForceJsonResponse::class])->group(function () {
+
+    // Direct services aliases
+    Route::get('/services', [ServiceController::class, 'indexPublic']);
+    Route::get('/services/{slug}', [ServiceController::class, 'showPublic']);
 
     // Public aliases
     Route::get('/public/layouts', [LayoutController::class, 'index']);

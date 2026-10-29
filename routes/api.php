@@ -21,6 +21,10 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+// Public direct aliases without prefix (e.g. /api/services)
+Route::get('services', [ServiceController::class, 'indexPublic']);
+Route::get('services/{slug}', [ServiceController::class, 'showPublic']);
+
 // ═══════════════════════════════════════════════════════════
 //  PUBLIC routes  (No Auth)
 // ═══════════════════════════════════════════════════════════

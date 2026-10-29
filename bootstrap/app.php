@@ -29,16 +29,31 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        // Always return JSON responses for unauthenticated requests on api/admin/public routes
+        // Always return JSON responses for API/services routes or when client expects JSON
         $exceptions->respond(function (\Symfony\Component\HttpFoundation\Response $response, \Throwable $e, \Illuminate\Http\Request $request) {
-            if ($request->is('admin/*', 'public/*', 'api/*')) {
-                if ($response->getStatusCode() === 401 || $e instanceof \Illuminate\Auth\AuthenticationException) {
+            $isApi = $request->is('admin/*', 'public/*', 'api/*', 'services', 'services/*')
+                || $request->expectsJson()
+                || $request->header('Sec-Fetch-Dest') === 'empty'
+                || ! str_contains($request->header('Accept', ''), 'text/html');
+
+            if ($isApi) {
+                $status = $response->getStatusCode();
+                if ($e instanceof \Illuminate\Auth\AuthenticationException || $status === 401) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Unauthenticated or invalid token. Please log in first.',
                     ], 401);
                 }
+
+                if ($status >= 400) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $e->getMessage() ?: ($status === 404 ? 'Resource not found' : 'Server error'),
+                        'error'   => $e->getMessage(),
+                    ], $status);
+                }
             }
+
             return $response;
         });
     })->create();

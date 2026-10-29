@@ -15,7 +15,10 @@ class ForceJsonResponse
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->is('admin/*', 'admin', 'public/*', 'public', 'api/*', 'api')) {
+        if ($request->is('admin/*', 'admin', 'public/*', 'public', 'api/*', 'api', 'services', 'services/*')
+            || $request->header('Sec-Fetch-Dest') === 'empty'
+            || ! str_contains($request->header('Accept', ''), 'text/html')
+        ) {
             $request->headers->set('Accept', 'application/json');
         }
 
