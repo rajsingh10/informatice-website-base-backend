@@ -33,6 +33,15 @@ class LayoutController extends Controller
             'items'    => $navItems,
         ];
 
+        $currentTopbarTemplate = $layouts['topbarLayout'] ?? 'layout1';
+        $isTopbarEnabled = TopbarController::isTopbarEnabled();
+        $layouts['topbarLayout'] = [
+            'layout'   => $isTopbarEnabled ? ($currentTopbarTemplate === 'layout0' ? 'layout1' : $currentTopbarTemplate) : 'layout0',
+            'enabled'  => $isTopbarEnabled,
+            'visible'  => $isTopbarEnabled,
+            'status'   => $isTopbarEnabled ? 'visible' : 'hidden',
+        ];
+
         return response()->json([
             'success' => true,
             'data'    => $layouts,
@@ -63,6 +72,14 @@ class LayoutController extends Controller
                     'visible'  => $isEnabled,
                     'status'   => $isEnabled ? 'visible' : 'hidden',
                     'items'    => $navItems,
+                ];
+            } elseif ($key === 'topbarLayout') {
+                $isTopbarEnabled = TopbarController::isTopbarEnabled();
+                $active[$key] = [
+                    'layout'   => $isTopbarEnabled ? ($current === 'layout0' ? 'layout1' : $current) : 'layout0',
+                    'enabled'  => $isTopbarEnabled,
+                    'visible'  => $isTopbarEnabled,
+                    'status'   => $isTopbarEnabled ? 'visible' : 'hidden',
                 ];
             } else {
                 $active[$key] = $current;
@@ -204,6 +221,47 @@ class LayoutController extends Controller
                 $processed = NavbarConfig::processItems($request->input('menu'));
                 $navbar->update(['items' => $processed]);
             }
+        } elseif ($key === 'topbarLayout') {
+            $setting = \App\Models\SiteSetting::getSingleton();
+            $ann = is_array($setting->announcement) ? $setting->announcement : [];
+            if (! isset($ann['_topbar'])) {
+                $ann['_topbar'] = [];
+            }
+
+            if ($request->has('enabled') || $request->has('visible') || $request->has('status')) {
+                $isTopEnabled = true;
+                if ($request->has('enabled')) {
+                    $isTopEnabled = filter_var($request->input('enabled'), FILTER_VALIDATE_BOOLEAN);
+                } elseif ($request->has('visible')) {
+                    $isTopEnabled = filter_var($request->input('visible'), FILTER_VALIDATE_BOOLEAN);
+                } elseif ($request->has('status')) {
+                    $st = (string) $request->input('status');
+                    $isTopEnabled = in_array(strtolower($st), ['visible', 'on', 'true', '1'], true);
+                }
+                $ann['_topbar']['enabled'] = $isTopEnabled;
+            }
+
+            if ($templateId === 'layout0') {
+                $ann['_topbar']['enabled'] = false;
+            } elseif ($templateId !== 'layout0' && ! ($ann['_topbar']['enabled'] ?? true)) {
+                $ann['_topbar']['enabled'] = true;
+            }
+
+            if ($request->has('email')) $setting->email = (string) $request->input('email');
+            if ($request->has('phone')) $setting->phone = (string) $request->input('phone');
+            if ($request->has('cta')) {
+                $ctaIn = $request->input('cta');
+                if (is_array($ctaIn)) {
+                    $ann['cta'] = [
+                        'enabled' => isset($ctaIn['enabled']) ? filter_var($ctaIn['enabled'], FILTER_VALIDATE_BOOLEAN) : true,
+                        'label'   => (string) ($ctaIn['label'] ?? 'Get a Quote'),
+                        'url'     => (string) ($ctaIn['url'] ?? '/contact'),
+                    ];
+                }
+            }
+
+            $setting->announcement = $ann;
+            $setting->save();
         }
 
         // 5. Message names the module and the new template
@@ -212,13 +270,23 @@ class LayoutController extends Controller
         $isEnabled = $navbar->isNavbarEnabled();
         $navItems = is_array($navbar->fresh()->items) ? array_values($navbar->fresh()->items) : NavbarConfig::defaultItems();
 
-        $responseData = [
-            'layout'   => $templateId,
-            'behavior' => $activeBehavior,
-            'enabled'  => $isEnabled,
-            'visible'  => $isEnabled,
-            'status'   => $isEnabled ? 'visible' : 'hidden',
-        ];
+        if ($key === 'topbarLayout') {
+            $isTopEnabled = TopbarController::isTopbarEnabled();
+            $responseData = [
+                'layout'   => $templateId,
+                'enabled'  => $isTopEnabled,
+                'visible'  => $isTopEnabled,
+                'status'   => $isTopEnabled ? 'visible' : 'hidden',
+            ];
+        } else {
+            $responseData = [
+                'layout'   => $templateId,
+                'behavior' => $activeBehavior,
+                'enabled'  => $isEnabled,
+                'visible'  => $isEnabled,
+                'status'   => $isEnabled ? 'visible' : 'hidden',
+            ];
+        }
 
         if ($key === 'navbarLayout') {
             $responseData['items'] = $navItems;

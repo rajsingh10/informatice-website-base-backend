@@ -27,25 +27,30 @@ class AdminModuleController extends Controller
      */
     public function getTopbar(): JsonResponse
     {
-        $layoutRecord = Layout::find('topbarLayout');
+        $payload = \App\Http\Controllers\TopbarController::buildPayload(true);
         $setting = SiteSetting::getSingleton();
 
         return response()->json([
             'success' => true,
             'module' => 'topbar',
-            'data' => [
+            'data' => array_merge($payload, [
                 'layout' => [
                     'key' => 'topbarLayout',
-                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'templateId' => $payload['templateId'],
+                    'layout' => $payload['layout'],
+                    'enabled' => $payload['enabled'],
+                    'visible' => $payload['visible'],
+                    'status' => $payload['status'],
                     'allowed' => Layout::allowedFor('topbarLayout'),
                 ],
                 'content' => [
-                    'email' => $setting->email,
-                    'phone' => $setting->phone,
-                    'socials' => $setting->socials ?? [],
-                    'announcement' => $setting->announcement ?? [],
+                    'email' => $payload['email'],
+                    'phone' => $payload['phone'],
+                    'socials' => $payload['socials'],
+                    'announcement' => $payload['announcement'],
+                    'cta' => $payload['cta'],
                 ],
-            ],
+            ]),
         ], 200);
     }
 
