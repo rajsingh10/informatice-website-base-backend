@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Admin\AuthController;
 use App\Models\MediaUpload;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class MediaUploadController extends Controller
 {
@@ -35,18 +35,30 @@ class MediaUploadController extends Controller
         $extension = $file->guessExtension() ?: $file->getClientOriginalExtension() ?: 'webp';
         $filename = "{$id}.{$extension}";
 
-        // Subfolder path by year/month: uploads/2026/10/f_91ab.ext
+        // Subfolder path by year/month directly inside public folder (no storage link needed)
         $subDir = 'uploads/' . date('Y/m');
-        $path = $file->storeAs($subDir, $filename, 'public');
-        $url = asset('storage/' . $path);
+        $destDir = public_path($subDir);
+        if (! file_exists($destDir)) {
+            mkdir($destDir, 0755, true);
+        }
+
+        $mimeType = $file->getMimeType() ?: $file->getClientMimeType() ?: 'application/octet-stream';
+        $size = $file->getSize() ?: 0;
+
+        $fullFilePath = $destDir . '/' . $filename;
+        $file->move($destDir, $filename);
+        $path = $subDir . '/' . $filename;
+        $url = AuthController::publicFileUrl($path);
 
         // Detect dimensions for raster images
         $width = null;
         $height = null;
-        $imageInfo = @getimagesize($file->getRealPath());
-        if ($imageInfo && isset($imageInfo[0], $imageInfo[1])) {
-            $width = (int) $imageInfo[0];
-            $height = (int) $imageInfo[1];
+        if (file_exists($fullFilePath)) {
+            $imageInfo = @getimagesize($fullFilePath);
+            if ($imageInfo && isset($imageInfo[0], $imageInfo[1])) {
+                $width = (int) $imageInfo[0];
+                $height = (int) $imageInfo[1];
+            }
         }
 
         $media = MediaUpload::create([
@@ -54,8 +66,8 @@ class MediaUploadController extends Controller
             'filename'  => $filename,
             'path'      => $path,
             'url'       => $url,
-            'mime_type' => $file->getMimeType() ?: 'application/octet-stream',
-            'size'      => $file->getSize() ?: 0,
+            'mime_type' => $mimeType,
+            'size'      => $size,
             'width'     => $width,
             'height'    => $height,
         ]);

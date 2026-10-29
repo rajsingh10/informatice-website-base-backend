@@ -302,7 +302,7 @@
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/public/layouts</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/layouts</span>
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
@@ -316,7 +316,7 @@
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-put">PUT</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/layouts/:key</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/layouts/:key</span>
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
@@ -334,7 +334,21 @@
                         </div>
                     </div>
                     <button onclick="testUpdateLayout()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2.5 rounded-lg transition">
-                        <i class="fa-solid fa-pen-to-square"></i> Send PUT /admin/layouts/:key
+                        <i class="fa-solid fa-pen-to-square"></i> Send PUT /api/admin/layouts/:key
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/layouts/save</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Save multiple layouts in a single batch request.</p>
+                    <button onclick="testBatchSaveLayouts()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2 rounded-lg transition">
+                        Save Batch Sample Layouts
                     </button>
                 </div>
             </div>
@@ -347,7 +361,7 @@
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/public/navigation/navbar</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/navigation/navbar</span>
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
@@ -360,7 +374,7 @@
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/navigation/navbar</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/navigation/navbar</span>
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
@@ -378,7 +392,7 @@
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/public/home-sections</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/home-sections</span>
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
@@ -396,7 +410,7 @@
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/public/services</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/services</span>
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
@@ -409,7 +423,7 @@
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/public/services/:slug</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/services/:slug</span>
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
@@ -426,12 +440,12 @@
             <!-- MODULE 5: PORTFOLIO & CASE STUDIES APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-portfolio" class="space-y-4 hidden">
-                <!-- 1. GET /public/portfolio -->
+                <!-- 1. GET /api/public/portfolio -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/public/portfolio</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/portfolio</span>
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
@@ -446,12 +460,12 @@
                     </button>
                 </div>
 
-                <!-- 2. GET /public/portfolio/:slug -->
+                <!-- 2. GET /api/public/portfolio/:slug -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/public/portfolio/:slug</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/portfolio/:slug</span>
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
@@ -464,12 +478,12 @@
                     </div>
                 </div>
 
-                <!-- 3. GET /admin/portfolio -->
+                <!-- 3. GET /api/admin/portfolio -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/portfolio</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/portfolio</span>
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
@@ -479,12 +493,12 @@
                     </button>
                 </div>
 
-                <!-- 4. POST /admin/portfolio (Create) -->
+                <!-- 4. POST /api/admin/portfolio (Create) -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-post">POST</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/portfolio</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/portfolio</span>
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
@@ -524,13 +538,13 @@
                     </button>
                 </div>
 
-                <!-- 5. PUT /admin/portfolio/:id & DELETE -->
+                <!-- 5. PUT /api/admin/portfolio/:id & DELETE -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-put">PUT</span>
                             <span class="method-badge badge-del">DELETE</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/portfolio/:id</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/portfolio/:id</span>
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
@@ -559,12 +573,12 @@
             <!-- 2.5 MODULE 6: BLOG APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-blog" class="space-y-4 hidden">
-                <!-- 1. GET /public/blog -->
+                <!-- 1. GET /api/public/blog -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/public/blog</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/blog</span>
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
@@ -580,12 +594,12 @@
                     </button>
                 </div>
 
-                <!-- 2. GET /public/blog/:slug -->
+                <!-- 2. GET /api/public/blog/:slug -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/public/blog/:slug</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/blog/:slug</span>
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
@@ -598,12 +612,12 @@
                     </div>
                 </div>
 
-                <!-- 3. GET /admin/blog -->
+                <!-- 3. GET /api/admin/blog -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/blog</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/blog</span>
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
@@ -613,12 +627,12 @@
                     </button>
                 </div>
 
-                <!-- 4. POST /admin/blog (Create) -->
+                <!-- 4. POST /api/admin/blog (Create) -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-post">POST</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/blog</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/blog</span>
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
@@ -658,13 +672,13 @@
                     </button>
                 </div>
 
-                <!-- 5. PUT & DELETE /admin/blog/:id -->
+                <!-- 5. PUT & DELETE /api/admin/blog/:id -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-put">PUT</span>
                             <span class="method-badge badge-del">DELETE</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/blog/:id</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/blog/:id</span>
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
@@ -688,13 +702,16 @@
                     </div>
                 </div>
             </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- 3. SEO MODULE APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-seo" class="space-y-4 hidden">
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/public/seo/:page</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/seo/:page</span>
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
@@ -704,6 +721,8 @@
                             <option value="portfolio-detail">portfolio-detail</option>
                             <option value="services">services</option>
                             <option value="service-detail">service-detail</option>
+                            <option value="blog">blog</option>
+                            <option value="blog-detail">blog-detail</option>
                             <option value="home">home</option>
                         </select>
                         <button onclick="testPublicSeo()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-xs font-medium">
@@ -721,7 +740,7 @@
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-post">POST</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/admin/uploads</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/uploads</span>
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
@@ -738,16 +757,72 @@
             <!-- 5. SITE SETTINGS APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-settings" class="space-y-4 hidden">
+                <!-- 1. GET /api/public/settings -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
-                            <span class="font-mono text-sm font-semibold text-slate-800">/public/settings</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/settings</span>
                         </div>
                         <span class="text-xs text-slate-400">Public (No Auth)</span>
                     </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetch public site identity, contacts, address, and socials.</p>
                     <button onclick="testPublicSettings()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
-                        <span>Fetch Site Settings</span>
+                        <i class="fa-solid fa-sliders"></i>
+                        <span>Fetch Public Site Settings</span>
+                    </button>
+                </div>
+
+                <!-- 2. GET /api/admin/settings -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/settings</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetch complete site settings for admin configuration.</p>
+                    <button onclick="testAdminSettings()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                        Fetch Admin Site Settings
+                    </button>
+                </div>
+
+                <!-- 3. PUT /api/admin/settings -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/settings</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Update global site metadata, branding, contacts, and socials.</p>
+                    <div class="space-y-2 mb-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Site Name</label>
+                                <input id="settings-sitename" type="text" value="NexGen Digital" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Contact Email</label>
+                                <input id="settings-email" type="email" value="contact@nexgen.io" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Phone</label>
+                                <input id="settings-phone" type="text" value="+1 (800) 555-0199" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Address</label>
+                                <input id="settings-address" type="text" value="100 Innovation Way, Suite 400, San Francisco, CA" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="testUpdateSettings()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Save Site Settings</span>
                     </button>
                 </div>
             </div>
@@ -994,42 +1069,53 @@
         }
 
         // Layouts
-        async function testPublicLayouts() { await sendApi('GET', '/public/layouts'); }
+        async function testPublicLayouts() { await sendApi('GET', '/api/public/layouts'); }
         async function testUpdateLayout() {
             const key = document.getElementById('layout-key-select').value;
             const templateId = document.getElementById('layout-template-select').value;
-            await sendApi('PUT', `/admin/layouts/${key}`, { templateId }, true);
+            await sendApi('PUT', `/api/admin/layouts/${key}`, { templateId }, true);
+        }
+        async function testBatchSaveLayouts() {
+            const body = {
+                layouts: {
+                    topbarLayout: "layout1",
+                    navbarLayout: "layout1",
+                    homePageLayout: "layout1",
+                    footerLayout: "layout1"
+                }
+            };
+            await sendApi('POST', '/api/admin/layouts/save', body, true);
         }
 
         // Navbar
-        async function testPublicNavbar() { await sendApi('GET', '/public/navigation/navbar'); }
-        async function testAdminNavbar() { await sendApi('GET', '/admin/navigation/navbar', null, true); }
+        async function testPublicNavbar() { await sendApi('GET', '/api/public/navigation/navbar'); }
+        async function testAdminNavbar() { await sendApi('GET', '/api/admin/navigation/navbar', null, true); }
 
         // Home
-        async function testPublicHomeSections() { await sendApi('GET', '/public/home-sections'); }
+        async function testPublicHomeSections() { await sendApi('GET', '/api/public/home-sections'); }
 
         // Services
-        async function testPublicServices() { await sendApi('GET', '/public/services'); }
+        async function testPublicServices() { await sendApi('GET', '/api/public/services'); }
         async function testPublicServiceDetail() {
             const slug = document.getElementById('srv-pub-slug').value.trim();
-            await sendApi('GET', `/public/services/${slug}`);
+            await sendApi('GET', `/api/public/services/${slug}`);
         }
 
         // Module 5: Portfolio
         async function testPublicPortfolio() {
             const cat = document.getElementById('port-pub-cat').value;
             const limit = document.getElementById('port-pub-limit').value || 20;
-            let path = `/public/portfolio?limit=${limit}`;
+            let path = `/api/public/portfolio?limit=${limit}`;
             if (cat) path += `&category=${encodeURIComponent(cat)}`;
             await sendApi('GET', path);
         }
         async function testPublicPortfolioDetail() {
             const slug = document.getElementById('port-pub-slug').value.trim();
             if (!slug) return alert('Enter project slug.');
-            await sendApi('GET', `/public/portfolio/${slug}`);
+            await sendApi('GET', `/api/public/portfolio/${slug}`);
         }
         async function testAdminPortfolio() {
-            await sendApi('GET', '/admin/portfolio', null, true);
+            await sendApi('GET', '/api/admin/portfolio', null, true);
         }
         async function testCreatePortfolio() {
             const tech = document.getElementById('port-create-tech').value.split(',').map(s => s.trim()).filter(Boolean);
@@ -1046,17 +1132,17 @@
                 isFeatured: true,
                 isPublished: true
             };
-            await sendApi('POST', '/admin/portfolio', body, true);
+            await sendApi('POST', '/api/admin/portfolio', body, true);
         }
         async function testUpdatePortfolio() {
             const id = document.getElementById('port-manage-id').value;
             const title = document.getElementById('port-manage-title').value;
-            await sendApi('PUT', `/admin/portfolio/${id}`, { title }, true);
+            await sendApi('PUT', `/api/admin/portfolio/${id}`, { title }, true);
         }
         async function testDeletePortfolio() {
             const id = document.getElementById('port-manage-id').value;
             if (!confirm(`Delete project ID ${id}?`)) return;
-            await sendApi('DELETE', `/admin/portfolio/${id}`, null, true);
+            await sendApi('DELETE', `/api/admin/portfolio/${id}`, null, true);
         }
 
         // Blog Module JS
@@ -1064,7 +1150,7 @@
             const cat = document.getElementById('blog-pub-cat').value;
             const tag = document.getElementById('blog-pub-tag').value;
             const limit = document.getElementById('blog-pub-limit').value || 10;
-            let path = `/public/blog?limit=${limit}`;
+            let path = `/api/public/blog?limit=${limit}`;
             if (cat) path += `&category=${encodeURIComponent(cat)}`;
             if (tag) path += `&tag=${encodeURIComponent(tag)}`;
             await sendApi('GET', path);
@@ -1072,10 +1158,10 @@
         async function testPublicBlogDetail() {
             const slug = document.getElementById('blog-pub-slug').value.trim();
             if (!slug) return alert('Enter blog article slug.');
-            await sendApi('GET', `/public/blog/${slug}`);
+            await sendApi('GET', `/api/public/blog/${slug}`);
         }
         async function testAdminBlog() {
-            await sendApi('GET', '/admin/blog', null, true);
+            await sendApi('GET', '/api/admin/blog', null, true);
         }
         async function testCreateBlog() {
             const tags = document.getElementById('blog-create-tags').value.split(',').map(s => s.trim()).filter(Boolean);
@@ -1090,23 +1176,23 @@
                 content: document.getElementById('blog-create-content').value,
                 status: 'published'
             };
-            await sendApi('POST', '/admin/blog', body, true);
+            await sendApi('POST', '/api/admin/blog', body, true);
         }
         async function testUpdateBlog() {
             const id = document.getElementById('blog-manage-id').value;
             const title = document.getElementById('blog-manage-title').value;
-            await sendApi('PUT', `/admin/blog/${id}`, { title }, true);
+            await sendApi('PUT', `/api/admin/blog/${id}`, { title }, true);
         }
         async function testDeleteBlog() {
             const id = document.getElementById('blog-manage-id').value;
             if (!confirm(`Delete blog post ID ${id}?`)) return;
-            await sendApi('DELETE', `/admin/blog/${id}`, null, true);
+            await sendApi('DELETE', `/api/admin/blog/${id}`, null, true);
         }
 
         // SEO
         async function testPublicSeo() {
             const page = document.getElementById('seo-public-page').value;
-            await sendApi('GET', `/public/seo/${page}`);
+            await sendApi('GET', `/api/public/seo/${page}`);
         }
 
         // Media
@@ -1115,11 +1201,19 @@
             if (!fileInput.files.length) return alert('Please select an image file first.');
             const formData = new FormData();
             formData.append('file', fileInput.files[0]);
-            await sendApi('POST', '/admin/uploads', formData, true, true);
+            await sendApi('POST', '/api/admin/uploads', formData, true, true);
         }
 
         // Settings
-        async function testPublicSettings() { await sendApi('GET', '/public/settings'); }
+        async function testPublicSettings() { await sendApi('GET', '/api/public/settings'); }
+        async function testAdminSettings() { await sendApi('GET', '/api/admin/settings', null, true); }
+        async function testUpdateSettings() {
+            const siteName = document.getElementById('settings-sitename').value;
+            const email = document.getElementById('settings-email').value;
+            const phone = document.getElementById('settings-phone').value;
+            const address = document.getElementById('settings-address').value;
+            await sendApi('PUT', '/api/admin/settings', { siteName, email, phone, address }, true);
+        }
 
         initLayoutSelects();
         updateTokenDisplay();

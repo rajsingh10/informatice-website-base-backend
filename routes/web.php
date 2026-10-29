@@ -21,6 +21,15 @@ Route::get('/api-tester', function () {
     return view('api-tester');
 });
 
+// Direct file serving for /services/public/... assets (mirrors production / Apache)
+Route::get('/services/public/{path}', function ($path) {
+    $fullPath = public_path($path);
+    if (! file_exists($fullPath) || is_dir($fullPath)) {
+        abort(404);
+    }
+    return response()->file($fullPath);
+})->where('path', '.*');
+
 // Direct aliases without /api prefix
 Route::middleware([\App\Http\Middleware\ForceJsonResponse::class])->group(function () {
 

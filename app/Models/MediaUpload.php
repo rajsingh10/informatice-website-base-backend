@@ -48,8 +48,8 @@ class MediaUpload extends Model
     protected static function booted()
     {
         static::deleting(function (MediaUpload $media) {
-            if ($media->path && Storage::disk('public')->exists($media->path)) {
-                Storage::disk('public')->delete($media->path);
+            if ($media->path) {
+                @unlink(public_path($media->path));
             }
         });
     }
