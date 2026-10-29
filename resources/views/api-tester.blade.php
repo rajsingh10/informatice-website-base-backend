@@ -42,9 +42,12 @@
             </div>
 
             <div class="flex items-center space-x-3 text-xs">
-                <div class="hidden sm:flex items-center space-x-2 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
-                    <span class="text-slate-500">Base URL:</span>
-                    <input id="baseUrlInput" type="text" value="" class="bg-transparent font-mono text-slate-700 outline-none w-48 font-medium">
+                <div class="flex items-center space-x-2 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+                    <span class="text-slate-500 font-semibold">Base URL:</span>
+                    <input id="baseUrlInput" type="text" value="{{ url('/') }}" placeholder="https://..." class="bg-transparent font-mono text-slate-800 outline-none w-60 sm:w-80 font-medium">
+                    <button onclick="resetBaseUrl()" title="Reset Base URL to current domain/subfolder" class="text-slate-400 hover:text-blue-600 transition">
+                        <i class="fa-solid fa-rotate-left"></i>
+                    </button>
                 </div>
                 <div id="tokenBadge" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-medium">
                     <span class="w-2 h-2 rounded-full bg-amber-500"></span>
@@ -2347,8 +2350,34 @@
         };
 
         let currentToken = localStorage.getItem('api_admin_token') || '';
-        // Use server-side APP_URL so subfolder deployments (e.g. /services/) work correctly
-        document.getElementById('baseUrlInput').value = '{{ rtrim(config("app.url"), "/") }}';
+        // Auto-detect Base URL from config('app.url'), url('/'), or current browser path (including /services)
+        const configAppUrl = @json(rtrim(config('app.url') ?? '', '/'));
+        const serverDefaultBaseUrl = @json(rtrim(url('/'), '/'));
+        const currentPath = window.location.pathname.replace(/\/api-tester\/?$/, '').replace(/\/+$/, '');
+        const autoBaseUrl = (configAppUrl && configAppUrl.includes('http') && !configAppUrl.includes('localhost') && !configAppUrl.includes('127.0.0.1'))
+            ? configAppUrl
+            : ((serverDefaultBaseUrl && !serverDefaultBaseUrl.includes('localhost') && !serverDefaultBaseUrl.includes('127.0.0.1'))
+                ? serverDefaultBaseUrl
+                : (window.location.origin + (currentPath && currentPath !== '/' ? currentPath : ''))).replace(/\/+$/, '');
+
+        let storedBaseUrl = localStorage.getItem('api_tester_base_url');
+        // If stored Base URL was previously cached without the /services subfolder while running on /services, auto-heal it
+        if (storedBaseUrl && window.location.pathname.includes('/services') && !storedBaseUrl.includes('/services')) {
+            storedBaseUrl = null;
+            localStorage.removeItem('api_tester_base_url');
+        }
+
+        const baseUrlEl = document.getElementById('baseUrlInput');
+        baseUrlEl.value = storedBaseUrl || autoBaseUrl;
+        baseUrlEl.addEventListener('input', (e) => {
+            localStorage.setItem('api_tester_base_url', e.target.value.trim());
+        });
+
+        function resetBaseUrl() {
+            localStorage.removeItem('api_tester_base_url');
+            baseUrlEl.value = autoBaseUrl;
+            alert(`Base URL reset to: ${autoBaseUrl}`);
+        }
 
         function initLayoutSelects() {
             const keySelect = document.getElementById('layout-key-select');
@@ -2448,13 +2477,37 @@
             try {
                 const response = await fetch(url, options);
                 const duration = Math.round(performance.now() - startTime);
+                const contentType = response.headers.get('content-type') || '';
 
-                const data = await response.json();
-                renderResponse(response.status, response.statusText, duration, data);
-                return { status: response.status, data: data };
+                if (contentType.includes('application/json')) {
+                    const data = await response.json();
+                    renderResponse(response.status, response.statusText, duration, data);
+                    return { status: response.status, data: data };
+                }
+
+                // If server returned non-JSON (e.g. HTML from a frontend SPA index.html or nginx error)
+                const rawText = await response.text();
+                const isHtml = rawText.trim().startsWith('<!doctype') || rawText.trim().startsWith('<html') || rawText.trim().startsWith('<');
+                let hint = 'Response was not JSON.';
+                if (isHtml) {
+                    hint = `The server returned an HTML webpage instead of JSON from Laravel. You called: "${url}". If your Laravel backend is located in a subfolder (e.g. /services), set the Base URL input above to: ${window.location.origin}/services`;
+                }
+
+                renderResponse(response.status, isHtml ? `${response.status} (HTML Page Returned)` : response.statusText, duration, {
+                    error: isHtml ? 'Received HTML webpage instead of Laravel API JSON response' : 'Non-JSON response',
+                    status: response.status,
+                    urlCalled: url,
+                    hint: hint,
+                    preview: rawText.substring(0, 400)
+                });
+                return { status: response.status, data: rawText };
             } catch (err) {
                 const duration = Math.round(performance.now() - startTime);
-                renderResponse(0, 'Network / Server Error', duration, { error: err.message });
+                renderResponse(0, 'Network / Server Error', duration, {
+                    error: err.message,
+                    urlCalled: url,
+                    hint: 'Request failed to reach endpoint. Check network, CORS, and Base URL.'
+                });
                 return null;
             }
         }
