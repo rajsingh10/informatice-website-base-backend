@@ -83,10 +83,17 @@ class Layout extends Model
             'min'  => 1,
             'max'  => 4,
         ],
+        // [Contact Page API] - Module 11
         'contactPageLayout' => [
             'name' => 'Contact',
             'min'  => 1,
             'max'  => 4,
+            'templates' => [
+                'layout1' => 'Split Form with Google Map',
+                'layout2' => 'Modern Card with Social Hub',
+                'layout3' => 'Corporate Multi-office',
+                'layout4' => 'Minimal Quick Reach',
+            ],
         ],
         'footerLayout' => [
             'name' => 'Footer',
@@ -144,5 +151,22 @@ class Layout extends Model
     public static function moduleName(string $key): string
     {
         return static::$modules[$key]['name'] ?? ucfirst(preg_replace('/Layout$/i', '', $key));
+    }
+
+    /**
+     * Returns detailed templates list with IDs and human-readable names for a given key.
+     */
+    public static function templatesFor(string $key): array
+    {
+        if (isset(static::$modules[$key]['templates'])) {
+            return static::$modules[$key]['templates'];
+        }
+
+        $allowed = static::allowedFor($key);
+        $result = [];
+        foreach ($allowed as $id) {
+            $result[$id] = "Template " . strtoupper($id);
+        }
+        return $result;
     }
 }
