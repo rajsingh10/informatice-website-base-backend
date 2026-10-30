@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\TopbarController;
 use App\Models\Blog;
 use App\Models\Event;
 use App\Models\Gallery;
-use App\Models\HomeSection;
-use App\Models\Inquiry; // Contact Page API
+use App\Models\HomeSection; // Contact Page API
+use App\Models\Inquiry;
 use App\Models\Layout;
 use App\Models\NavbarConfig;
 use App\Models\PageSeo;
@@ -27,7 +28,7 @@ class AdminModuleController extends Controller
      */
     public function getTopbar(): JsonResponse
     {
-        $payload = \App\Http\Controllers\TopbarController::buildPayload(true);
+        $payload = TopbarController::buildPayload(true);
         $setting = SiteSetting::getSingleton();
 
         return response()->json([
@@ -114,6 +115,28 @@ class AdminModuleController extends Controller
                 'totalCount' => count($sections),
                 'items' => $home->getDetailedList(),
                 'sections' => $sections,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Module: About Page
+     * GET /api/admin/modules/about
+     */
+    public function getAbout(): JsonResponse
+    {
+        $layoutRecord = Layout::find('aboutPageLayout');
+
+        return response()->json([
+            'success' => true,
+            'module' => 'about',
+            'data' => [
+                'layout' => [
+                    'key' => 'aboutPageLayout',
+                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'allowed' => Layout::allowedFor('aboutPageLayout'),
+                    'templates' => Layout::templatesFor('aboutPageLayout'),
+                ],
             ],
         ], 200);
     }
@@ -260,6 +283,61 @@ class AdminModuleController extends Controller
     }
 
     /**
+     * Module 7: Events Feed & Catalog
+     * GET /api/admin/modules/events
+     */
+    public function getEvents(Request $request): JsonResponse
+    {
+        $layoutRecord = Layout::find('eventsPageLayout');
+        $events = Event::orderBy('date', 'desc')->orderBy('id', 'desc')->get()->map(fn ($e) => $e->toAdminPayload());
+
+        return response()->json([
+            'success' => true,
+            'module' => 'events',
+            'data' => [
+                'layout' => [
+                    'key' => 'eventsPageLayout',
+                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'allowed' => Layout::allowedFor('eventsPageLayout'),
+                ],
+                'total' => $events->count(),
+                'events' => $events,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Module 7.1: Event Detail
+     * GET /api/admin/modules/event-detail
+     */
+    public function getEventDetail(): JsonResponse
+    {
+        $layoutRecord = Layout::find('eventDetailPageLayout');
+        $defaultSeo = PageSeo::find('event-detail')?->toPayload();
+
+        return response()->json([
+            'success' => true,
+            'module' => 'event-detail',
+            'data' => [
+                'layout' => [
+                    'key' => 'eventDetailPageLayout',
+                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'allowed' => Layout::allowedFor('eventDetailPageLayout'),
+                ],
+                'defaultSeo' => $defaultSeo,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Module 8: Team Members
+     * GET /api/admin/modules/team
+     */
+    public function getTeam(Request $request): JsonResponse
+    {
+        $layoutRecord = Layout::find('teamPageLayout');
+        $members = TeamMember::orderBy('order', 'asc')->orderBy('id', 'asc')->get()->map(fn ($m) => $m->toAdminPayload());
+
         return response()->json([
             'success' => true,
             'module' => 'team',
@@ -293,35 +371,35 @@ class AdminModuleController extends Controller
         $templates = [];
         foreach ($templatesMeta as $id => $name) {
             $templates[] = [
-                'id'     => $id,
-                'name'   => $name,
+                'id' => $id,
+                'name' => $name,
                 'active' => $id === $currentTemplate,
             ];
         }
 
         $counts = [
-            'total'    => Inquiry::count(),
-            'new'      => Inquiry::where('status', 'new')->count(),
-            'read'     => Inquiry::where('status', 'read')->count(),
-            'replied'  => Inquiry::where('status', 'replied')->count(),
+            'total' => Inquiry::count(),
+            'new' => Inquiry::where('status', 'new')->count(),
+            'read' => Inquiry::where('status', 'read')->count(),
+            'replied' => Inquiry::where('status', 'replied')->count(),
             'archived' => Inquiry::where('status', 'archived')->count(),
         ];
 
         return response()->json([
             'success' => true,
-            'module'  => 'contact',
-            'data'    => [
+            'module' => 'contact',
+            'data' => [
                 'layout' => [
-                    'key'        => 'contactPageLayout',
+                    'key' => 'contactPageLayout',
                     'templateId' => $currentTemplate,
-                    'allowed'    => Layout::allowedFor('contactPageLayout'),
-                    'templates'  => $templates,
+                    'allowed' => Layout::allowedFor('contactPageLayout'),
+                    'templates' => $templates,
                 ],
-                'seo'         => $defaultSeo,
+                'seo' => $defaultSeo,
                 'contactInfo' => $setting->toContactInfo(),
-                'siteInfo'    => $setting->toContactInfo(),
-                'stats'       => $counts,
-                'recent'     => Inquiry::orderBy('id', 'desc')->take(5)->get()->map->toPayload(),
+                'siteInfo' => $setting->toContactInfo(),
+                'stats' => $counts,
+                'recent' => Inquiry::orderBy('id', 'desc')->take(5)->get()->map->toPayload(),
             ],
         ], 200);
     }
@@ -412,10 +490,10 @@ class AdminModuleController extends Controller
                 $active[$key] = [
                     'layout' => $current,
                     'behavior' => $navBehavior,
-                    'enabled'  => $isEnabled,
-                    'visible'  => $isEnabled,
-                    'status'   => $isEnabled ? 'visible' : 'hidden',
-                    'items'    => $navItems,
+                    'enabled' => $isEnabled,
+                    'visible' => $isEnabled,
+                    'status' => $isEnabled ? 'visible' : 'hidden',
+                    'items' => $navItems,
                 ];
             } else {
                 $active[$key] = $current;

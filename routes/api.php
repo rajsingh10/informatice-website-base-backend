@@ -132,6 +132,7 @@ Route::prefix('admin')->group(function () {
         Route::get('team-feed', [AdminModuleController::class, 'getTeam']);
         Route::get('testimonials-feed', [AdminModuleController::class, 'getTestimonials']);
         Route::get('gallery-feed', [AdminModuleController::class, 'getGallery']);
+        Route::get('about-feed', [AdminModuleController::class, 'getAbout']);
 
         // Contact Page API (Module 11)
         Route::get('contact', [AdminModuleController::class, 'getContact']); // Contact Page API
@@ -165,6 +166,7 @@ Route::prefix('admin')->group(function () {
 
             Route::get('testimonials', [AdminModuleController::class, 'getTestimonials']);
             Route::get('gallery', [AdminModuleController::class, 'getGallery']);
+            Route::get('about', [AdminModuleController::class, 'getAbout']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
         });
@@ -232,37 +234,37 @@ Route::prefix('admin')->group(function () {
         Route::put('navigation/navbar/behavior', [NavbarController::class, 'updateBehavior']);
         Route::put('navigation/navbar/items', [NavbarController::class, 'updateItems']);
         Route::put('navigation/navbar/cta', [NavbarController::class, 'updateCta']);
-        Route::put('navbar/behavior',            [NavbarController::class, 'updateBehavior']);
-        Route::put('navigation/navbar/cta',    [NavbarController::class, 'updateCta']);
-        Route::put('navbar/cta',               [NavbarController::class, 'updateCta']);
+        Route::put('navbar/behavior', [NavbarController::class, 'updateBehavior']);
+        Route::put('navigation/navbar/cta', [NavbarController::class, 'updateCta']);
+        Route::put('navbar/cta', [NavbarController::class, 'updateCta']);
         Route::post('navigation/navbar/reset', [NavbarController::class, 'reset']);
-        Route::post('navbar/reset',            [NavbarController::class, 'reset']);
+        Route::post('navbar/reset', [NavbarController::class, 'reset']);
 
         // Navbar Menu Links Manager (List, Add, Edit, Toggle Show/Hide, Reorder, Delete)
-        Route::get('navigation/navbar/items',  [NavbarController::class, 'getItems']);
-        Route::get('navbar/items',             [NavbarController::class, 'getItems']);
+        Route::get('navigation/navbar/items', [NavbarController::class, 'getItems']);
+        Route::get('navbar/items', [NavbarController::class, 'getItems']);
         Route::post('navigation/navbar/items', [NavbarController::class, 'addItem']);
-        Route::post('navbar/items',            [NavbarController::class, 'addItem']);
-        Route::post('navigation/navbar/item',  [NavbarController::class, 'addItem']);
-        Route::post('navbar/item',             [NavbarController::class, 'addItem']);
-        Route::put('navigation/navbar/items',  [NavbarController::class, 'updateItems']);
-        Route::put('navbar/items',             [NavbarController::class, 'updateItems']);
+        Route::post('navbar/items', [NavbarController::class, 'addItem']);
+        Route::post('navigation/navbar/item', [NavbarController::class, 'addItem']);
+        Route::post('navbar/item', [NavbarController::class, 'addItem']);
+        Route::put('navigation/navbar/items', [NavbarController::class, 'updateItems']);
+        Route::put('navbar/items', [NavbarController::class, 'updateItems']);
         Route::match(['put', 'post', 'patch'], 'navigation/navbar/items/{id}', [NavbarController::class, 'updateItem']);
-        Route::match(['put', 'post', 'patch'], 'navbar/items/{id}',            [NavbarController::class, 'updateItem']);
-        Route::match(['put', 'post', 'patch'], 'navigation/navbar/item/{id}',  [NavbarController::class, 'updateItem']);
-        Route::match(['put', 'post', 'patch'], 'navbar/item/{id}',             [NavbarController::class, 'updateItem']);
-        Route::match(['put', 'post'], 'navigation/navbar/items/{id}/toggle',   [NavbarController::class, 'toggleItem']);
-        Route::match(['put', 'post'], 'navbar/items/{id}/toggle',              [NavbarController::class, 'toggleItem']);
-        Route::match(['put', 'post'], 'navigation/navbar/items/reorder',       [NavbarController::class, 'reorderItems']);
-        Route::match(['put', 'post'], 'navbar/items/reorder',                  [NavbarController::class, 'reorderItems']);
-        Route::match(['put', 'post'], 'navigation/navbar/items/{id}/move-up',   [NavbarController::class, 'moveUp']);
+        Route::match(['put', 'post', 'patch'], 'navbar/items/{id}', [NavbarController::class, 'updateItem']);
+        Route::match(['put', 'post', 'patch'], 'navigation/navbar/item/{id}', [NavbarController::class, 'updateItem']);
+        Route::match(['put', 'post', 'patch'], 'navbar/item/{id}', [NavbarController::class, 'updateItem']);
+        Route::match(['put', 'post'], 'navigation/navbar/items/{id}/toggle', [NavbarController::class, 'toggleItem']);
+        Route::match(['put', 'post'], 'navbar/items/{id}/toggle', [NavbarController::class, 'toggleItem']);
+        Route::match(['put', 'post'], 'navigation/navbar/items/reorder', [NavbarController::class, 'reorderItems']);
+        Route::match(['put', 'post'], 'navbar/items/reorder', [NavbarController::class, 'reorderItems']);
+        Route::match(['put', 'post'], 'navigation/navbar/items/{id}/move-up', [NavbarController::class, 'moveUp']);
         Route::match(['put', 'post'], 'navigation/navbar/items/{id}/move-down', [NavbarController::class, 'moveDown']);
-        Route::match(['put', 'post'], 'navbar/items/{id}/move-up',              [NavbarController::class, 'moveUp']);
-        Route::match(['put', 'post'], 'navbar/items/{id}/move-down',            [NavbarController::class, 'moveDown']);
-        Route::match(['delete', 'post'], 'navigation/navbar/items/{id}',        [NavbarController::class, 'deleteItem']);
-        Route::match(['delete', 'post'], 'navbar/items/{id}',                   [NavbarController::class, 'deleteItem']);
+        Route::match(['put', 'post'], 'navbar/items/{id}/move-up', [NavbarController::class, 'moveUp']);
+        Route::match(['put', 'post'], 'navbar/items/{id}/move-down', [NavbarController::class, 'moveDown']);
+        Route::match(['delete', 'post'], 'navigation/navbar/items/{id}', [NavbarController::class, 'deleteItem']);
+        Route::match(['delete', 'post'], 'navbar/items/{id}', [NavbarController::class, 'deleteItem']);
         Route::match(['delete', 'post'], 'navigation/navbar/items/{id}/delete', [NavbarController::class, 'deleteItem']);
-        Route::match(['delete', 'post'], 'navbar/items/{id}/delete',            [NavbarController::class, 'deleteItem']);
+        Route::match(['delete', 'post'], 'navbar/items/{id}/delete', [NavbarController::class, 'deleteItem']);
 
         // Module 3: Home Sections (GET & POST on/off toggle APIs)
         Route::get('home-sections', [HomeSectionController::class, 'index']);
@@ -274,11 +276,11 @@ Route::prefix('admin')->group(function () {
         Route::match(['put', 'post'], 'home', [HomeSectionController::class, 'toggle']);
 
         // Module 4: Services CRUD
-        Route::get('services',                 [ServiceController::class, 'indexAdmin']);
-        Route::get('services/{id}',            [ServiceController::class, 'showAdmin']);
-        Route::post('services',                [ServiceController::class, 'store']);
+        Route::get('services', [ServiceController::class, 'indexAdmin']);
+        Route::get('services/{id}', [ServiceController::class, 'showAdmin']);
+        Route::post('services', [ServiceController::class, 'store']);
         Route::match(['put', 'post', 'patch'], 'services/{id}', [ServiceController::class, 'update']);
-        Route::delete('services/{id}',         [ServiceController::class, 'destroy']);
+        Route::delete('services/{id}', [ServiceController::class, 'destroy']);
 
         // Module 5: Portfolio CRUD
         Route::get('portfolio', [PortfolioController::class, 'indexAdmin']);
@@ -309,10 +311,10 @@ Route::prefix('admin')->group(function () {
         Route::delete('team/{id}', [TeamController::class, 'destroy']);
 
         // ─── Contact Page API (Module 11: Inquiries Management) ───
-        Route::get('inquiries',                [InquiryController::class, 'index']); // Contact Page API
-        Route::get('inquiries/{id}',           [InquiryController::class, 'show']); // Contact Page API
+        Route::get('inquiries', [InquiryController::class, 'index']); // Contact Page API
+        Route::get('inquiries/{id}', [InquiryController::class, 'show']); // Contact Page API
         Route::match(['put', 'patch', 'post'], 'inquiries/{id}', [InquiryController::class, 'updateStatus']); // Contact Page API
-        Route::delete('inquiries/{id}',        [InquiryController::class, 'destroy']); // Contact Page API
+        Route::delete('inquiries/{id}', [InquiryController::class, 'destroy']); // Contact Page API
         // Module 9: Testimonials CRUD
         Route::get('testimonials', [TestimonialController::class, 'indexAdmin']);
         Route::get('testimonials/{id}', [TestimonialController::class, 'showAdmin']);

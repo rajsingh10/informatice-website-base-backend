@@ -18,10 +18,11 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\TopbarController;
 use App\Http\Middleware\ForceJsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Interactive API Testing Dashboard / Root Services API
-Route::get('/', function (\Illuminate\Http\Request $request) {
+Route::get('/', function (Request $request) {
     // If request wants JSON (API request, fetch, axios, or not a full browser page navigation)
     $isBrowserDocument = str_contains($request->header('Accept', ''), 'text/html')
         && ($request->header('Sec-Fetch-Dest', '') === 'document' || ! $request->hasHeader('Sec-Fetch-Dest'))
@@ -45,6 +46,7 @@ Route::get('/services/public/{path}', function ($path) {
     if (! file_exists($fullPath) || is_dir($fullPath)) {
         abort(404);
     }
+
     return response()->file($fullPath);
 })->where('path', '.*\.(css|js|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf|eot|map)$');
 
@@ -135,6 +137,7 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
         Route::get('/admin/team-feed', [AdminModuleController::class, 'getTeam']);
         Route::get('/admin/testimonials-feed', [AdminModuleController::class, 'getTestimonials']);
         Route::get('/admin/gallery-feed', [AdminModuleController::class, 'getGallery']);
+        Route::get('/admin/about-feed', [AdminModuleController::class, 'getAbout']);
 
         // Contact Page API (Module 11)
         Route::get('/admin/contact', [AdminModuleController::class, 'getContact']); // Contact Page API
@@ -166,6 +169,7 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
 
             Route::get('testimonials', [AdminModuleController::class, 'getTestimonials']);
             Route::get('gallery', [AdminModuleController::class, 'getGallery']);
+            Route::get('about', [AdminModuleController::class, 'getAbout']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
         });
