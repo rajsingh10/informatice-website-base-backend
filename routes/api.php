@@ -3,11 +3,14 @@
 use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CareerController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeSectionController;
 use App\Http\Controllers\InquiryController; // [Contact Page API]
 use App\Http\Controllers\LayoutController;
+use App\Http\Controllers\LegalPageController;
 use App\Http\Controllers\MediaUploadController;
 use App\Http\Controllers\NavbarController;
 use App\Http\Controllers\PortfolioController;
@@ -33,6 +36,14 @@ Route::get('topbar/items', [TopbarController::class, 'getItems']);
 Route::get('topbar/socials', [TopbarController::class, 'getItems']);
 Route::get('services', [ServiceController::class, 'indexPublic']);
 Route::get('services/{slug}', [ServiceController::class, 'showPublic']);
+
+// Module 13-16 Public direct aliases
+Route::get('careers', [CareerController::class, 'indexPublic']);
+Route::get('careers/{slug}', [CareerController::class, 'showPublic']);
+Route::get('faqs', [FaqController::class, 'indexPublic']);
+Route::get('legal/{type}', [LegalPageController::class, 'showPublic']);
+Route::get('terms', [LegalPageController::class, 'showTermsPublic']);
+Route::get('privacy', [LegalPageController::class, 'showPrivacyPublic']);
 
 // ═══════════════════════════════════════════════════════════
 //  PUBLIC routes  (No Auth)
@@ -97,6 +108,18 @@ Route::prefix('public')->group(function () {
     // Module 10: Gallery
     Route::get('gallery', [GalleryController::class, 'indexPublic']);
     Route::get('gallery/{id}', [GalleryController::class, 'showPublic']);
+
+    // Module 13: Careers
+    Route::get('careers', [CareerController::class, 'indexPublic']);
+    Route::get('careers/{slug}', [CareerController::class, 'showPublic']);
+
+    // Module 14: FAQs
+    Route::get('faqs', [FaqController::class, 'indexPublic']);
+
+    // Module 15 & 16: Legal Pages (Terms & Privacy)
+    Route::get('legal/{type}', [LegalPageController::class, 'showPublic']);
+    Route::get('terms', [LegalPageController::class, 'showTermsPublic']);
+    Route::get('privacy', [LegalPageController::class, 'showPrivacyPublic']);
 });
 
 // ═══════════════════════════════════════════════════════════
@@ -133,6 +156,10 @@ Route::prefix('admin')->group(function () {
         Route::get('testimonials-feed', [AdminModuleController::class, 'getTestimonials']);
         Route::get('gallery-feed', [AdminModuleController::class, 'getGallery']);
         Route::get('about-feed', [AdminModuleController::class, 'getAbout']);
+        Route::get('career', [AdminModuleController::class, 'getCareer']);
+        Route::get('faq', [AdminModuleController::class, 'getFaq']);
+        Route::get('terms', [AdminModuleController::class, 'getTerms']);
+        Route::get('privacy', [AdminModuleController::class, 'getPrivacy']);
 
         // Contact Page API (Module 11)
         Route::get('contact', [AdminModuleController::class, 'getContact']); // Contact Page API
@@ -167,6 +194,12 @@ Route::prefix('admin')->group(function () {
             Route::get('testimonials', [AdminModuleController::class, 'getTestimonials']);
             Route::get('gallery', [AdminModuleController::class, 'getGallery']);
             Route::get('about', [AdminModuleController::class, 'getAbout']);
+            Route::get('career', [AdminModuleController::class, 'getCareer']);
+            Route::get('careers', [AdminModuleController::class, 'getCareer']);
+            Route::get('faq', [AdminModuleController::class, 'getFaq']);
+            Route::get('faqs', [AdminModuleController::class, 'getFaq']);
+            Route::get('terms', [AdminModuleController::class, 'getTerms']);
+            Route::get('privacy', [AdminModuleController::class, 'getPrivacy']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
         });
@@ -328,5 +361,28 @@ Route::prefix('admin')->group(function () {
         Route::post('gallery', [GalleryController::class, 'store']);
         Route::put('gallery/{id}', [GalleryController::class, 'update']);
         Route::delete('gallery/{id}', [GalleryController::class, 'destroy']);
+
+        // Module 13: Careers CRUD
+        Route::get('careers', [CareerController::class, 'indexAdmin']);
+        Route::get('careers/{id}', [CareerController::class, 'showAdmin'])->whereNumber('id');
+        Route::post('careers', [CareerController::class, 'store']);
+        Route::match(['put', 'post', 'patch'], 'careers/{id}', [CareerController::class, 'update'])->whereNumber('id');
+        Route::delete('careers/{id}', [CareerController::class, 'destroy'])->whereNumber('id');
+
+        // Module 14: FAQs CRUD & Bulk Save
+        Route::get('faqs', [FaqController::class, 'indexAdmin']);
+        Route::match(['put', 'post'], 'faqs', [FaqController::class, 'saveAll']);
+        Route::get('faqs/{id}', [FaqController::class, 'showAdmin'])->whereNumber('id');
+        Route::post('faqs/item', [FaqController::class, 'store']);
+        Route::match(['put', 'post', 'patch'], 'faqs/{id}', [FaqController::class, 'update'])->whereNumber('id');
+        Route::delete('faqs/{id}', [FaqController::class, 'destroy'])->whereNumber('id');
+
+        // Module 15 & 16: Legal Pages (Terms & Privacy)
+        Route::get('legal/{type}', [LegalPageController::class, 'showAdmin']);
+        Route::match(['put', 'post'], 'legal/{type}', [LegalPageController::class, 'update']);
+        Route::get('terms', [LegalPageController::class, 'showTermsAdmin']);
+        Route::match(['put', 'post'], 'terms', [LegalPageController::class, 'updateTerms']);
+        Route::get('privacy', [LegalPageController::class, 'showPrivacyAdmin']);
+        Route::match(['put', 'post'], 'privacy', [LegalPageController::class, 'updatePrivacy']);
     });
 });
