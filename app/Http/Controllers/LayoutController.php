@@ -394,7 +394,6 @@ class LayoutController extends Controller
             if ($request->has('items') || $request->has('links')) {
                 $fIn = $request->input('items', $request->input('links'));
                 if (is_array($fIn)) {
-                    $footer->items = $fIn;
                     $footer->links = $fIn;
                 }
             }
@@ -506,11 +505,9 @@ class LayoutController extends Controller
             $items['footerLayout'] = $footData['layout'] ?? ($footData['templateId'] ?? 'layout1');
             $footer = \App\Models\FooterConfig::getSingleton();
             if (isset($footData['items']) && is_array($footData['items'])) {
-                $footer->items = $footData['items'];
                 $footer->links = $footData['items'];
                 $footer->save();
             } elseif (isset($footData['links']) && is_array($footData['links'])) {
-                $footer->items = $footData['links'];
                 $footer->links = $footData['links'];
                 $footer->save();
             }
