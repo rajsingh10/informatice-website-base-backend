@@ -5,7 +5,6 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeSectionController;
 use App\Http\Controllers\InquiryController; // [Contact Page API]
@@ -28,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Public direct aliases without prefix (e.g. /api/topbar, /api/services)
+// Public direct aliases without prefix (e.g. /api/topbar, /api/services, /api/footer)
 Route::get('topbar', [TopbarController::class, 'showPublic']);
 Route::match(['put', 'post'], 'topbar', [TopbarController::class, 'saveTopbar']);
 Route::match(['put', 'post'], 'topbar/toggle', [TopbarController::class, 'toggle']);
@@ -37,14 +36,6 @@ Route::get('topbar/socials', [TopbarController::class, 'getItems']);
 Route::get('services', [ServiceController::class, 'indexPublic']);
 Route::get('services/{slug}', [ServiceController::class, 'showPublic']);
 
-// Module 13-16 Public direct aliases
-Route::get('careers', [CareerController::class, 'indexPublic']);
-Route::get('careers/{slug}', [CareerController::class, 'showPublic']);
-Route::get('faqs', [FaqController::class, 'indexPublic']);
-Route::get('legal/{type}', [LegalPageController::class, 'showPublic']);
-Route::get('terms', [LegalPageController::class, 'showTermsPublic']);
-Route::get('privacy', [LegalPageController::class, 'showPrivacyPublic']);
-
 // ═══════════════════════════════════════════════════════════
 //  PUBLIC routes  (No Auth)
 // ═══════════════════════════════════════════════════════════
@@ -52,6 +43,10 @@ Route::prefix('public')->group(function () {
     // Layouts
     Route::get('layouts', [LayoutController::class, 'index']);
     Route::match(['put', 'post'], 'layouts', [LayoutController::class, 'save']);
+    Route::get('layouts/{key}', [LayoutController::class, 'show']);
+
+    // Module 12: Footer
+    Route::get('footer', [FooterController::class, 'showPublic']);
 
     // Module 1: Top Bar
     Route::get('topbar', [TopbarController::class, 'showPublic']);
@@ -146,6 +141,7 @@ Route::prefix('admin')->group(function () {
         // Direct Module Admin GET APIs (e.g. /api/admin/topbar)
         Route::get('topbar', [AdminModuleController::class, 'getTopbar']);
         Route::get('navbar', [AdminModuleController::class, 'getNavbar']);
+        Route::get('footer', [AdminModuleController::class, 'getFooter']);
         Route::get('home', [AdminModuleController::class, 'getHome']);
         Route::get('service-detail', [AdminModuleController::class, 'getServiceDetail']);
         Route::get('portfolio-detail', [AdminModuleController::class, 'getPortfolioDetail']);
@@ -193,22 +189,16 @@ Route::prefix('admin')->group(function () {
 
             Route::get('testimonials', [AdminModuleController::class, 'getTestimonials']);
             Route::get('gallery', [AdminModuleController::class, 'getGallery']);
-            Route::get('about', [AdminModuleController::class, 'getAbout']);
-            Route::get('career', [AdminModuleController::class, 'getCareer']);
-            Route::get('careers', [AdminModuleController::class, 'getCareer']);
-            Route::get('faq', [AdminModuleController::class, 'getFaq']);
-            Route::get('faqs', [AdminModuleController::class, 'getFaq']);
-            Route::get('terms', [AdminModuleController::class, 'getTerms']);
-            Route::get('privacy', [AdminModuleController::class, 'getPrivacy']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
         });
 
         // Layouts (Modules 1, 2, 3, 4, 5 etc.)
         Route::get('layouts', [LayoutController::class, 'indexAdmin']);
+        Route::get('layouts/{key}', [LayoutController::class, 'show']);
         Route::post('layouts/save', [LayoutController::class, 'save']);
         Route::match(['put', 'post'], 'layouts', [LayoutController::class, 'store']);
-        Route::match(['put', 'post'], 'layouts/{key}', [LayoutController::class, 'update']);
+        Route::match(['put', 'post', 'patch'], 'layouts/{key}', [LayoutController::class, 'update']);
 
         // 3.2 SEO
         Route::get('seo/{page}', [SeoController::class, 'showAdmin']);
@@ -365,28 +355,5 @@ Route::prefix('admin')->group(function () {
         Route::post('gallery', [GalleryController::class, 'store']);
         Route::put('gallery/{id}', [GalleryController::class, 'update']);
         Route::delete('gallery/{id}', [GalleryController::class, 'destroy']);
-
-        // Module 13: Careers CRUD
-        Route::get('careers', [CareerController::class, 'indexAdmin']);
-        Route::get('careers/{id}', [CareerController::class, 'showAdmin'])->whereNumber('id');
-        Route::post('careers', [CareerController::class, 'store']);
-        Route::match(['put', 'post', 'patch'], 'careers/{id}', [CareerController::class, 'update'])->whereNumber('id');
-        Route::delete('careers/{id}', [CareerController::class, 'destroy'])->whereNumber('id');
-
-        // Module 14: FAQs CRUD & Bulk Save
-        Route::get('faqs', [FaqController::class, 'indexAdmin']);
-        Route::match(['put', 'post'], 'faqs', [FaqController::class, 'saveAll']);
-        Route::get('faqs/{id}', [FaqController::class, 'showAdmin'])->whereNumber('id');
-        Route::post('faqs/item', [FaqController::class, 'store']);
-        Route::match(['put', 'post', 'patch'], 'faqs/{id}', [FaqController::class, 'update'])->whereNumber('id');
-        Route::delete('faqs/{id}', [FaqController::class, 'destroy'])->whereNumber('id');
-
-        // Module 15 & 16: Legal Pages (Terms & Privacy)
-        Route::get('legal/{type}', [LegalPageController::class, 'showAdmin']);
-        Route::match(['put', 'post'], 'legal/{type}', [LegalPageController::class, 'update']);
-        Route::get('terms', [LegalPageController::class, 'showTermsAdmin']);
-        Route::match(['put', 'post'], 'terms', [LegalPageController::class, 'updateTerms']);
-        Route::get('privacy', [LegalPageController::class, 'showPrivacyAdmin']);
-        Route::match(['put', 'post'], 'privacy', [LegalPageController::class, 'updatePrivacy']);
     });
 });

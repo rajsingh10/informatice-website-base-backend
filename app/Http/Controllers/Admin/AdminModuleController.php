@@ -611,6 +611,28 @@ class AdminModuleController extends Controller
                     'status' => $isEnabled ? 'visible' : 'hidden',
                     'items' => $navItems,
                 ];
+            } elseif ($key === 'topbarLayout') {
+                $isTopbarEnabled = \App\Http\Controllers\TopbarController::isTopbarEnabled();
+                $active[$key] = [
+                    'layout'   => $isTopbarEnabled ? ($current === 'layout0' ? 'layout1' : $current) : 'layout0',
+                    'enabled'  => $isTopbarEnabled,
+                    'visible'  => $isTopbarEnabled,
+                    'status'   => $isTopbarEnabled ? 'visible' : 'hidden',
+                ];
+            } elseif ($key === 'footerLayout') {
+                $footer = \App\Models\FooterConfig::getSingleton();
+                $footerItems = $footer->getItemsList();
+                $active[$key] = [
+                    'layout'     => $current,
+                    'enabled'    => true,
+                    'visible'    => true,
+                    'status'     => 'visible',
+                    'items'      => $footerItems,
+                    'links'      => $footerItems,
+                    'grid'       => is_array($footer->grid) ? $footer->grid : \App\Models\FooterConfig::defaultGrid(),
+                    'cta'        => is_array($footer->cta) ? $footer->cta : \App\Models\FooterConfig::defaultCta(),
+                    'customCode' => is_array($footer->customCode) ? $footer->customCode : \App\Models\FooterConfig::defaultCustomCode(),
+                ];
             } else {
                 $active[$key] = $current;
             }
@@ -631,6 +653,28 @@ class AdminModuleController extends Controller
                 'active' => $active,
                 'modules' => $modules,
             ],
+        ], 200);
+    }
+
+    /**
+     * Module 12: Footer
+     * GET /api/admin/modules/footer
+     */
+    public function getFooter(): JsonResponse
+    {
+        $layoutRecord = Layout::find('footerLayout');
+        $footer = \App\Models\FooterConfig::getSingleton();
+
+        return response()->json([
+            'success' => true,
+            'module'  => 'footer',
+            'data'    => array_merge($footer->toAdminPayload(), [
+                'layout' => [
+                    'key'        => 'footerLayout',
+                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'allowed'    => Layout::allowedFor('footerLayout'),
+                ],
+            ]),
         ], 200);
     }
 }
