@@ -3678,16 +3678,20 @@
                         <!-- ══════════════════════════════════════════════════════════ -->
             <!-- 3. SEO MODULE APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- 3.2 SEO APIS (Public & Admin) -->
+            <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-seo" class="space-y-4 hidden">
+                <!-- 1. Public SEO GET -->
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center space-x-2">
                             <span class="method-badge badge-get">GET</span>
                             <span class="font-mono text-sm font-semibold text-slate-800">/api/public/seo/:page</span>
                         </div>
-                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">Public (No Auth)</span>
                     </div>
-                    <div class="flex space-x-2 mb-3">
+                    <p class="text-xs text-slate-600 mb-3">Read published SEO metadata for a page (meta tags, Open Graph, canonical URL, robots, and imageAltMap).</p>
+                    <div class="flex space-x-2">
                         <select id="seo-public-page" class="flex-1 text-xs border border-slate-200 rounded p-2 bg-white outline-none">
                             <option value="portfolio">portfolio</option>
                             <option value="portfolio-detail">portfolio-detail</option>
@@ -3706,11 +3710,140 @@
                             <option value="terms">terms</option>
                             <option value="privacy">privacy</option>
                             <option value="home">home</option>
+                            <option value="about">about</option>
                         </select>
-                        <button onclick="testPublicSeo()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-xs font-medium">
-                            Read Public SEO
+                        <button onclick="testPublicSeo()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-xs font-medium transition shadow-sm">
+                            <i class="fa-solid fa-eye mr-1"></i> Read Public SEO
                         </button>
                     </div>
+                </div>
+
+                <!-- 2. Admin Read SEO GET -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/seo/:page</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Admin read of page SEO metadata. Automatically populates the Update SEO form below for instant editing.</p>
+                    <div class="flex space-x-2">
+                        <select id="seo-admin-read-page" class="flex-1 text-xs border border-slate-200 rounded p-2 bg-white outline-none">
+                            <option value="portfolio">portfolio</option>
+                            <option value="portfolio-detail">portfolio-detail</option>
+                            <option value="services">services</option>
+                            <option value="service-detail">service-detail</option>
+                            <option value="blog">blog</option>
+                            <option value="blog-detail">blog-detail</option>
+                            <option value="events">events</option>
+                            <option value="event-detail">event-detail</option>
+                            <option value="team">team</option>
+                            <option value="contact">contact</option>
+                            <option value="testimonials">testimonials</option>
+                            <option value="gallery">gallery</option>
+                            <option value="career">career</option>
+                            <option value="faq">faq</option>
+                            <option value="terms">terms</option>
+                            <option value="privacy">privacy</option>
+                            <option value="home">home</option>
+                            <option value="about">about</option>
+                        </select>
+                        <button onclick="testAdminSeo()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-xs font-medium transition shadow-sm">
+                            <i class="fa-solid fa-shield-halved mr-1"></i> Read Admin SEO
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. Admin Update SEO PUT -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/seo/:page</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Create or update page SEO tags, Open Graph parameters, and imageAltMap.</p>
+                    
+                    <div class="space-y-3 mb-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Target Page</label>
+                                <select id="seo-admin-update-page" class="w-full text-xs border border-slate-200 rounded p-2 bg-white outline-none">
+                                    <option value="portfolio">portfolio</option>
+                                    <option value="portfolio-detail">portfolio-detail</option>
+                                    <option value="services">services</option>
+                                    <option value="service-detail">service-detail</option>
+                                    <option value="blog">blog</option>
+                                    <option value="blog-detail">blog-detail</option>
+                                    <option value="events">events</option>
+                                    <option value="event-detail">event-detail</option>
+                                    <option value="team">team</option>
+                                    <option value="contact">contact</option>
+                                    <option value="testimonials">testimonials</option>
+                                    <option value="gallery">gallery</option>
+                                    <option value="career">career</option>
+                                    <option value="faq">faq</option>
+                                    <option value="terms">terms</option>
+                                    <option value="privacy">privacy</option>
+                                    <option value="home">home</option>
+                                    <option value="about">about</option>
+                                </select>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">SEO Title (max 70 chars)</label>
+                                <input id="seo-admin-title" type="text" placeholder="e.g. Portfolio — NexGen Solutions" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Meta Description (max 160 chars)</label>
+                            <textarea id="seo-admin-description" rows="2" placeholder="Brief summary for search engines (max 160 chars)..." class="w-full text-xs border border-slate-200 rounded p-2 outline-none"></textarea>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Keywords</label>
+                                <input id="seo-admin-keywords" type="text" placeholder="e.g. software, engineering, informatic, cloud" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Robots</label>
+                                <input id="seo-admin-robots" type="text" value="index, follow" class="w-full text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">OG Title</label>
+                                <input id="seo-admin-ogtitle" type="text" placeholder="Open Graph title for social sharing" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">OG Image URL</label>
+                                <input id="seo-admin-ogimage" type="text" placeholder="https://..." class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">OG Description</label>
+                                <input id="seo-admin-ogdesc" type="text" placeholder="Social share snippet" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Canonical URL</label>
+                                <input id="seo-admin-canonical" type="text" placeholder="https://example.com/portfolio" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Image Alt Map (JSON Object)</label>
+                            <textarea id="seo-admin-altmap" rows="2" placeholder='{"hero": "Office hero banner", "team": "Our team at work"}' class="w-full text-xs font-mono border border-slate-200 rounded p-2 outline-none">{}</textarea>
+                        </div>
+                    </div>
+
+                    <button onclick="testUpdateSeo()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Save Page SEO (PUT /api/admin/seo/:page)
+                    </button>
                 </div>
             </div>
 
@@ -5004,6 +5137,70 @@
         async function testPublicSeo() {
             const page = document.getElementById('seo-public-page').value;
             await sendApi('GET', `/api/public/seo/${page}`);
+        }
+
+        async function testAdminSeo() {
+            const page = document.getElementById('seo-admin-read-page').value;
+            const res = await sendApi('GET', `/api/admin/seo/${page}`, null, true);
+            if (res && res.data) {
+                const d = res.data;
+                const updateSelect = document.getElementById('seo-admin-update-page');
+                if (updateSelect) updateSelect.value = page;
+
+                const setVal = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = val || '';
+                };
+
+                setVal('seo-admin-title', d.title);
+                setVal('seo-admin-description', d.description);
+                setVal('seo-admin-keywords', d.keywords);
+                setVal('seo-admin-ogtitle', d.ogTitle);
+                setVal('seo-admin-ogdesc', d.ogDescription);
+                setVal('seo-admin-ogimage', d.ogImage);
+                setVal('seo-admin-canonical', d.canonicalUrl);
+                setVal('seo-admin-robots', d.robots || 'index, follow');
+
+                const altMapEl = document.getElementById('seo-admin-altmap');
+                if (altMapEl) {
+                    altMapEl.value = JSON.stringify(d.imageAltMap || {}, null, 2);
+                }
+            }
+        }
+
+        async function testUpdateSeo() {
+            const page = document.getElementById('seo-admin-update-page').value;
+            const title = document.getElementById('seo-admin-title').value;
+            const description = document.getElementById('seo-admin-description').value;
+            const keywords = document.getElementById('seo-admin-keywords').value;
+            const ogTitle = document.getElementById('seo-admin-ogtitle').value;
+            const ogDescription = document.getElementById('seo-admin-ogdesc').value;
+            const ogImage = document.getElementById('seo-admin-ogimage').value;
+            const canonicalUrl = document.getElementById('seo-admin-canonical').value;
+            const robots = document.getElementById('seo-admin-robots').value;
+
+            let imageAltMap = {};
+            const altRaw = document.getElementById('seo-admin-altmap').value.trim();
+            if (altRaw) {
+                try {
+                    imageAltMap = JSON.parse(altRaw);
+                } catch (e) {
+                    alert('Invalid JSON in Image Alt Map: ' + e.message);
+                    return;
+                }
+            }
+
+            await sendApi('PUT', `/api/admin/seo/${page}`, {
+                title,
+                description,
+                keywords,
+                ogTitle,
+                ogDescription,
+                ogImage,
+                canonicalUrl,
+                robots,
+                imageAltMap
+            }, true);
         }
 
         // Media
