@@ -22,14 +22,25 @@ class LayoutController extends Controller
             $layouts[$k] = $dbLayouts[$k] ?? 'layout1';
         }
         $navbar = NavbarConfig::getSingleton();
+        $ordered = [];
 
+        // 1. topbarLayout (FIRST)
+        $currentTopbarTemplate = $layouts['topbarLayout'] ?? 'layout1';
+        $isTopbarEnabled = TopbarController::isTopbarEnabled();
+        $ordered['topbarLayout'] = [
+            'layout'   => $isTopbarEnabled ? ($currentTopbarTemplate === 'layout0' ? 'layout1' : $currentTopbarTemplate) : 'layout0',
+            'enabled'  => $isTopbarEnabled,
+            'visible'  => $isTopbarEnabled,
+            'status'   => $isTopbarEnabled ? 'visible' : 'hidden',
+        ];
+
+        // 2. navbarLayout (SECOND)
         $currentNavbarTemplate = $layouts['navbarLayout'] ?? 'layout1';
         $activeBehavior = $navbar->getBehaviorForLayout($currentNavbarTemplate);
         $isEnabled = $navbar->isNavbarEnabled();
         $navItems = is_array($navbar->items) ? array_values($navbar->items) : NavbarConfig::defaultItems();
-
-        $layouts['navbarLayout'] = [
-            'layout' => $currentNavbarTemplate,
+        $ordered['navbarLayout'] = [
+            'layout'   => $currentNavbarTemplate,
             'behavior' => $activeBehavior,
             'enabled' => $isEnabled,
             'visible' => $isEnabled,
@@ -45,10 +56,32 @@ class LayoutController extends Controller
             'visible' => $isTopbarEnabled,
             'status' => $isTopbarEnabled ? 'visible' : 'hidden',
         ];
+        // 3. Page layouts in clean architectural order
+        foreach (Layout::$modules as $modKey => $modMeta) {
+            if ($modKey === 'topbarLayout' || $modKey === 'navbarLayout' || $modKey === 'footerLayout') {
+                continue;
+            }
+            $ordered[$modKey] = $layouts[$modKey] ?? 'layout1';
+        }
+
+        // Preserve any custom or database-stored layout keys
+        foreach ($layouts as $dbKey => $dbVal) {
+            if (! isset($ordered[$dbKey]) && $dbKey !== 'footerLayout') {
+                $ordered[$dbKey] = $dbVal;
+            }
+        }
+
+        // 4. footerLayout (LAST)
+        $footer = \App\Models\FooterConfig::getSingleton();
+        $currentFooterTemplate = $layouts['footerLayout'] ?? ($footer->layoutId ?? 'layout1');
+        $footerPayload = $footer->toPublicPayload();
+        $footerPayload['layout'] = $currentFooterTemplate;
+        $footerPayload['layoutId'] = $currentFooterTemplate;
+        $ordered['footerLayout'] = $footerPayload;
 
         return response()->json([
             'success' => true,
-            'data' => $layouts,
+            'data'    => $ordered,
         ], 200);
     }
 
@@ -85,6 +118,12 @@ class LayoutController extends Controller
                     'visible' => $isTopbarEnabled,
                     'status' => $isTopbarEnabled ? 'visible' : 'hidden',
                 ];
+            } elseif ($key === 'footerLayout') {
+                $footer = \App\Models\FooterConfig::getSingleton();
+                $adminPayload = $footer->toAdminPayload();
+                $adminPayload['layout'] = $current;
+                $adminPayload['layoutId'] = $current;
+                $active[$key] = $adminPayload;
             } else {
                 $active[$key] = $current;
             }
@@ -123,6 +162,82 @@ class LayoutController extends Controller
         }
 
         return $this->save($request);
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
+    // GET /admin/layouts/:key & /api/admin/layouts/:key & /public/layouts/:key
+    // Show one layout's configuration.
+    // ──────────────────────────────────────────────────────────────────────
+    public function show(string $key): JsonResponse
+    {
+        if (! in_array($key, Layout::validKeys())) {
+            return response()->json([
+                'success' => false,
+                'message' => "Invalid layout key '{$key}'.",
+                'errors'  => [
+                    'key' => ['The key must be one of: ' . implode(', ', Layout::validKeys()) . '.'],
+                ],
+            ], 422);
+        }
+
+        $record = Layout::find($key);
+        $current = $record?->templateId ?? 'layout1';
+        $allowed = Layout::allowedFor($key);
+
+        if ($key === 'navbarLayout') {
+            $navbar = NavbarConfig::getSingleton();
+            $data = [
+                'key'        => $key,
+                'layout'     => $current,
+                'templateId' => $current,
+                'behavior'   => $navbar->getBehaviorForLayout($current),
+                'enabled'    => $navbar->isNavbarEnabled(),
+                'visible'    => $navbar->isNavbarEnabled(),
+                'status'     => $navbar->isNavbarEnabled() ? 'visible' : 'hidden',
+                'items'      => is_array($navbar->items) ? array_values($navbar->items) : NavbarConfig::defaultItems(),
+                'allowed'    => $allowed,
+            ];
+        } elseif ($key === 'topbarLayout') {
+            $isTopEnabled = TopbarController::isTopbarEnabled();
+            $data = [
+                'key'        => $key,
+                'layout'     => $isTopEnabled ? ($current === 'layout0' ? 'layout1' : $current) : 'layout0',
+                'templateId' => $current,
+                'enabled'    => $isTopEnabled,
+                'visible'    => $isTopEnabled,
+                'status'     => $isTopEnabled ? 'visible' : 'hidden',
+                'allowed'    => $allowed,
+            ];
+        } elseif ($key === 'footerLayout') {
+            $footer = \App\Models\FooterConfig::getSingleton();
+            $footItems = $footer->getItemsList();
+            $data = [
+                'key'        => $key,
+                'layout'     => $current,
+                'templateId' => $current,
+                'enabled'    => true,
+                'visible'    => true,
+                'status'     => 'visible',
+                'items'      => $footItems,
+                'links'      => $footItems,
+                'grid'       => is_array($footer->grid) ? $footer->grid : \App\Models\FooterConfig::defaultGrid(),
+                'cta'        => is_array($footer->cta) ? $footer->cta : \App\Models\FooterConfig::defaultCta(),
+                'customCode' => is_array($footer->customCode) ? $footer->customCode : \App\Models\FooterConfig::defaultCustomCode(),
+                'allowed'    => $allowed,
+            ];
+        } else {
+            $data = [
+                'key'        => $key,
+                'layout'     => $current,
+                'templateId' => $current,
+                'allowed'    => $allowed,
+            ];
+        }
+
+        return response()->json([
+            'success' => true,
+            'data'    => $data,
+        ], 200);
     }
 
     // ──────────────────────────────────────────────────────────────────────
@@ -272,6 +387,24 @@ class LayoutController extends Controller
 
             $setting->announcement = $ann;
             $setting->save();
+        } elseif ($key === 'footerLayout') {
+            $footer = \App\Models\FooterConfig::getSingleton();
+            $footer->layoutId = $templateId;
+
+            if ($request->has('items') || $request->has('links')) {
+                $fIn = $request->input('items', $request->input('links'));
+                if (is_array($fIn)) {
+                    $footer->items = $fIn;
+                    $footer->links = $fIn;
+                }
+            }
+            if ($request->has('cta') && is_array($request->input('cta'))) {
+                $footer->cta = $request->input('cta');
+            }
+            if ($request->has('grid') && is_array($request->input('grid'))) {
+                $footer->grid = $request->input('grid');
+            }
+            $footer->save();
         }
 
         // 5. Message names the module and the new template
@@ -287,6 +420,20 @@ class LayoutController extends Controller
                 'enabled' => $isTopEnabled,
                 'visible' => $isTopEnabled,
                 'status' => $isTopEnabled ? 'visible' : 'hidden',
+            ];
+        } elseif ($key === 'footerLayout') {
+            $footer = \App\Models\FooterConfig::getSingleton();
+            $footItems = $footer->getItemsList();
+            $responseData = [
+                'layout'     => $templateId,
+                'enabled'    => true,
+                'visible'    => true,
+                'status'     => 'visible',
+                'items'      => $footItems,
+                'links'      => $footItems,
+                'grid'       => is_array($footer->grid) ? $footer->grid : \App\Models\FooterConfig::defaultGrid(),
+                'cta'        => is_array($footer->cta) ? $footer->cta : \App\Models\FooterConfig::defaultCta(),
+                'customCode' => is_array($footer->customCode) ? $footer->customCode : \App\Models\FooterConfig::defaultCustomCode(),
             ];
         } else {
             $responseData = [
@@ -350,6 +497,22 @@ class LayoutController extends Controller
             } elseif (isset($navData['menu']) && is_array($navData['menu'])) {
                 $processed = NavbarConfig::processItems($navData['menu']);
                 NavbarConfig::getSingleton()->update(['items' => $processed]);
+            }
+        }
+
+        // Handle footerLayout passed as an object { layout: "layout2", items: [...] }
+        if (isset($items['footerLayout']) && is_array($items['footerLayout'])) {
+            $footData = $items['footerLayout'];
+            $items['footerLayout'] = $footData['layout'] ?? ($footData['templateId'] ?? 'layout1');
+            $footer = \App\Models\FooterConfig::getSingleton();
+            if (isset($footData['items']) && is_array($footData['items'])) {
+                $footer->items = $footData['items'];
+                $footer->links = $footData['items'];
+                $footer->save();
+            } elseif (isset($footData['links']) && is_array($footData['links'])) {
+                $footer->items = $footData['links'];
+                $footer->links = $footData['links'];
+                $footer->save();
             }
         }
 

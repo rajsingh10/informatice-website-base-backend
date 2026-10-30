@@ -5,7 +5,6 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\FaqController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeSectionController;
 use App\Http\Controllers\InquiryController; // [Contact Page API]
@@ -77,6 +76,9 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
     // Public aliases
     Route::get('/public/layouts', [LayoutController::class, 'index']);
     Route::match(['put', 'post'], '/public/layouts', [LayoutController::class, 'save']);
+    Route::get('/public/layouts/{key}', [LayoutController::class, 'show']);
+    Route::get('/footer', [FooterController::class, 'showPublic']);
+    Route::get('/public/footer', [FooterController::class, 'showPublic']);
     Route::get('/public/seo/{page}', [SeoController::class, 'showPublic']);
     Route::get('/public/settings', [SiteSettingController::class, 'show']);
     Route::get('/public/navigation/navbar', [NavbarController::class, 'showPublic']);
@@ -194,21 +196,16 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
 
             Route::get('testimonials', [AdminModuleController::class, 'getTestimonials']);
             Route::get('gallery', [AdminModuleController::class, 'getGallery']);
-            Route::get('about', [AdminModuleController::class, 'getAbout']);
-            Route::get('career', [AdminModuleController::class, 'getCareer']);
-            Route::get('careers', [AdminModuleController::class, 'getCareer']);
-            Route::get('faq', [AdminModuleController::class, 'getFaq']);
-            Route::get('faqs', [AdminModuleController::class, 'getFaq']);
-            Route::get('terms', [AdminModuleController::class, 'getTerms']);
-            Route::get('privacy', [AdminModuleController::class, 'getPrivacy']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
         });
 
         // Module Layouts
         Route::get('/admin/layouts', [LayoutController::class, 'indexAdmin']);
+        Route::get('/admin/layouts/{key}', [LayoutController::class, 'show']);
         Route::post('/admin/layouts/save', [LayoutController::class, 'save']);
         Route::match(['put', 'post'], '/admin/layouts', [LayoutController::class, 'store']);
+        Route::match(['put', 'post', 'patch'], '/admin/layouts/{key}', [LayoutController::class, 'update']);
         Route::match(['put', 'post'], '/admin/layouts/{key}', [LayoutController::class, 'update']);
         Route::get('/admin/seo/{page}', [SeoController::class, 'showAdmin']);
         Route::match(['put', 'post'], '/admin/seo/{page}', [SeoController::class, 'update']);
@@ -355,28 +352,5 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
         Route::post('/admin/gallery', [GalleryController::class, 'store']);
         Route::put('/admin/gallery/{id}', [GalleryController::class, 'update']);
         Route::delete('/admin/gallery/{id}', [GalleryController::class, 'destroy']);
-
-        // Module 13 Careers
-        Route::get('/admin/careers', [CareerController::class, 'indexAdmin']);
-        Route::get('/admin/careers/{id}', [CareerController::class, 'showAdmin'])->whereNumber('id');
-        Route::post('/admin/careers', [CareerController::class, 'store']);
-        Route::match(['put', 'post', 'patch'], '/admin/careers/{id}', [CareerController::class, 'update'])->whereNumber('id');
-        Route::delete('/admin/careers/{id}', [CareerController::class, 'destroy'])->whereNumber('id');
-
-        // Module 14 FAQs
-        Route::get('/admin/faqs', [FaqController::class, 'indexAdmin']);
-        Route::match(['put', 'post'], '/admin/faqs', [FaqController::class, 'saveAll']);
-        Route::get('/admin/faqs/{id}', [FaqController::class, 'showAdmin'])->whereNumber('id');
-        Route::post('/admin/faqs/item', [FaqController::class, 'store']);
-        Route::match(['put', 'post', 'patch'], '/admin/faqs/{id}', [FaqController::class, 'update'])->whereNumber('id');
-        Route::delete('/admin/faqs/{id}', [FaqController::class, 'destroy'])->whereNumber('id');
-
-        // Module 15 & 16 Legal Pages (Terms & Privacy)
-        Route::get('/admin/legal/{type}', [LegalPageController::class, 'showAdmin']);
-        Route::match(['put', 'post'], '/admin/legal/{type}', [LegalPageController::class, 'update']);
-        Route::get('/admin/terms', [LegalPageController::class, 'showTermsAdmin']);
-        Route::match(['put', 'post'], '/admin/terms', [LegalPageController::class, 'updateTerms']);
-        Route::get('/admin/privacy', [LegalPageController::class, 'showPrivacyAdmin']);
-        Route::match(['put', 'post'], '/admin/privacy', [LegalPageController::class, 'updatePrivacy']);
     });
 });
