@@ -27,7 +27,11 @@ class Faq extends Model
      */
     public function scopePublished(Builder $query): Builder
     {
-        return $query->where('isPublished', true);
+        if (\Illuminate\Support\Facades\Schema::hasColumn('faqs', 'isPublished')) {
+            return $query->where('isPublished', true);
+        }
+
+        return $query;
     }
 
     /**
@@ -85,7 +89,7 @@ class Faq extends Model
             'answer' => (string) $this->answer,
             'category' => (string) ($this->category ?? 'General'),
             'order' => (int) ($this->order ?? 0),
-            'isPublished' => (bool) $this->isPublished,
+            'isPublished' => isset($this->attributes['isPublished']) ? (bool) $this->attributes['isPublished'] : true,
         ];
     }
 
