@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class Service extends Model
@@ -17,12 +18,53 @@ class Service extends Model
         'fullDescription',
         'icon',
         'image',
+        'imageAlt',
         'features',
         'deliverables',
         'order',
         'isPublished',
         'seo',
     ];
+
+    /**
+     * Dynamically filter fillable attributes based on database columns.
+     */
+    public function getFillable(): array
+    {
+        $fillable = $this->fillable;
+        try {
+            if (! Schema::hasColumn($this->getTable(), 'imageAlt')) {
+                $fillable = array_values(array_diff($fillable, ['imageAlt']));
+            }
+        } catch (\Throwable $e) {
+            // fallback
+        }
+        return $fillable;
+    }
+
+    /**
+     * Get imageAlt with graceful fallback to seo.imageAlt if column not present.
+     */
+    public function getImageAltAttribute(): string
+    {
+        if (array_key_exists('imageAlt', $this->attributes) && $this->attributes['imageAlt'] !== null) {
+            return (string) $this->attributes['imageAlt'];
+        }
+
+        if (is_array($this->seo) && ! empty($this->seo['imageAlt'])) {
+            return (string) $this->seo['imageAlt'];
+        }
+
+        return '';
+    }
+
+    /**
+     * Alias for altImage.
+     */
+    public function getAltImageAttribute(): string
+    {
+        return $this->getImageAltAttribute();
+    }
 
     protected $casts = [
         'features'     => 'array',
@@ -86,7 +128,7 @@ class Service extends Model
 
     /**
      * Compact payload for public catalog listing:
-     * id, title, slug, category, shortDescription, icon, image, features
+     * id, title, slug, category, shortDescription, icon, image, imageAlt, features
      */
     public function toCatalogPayload(): array
     {
@@ -98,6 +140,8 @@ class Service extends Model
             'shortDescription' => (string) ($this->shortDescription ?? ''),
             'icon'             => (string) ($this->icon ?? 'Globe'),
             'image'            => (string) ($this->image ?? ''),
+            'imageAlt'         => (string) ($this->imageAlt ?? ''),
+            'altImage'         => (string) ($this->imageAlt ?? ''),
             'features'         => is_array($this->features) ? array_values($this->features) : [],
         ];
     }
@@ -116,6 +160,8 @@ class Service extends Model
             'fullDescription'  => (string) ($this->fullDescription ?? ''),
             'icon'             => (string) ($this->icon ?? 'Globe'),
             'image'            => (string) ($this->image ?? ''),
+            'imageAlt'         => (string) ($this->imageAlt ?? ''),
+            'altImage'         => (string) ($this->imageAlt ?? ''),
             'features'         => is_array($this->features) ? array_values($this->features) : [],
             'deliverables'     => is_array($this->deliverables) ? array_values($this->deliverables) : [],
             'order'            => (int) $this->order,
@@ -138,6 +184,8 @@ class Service extends Model
             'fullDescription'  => (string) ($this->fullDescription ?? ''),
             'icon'             => (string) ($this->icon ?? 'Globe'),
             'image'            => (string) ($this->image ?? ''),
+            'imageAlt'         => (string) ($this->imageAlt ?? ''),
+            'altImage'         => (string) ($this->imageAlt ?? ''),
             'features'         => is_array($this->features) ? array_values($this->features) : [],
             'deliverables'     => is_array($this->deliverables) ? array_values($this->deliverables) : [],
             'order'            => (int) $this->order,

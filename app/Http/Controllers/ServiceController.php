@@ -154,6 +154,8 @@ class ServiceController extends Controller
             'fullDescription'  => 'sometimes|nullable|string',
             'icon'             => 'sometimes|nullable|string|max:255',
             'image'            => 'sometimes|nullable|string|max:1024',
+            'imageAlt'         => 'sometimes|nullable|string|max:500',
+            'altImage'         => 'sometimes|nullable|string|max:500',
             'features'         => 'sometimes|nullable|array',
             'features.*'       => 'string',
             'deliverables'     => 'sometimes|nullable|array',
@@ -170,7 +172,9 @@ class ServiceController extends Controller
             ? Service::generateSlug($request->input('slug'))
             : Service::generateSlug($request->input('title'));
 
-        $service = Service::create([
+        $imageAlt = (string) $request->input('imageAlt', $request->input('altImage', ''));
+
+        $createData = [
             'title'            => $request->input('title'),
             'slug'             => $slug,
             'category'         => $request->input('category', 'General'),
@@ -183,7 +187,17 @@ class ServiceController extends Controller
             'order'            => (int) $request->input('order', 0),
             'isPublished'      => $request->has('isPublished') ? filter_var($request->input('isPublished'), FILTER_VALIDATE_BOOLEAN) : true,
             'seo'              => $request->input('seo', []),
-        ]);
+        ];
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('services', 'imageAlt')) {
+            $createData['imageAlt'] = $imageAlt;
+        } else {
+            $seo = is_array($createData['seo']) ? $createData['seo'] : [];
+            $seo['imageAlt'] = $imageAlt;
+            $createData['seo'] = $seo;
+        }
+
+        $service = Service::create($createData);
 
         return response()->json([
             'success' => true,
@@ -215,6 +229,8 @@ class ServiceController extends Controller
             'fullDescription'  => 'sometimes|nullable|string',
             'icon'             => 'sometimes|nullable|string|max:255',
             'image'            => 'sometimes|nullable|string|max:1024',
+            'imageAlt'         => 'sometimes|nullable|string|max:500',
+            'altImage'         => 'sometimes|nullable|string|max:500',
             'features'         => 'sometimes|nullable|array',
             'features.*'       => 'string',
             'deliverables'     => 'sometimes|nullable|array',
@@ -236,6 +252,17 @@ class ServiceController extends Controller
             'order',
             'seo',
         ]);
+
+        if ($request->has('imageAlt') || $request->has('altImage')) {
+            $imageAlt = (string) $request->input('imageAlt', $request->input('altImage', ''));
+            if (\Illuminate\Support\Facades\Schema::hasColumn('services', 'imageAlt')) {
+                $data['imageAlt'] = $imageAlt;
+            } else {
+                $seo = isset($data['seo']) && is_array($data['seo']) ? $data['seo'] : (is_array($service->seo) ? $service->seo : []);
+                $seo['imageAlt'] = $imageAlt;
+                $data['seo'] = $seo;
+            }
+        }
 
         if ($request->has('isPublished')) {
             $data['isPublished'] = filter_var($request->input('isPublished'), FILTER_VALIDATE_BOOLEAN);
