@@ -24,6 +24,21 @@
         .badge-get  { background-color: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; }
         .badge-put  { background-color: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
         .badge-del  { background-color: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+        /* Custom slim scrollbar for nav and pre */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen">
@@ -66,7 +81,7 @@
         <div class="lg:col-span-3">
             <div class="bg-white rounded-xl border border-slate-200 p-3 shadow-sm sticky top-20">
                 <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">API Modules</h3>
-                <nav class="space-y-1">
+                <nav class="space-y-1 overflow-y-auto pr-1.5 custom-scrollbar h-[420px] max-h-[calc(100vh-320px)] min-h-[280px]">
                     <button onclick="switchTab('auth')" id="tab-auth" class="tab-btn active w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left transition">
                         <span class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-shield-halved text-blue-500"></i>
@@ -1246,7 +1261,6 @@
                         <i class="fa-solid fa-sitemap mr-1"></i>
                         <span>Save Multi-Layer Menu Tree</span>
                     </button>
-                </div>
                 </div>
             </div>
 
@@ -3657,12 +3671,15 @@
             const activeBtn = document.getElementById(`tab-${name}`);
             if (activeBtn) activeBtn.classList.add('active');
 
-            ['auth', 'modules', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'events', 'team', 'testimonials', 'gallery', 'contact', 'careers', 'faqs', 'terms', 'privacy', 'seo', 'media', 'settings'].forEach(s => {
-                const el = document.getElementById(`section-${s}`);
-                if (el) el.classList.add('hidden');
-            });
+            // Hide all sections dynamically
+            document.querySelectorAll('[id^="section-"]').forEach(el => el.classList.add('hidden'));
+
+            // Show active section
             const activeSec = document.getElementById(`section-${name}`);
             if (activeSec) activeSec.classList.remove('hidden');
+
+            // Reset page scroll to top so the module content is instantly visible
+            window.scrollTo({ top: 0, behavior: 'instant' });
         }
 
         async function sendApi(method, path, body = null, requireAuth = false, isFormData = false) {
