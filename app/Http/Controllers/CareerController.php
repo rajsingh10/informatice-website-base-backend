@@ -19,8 +19,6 @@ class CareerController extends Controller
             ->type($request->input('type'))
             ->location($request->input('location'))
             ->search($request->input('q') ?? $request->input('search'))
-            ->orderBy('order', 'asc')
-            ->orderBy('postedAt', 'desc')
             ->orderBy('id', 'desc');
 
         $limit = max(1, min(100, (int) $request->input('limit', 20)));
@@ -65,7 +63,6 @@ class CareerController extends Controller
             ->department($request->input('department'))
             ->type($request->input('type'))
             ->search($request->input('q') ?? $request->input('search'))
-            ->orderBy('order', 'asc')
             ->orderBy('id', 'desc');
 
         $items = $query->get()->map(fn ($c) => $c->toAdminPayload());

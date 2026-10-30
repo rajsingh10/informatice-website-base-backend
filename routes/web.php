@@ -354,5 +354,62 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
         Route::post('/admin/gallery', [GalleryController::class, 'store']);
         Route::put('/admin/gallery/{id}', [GalleryController::class, 'update']);
         Route::delete('/admin/gallery/{id}', [GalleryController::class, 'destroy']);
+
+        // Module 12: Footer
+        Route::get('/admin/footer', [FooterController::class, 'showAdmin']);
+        Route::match(['put', 'post', 'patch'], '/admin/footer', [FooterController::class, 'updateFooter']);
+        Route::get('/admin/footer/links', [FooterController::class, 'getLinks']);
+        Route::match(['put', 'post', 'patch'], '/admin/footer/links', [FooterController::class, 'updateLinks']);
+        Route::get('/admin/footer/items', [FooterController::class, 'getLinks']);
+        Route::match(['put', 'post', 'patch'], '/admin/footer/items', [FooterController::class, 'updateLinks']);
+        Route::get('/admin/footer/cta', [FooterController::class, 'getCta']);
+        Route::match(['put', 'post', 'patch'], '/admin/footer/cta', [FooterController::class, 'updateCta']);
+        Route::get('/admin/footer/grid', [FooterController::class, 'getGrid']);
+        Route::match(['put', 'post', 'patch'], '/admin/footer/grid', [FooterController::class, 'updateGrid']);
+        Route::get('/admin/footer/custom-code', [FooterController::class, 'getCustomCode']);
+        Route::match(['put', 'post', 'patch'], '/admin/footer/custom-code', [FooterController::class, 'updateCustomCode']);
+        Route::match(['post', 'put', 'get'], '/admin/footer/reset', [FooterController::class, 'reset']);
+
+        // Module 13: Careers
+        Route::get('/admin/careers', [CareerController::class, 'indexAdmin']);
+        Route::get('/admin/careers/items', [CareerController::class, 'indexAdmin']);
+        Route::get('/admin/careers/item', [CareerController::class, 'indexAdmin']);
+        Route::get('/admin/career/items', [CareerController::class, 'indexAdmin']);
+        Route::get('/admin/careers/{id}', [CareerController::class, 'showAdmin']);
+        Route::get('/admin/careers/item/{id}', [CareerController::class, 'showAdmin']);
+        Route::get('/admin/career/{id}', [CareerController::class, 'showAdmin']);
+        Route::post('/admin/careers', [CareerController::class, 'store']);
+        Route::post('/admin/careers/item', [CareerController::class, 'store']);
+        Route::post('/admin/career/item', [CareerController::class, 'store']);
+        Route::match(['put', 'patch', 'post'], '/admin/careers/{id}', [CareerController::class, 'update']);
+        Route::match(['put', 'patch', 'post'], '/admin/careers/item/{id}', [CareerController::class, 'update']);
+        Route::match(['put', 'patch', 'post'], '/admin/career/{id}', [CareerController::class, 'update']);
+        Route::match(['delete', 'post'], '/admin/careers/{id}', [CareerController::class, 'destroy']);
+        Route::match(['delete', 'post'], '/admin/careers/item/{id}', [CareerController::class, 'destroy']);
+        Route::match(['delete', 'post'], '/admin/career/{id}', [CareerController::class, 'destroy']);
+
+        // Module 14: FAQs
+        Route::get('/admin/faqs', [FaqController::class, 'indexAdmin']);
+        Route::get('/admin/faqs/items', [FaqController::class, 'indexAdmin']);
+        Route::get('/admin/faqs/item', [FaqController::class, 'indexAdmin']);
+        Route::get('/admin/faq', [FaqController::class, 'indexAdmin']);
+        Route::get('/admin/faqs/{id}', [FaqController::class, 'showAdmin']);
+        Route::get('/admin/faqs/item/{id}', [FaqController::class, 'showAdmin']);
+        Route::match(['put', 'post'], '/admin/faqs', [FaqController::class, 'saveAll']);
+        Route::post('/admin/faqs/item', [FaqController::class, 'store']);
+        Route::post('/admin/faqs/items', [FaqController::class, 'store']);
+        Route::post('/admin/faq/item', [FaqController::class, 'store']);
+        Route::match(['put', 'patch', 'post'], '/admin/faqs/item/{id}', [FaqController::class, 'update']);
+        Route::match(['put', 'patch', 'post'], '/admin/faqs/{id}', [FaqController::class, 'update']);
+        Route::match(['delete', 'post'], '/admin/faqs/item/{id}', [FaqController::class, 'destroy']);
+        Route::match(['delete', 'post'], '/admin/faqs/{id}', [FaqController::class, 'destroy']);
+
+        // Modules 15 & 16: Legal Pages (Terms & Privacy)
+        Route::get('/admin/legal/{type}', [LegalPageController::class, 'showAdmin']);
+        Route::match(['put', 'patch', 'post'], '/admin/legal/{type}', [LegalPageController::class, 'update']);
+        Route::get('/admin/terms', [LegalPageController::class, 'showTermsAdmin']);
+        Route::match(['put', 'patch', 'post'], '/admin/terms', [LegalPageController::class, 'updateTerms']);
+        Route::get('/admin/privacy', [LegalPageController::class, 'showPrivacyAdmin']);
+        Route::match(['put', 'patch', 'post'], '/admin/privacy', [LegalPageController::class, 'updatePrivacy']);
     });
 });

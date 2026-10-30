@@ -14,8 +14,27 @@ class Faq extends Model
         'answer',
         'category',
         'order',
-        'isPublished',
     ];
+
+    public function getFillable(): array
+    {
+        $fillable = $this->fillable;
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasColumn('faqs', 'isPublished')) {
+                $fillable[] = 'isPublished';
+            }
+        } catch (\Throwable $e) {}
+        return $fillable;
+    }
+
+    public function setIsPublishedAttribute($value): void
+    {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasColumn('faqs', 'isPublished')) {
+                $this->attributes['isPublished'] = (bool) $value;
+            }
+        } catch (\Throwable $e) {}
+    }
 
     protected $casts = [
         'order' => 'integer',
