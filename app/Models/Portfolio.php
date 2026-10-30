@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class Portfolio extends Model
@@ -22,6 +23,7 @@ class Portfolio extends Model
         'solution',
         'results',
         'image',
+        'imageAlt',
         'gallery',
         'projectUrl',
         'isFeatured',
@@ -29,6 +31,38 @@ class Portfolio extends Model
         'isPublished',
         'seo',
     ];
+
+    /**
+     * Dynamically filter fillable attributes based on database columns.
+     */
+    public function getFillable(): array
+    {
+        $fillable = $this->fillable;
+        try {
+            if (! Schema::hasColumn($this->getTable(), 'imageAlt')) {
+                $fillable = array_values(array_diff($fillable, ['imageAlt']));
+            }
+        } catch (\Throwable $e) {
+            // fallback
+        }
+        return $fillable;
+    }
+
+    /**
+     * Get imageAlt with graceful fallback to seo.imageAlt if column not present.
+     */
+    public function getImageAltAttribute(): string
+    {
+        if (array_key_exists('imageAlt', $this->attributes) && $this->attributes['imageAlt'] !== null) {
+            return (string) $this->attributes['imageAlt'];
+        }
+
+        if (is_array($this->seo) && ! empty($this->seo['imageAlt'])) {
+            return (string) $this->seo['imageAlt'];
+        }
+
+        return '';
+    }
 
     protected $casts = [
         'technologies' => 'array',
@@ -107,6 +141,7 @@ class Portfolio extends Model
             'technologies'     => is_array($this->technologies) ? array_values($this->technologies) : [],
             'shortDescription' => (string) ($this->shortDescription ?? ''),
             'image'            => (string) ($this->image ?? ''),
+            'imageAlt'         => (string) ($this->imageAlt ?? ''),
             'isFeatured'       => (bool) $this->isFeatured,
         ];
     }
@@ -130,6 +165,7 @@ class Portfolio extends Model
             'solution'         => (string) ($this->solution ?? ''),
             'results'          => is_array($this->results) ? array_values($this->results) : [],
             'image'            => (string) ($this->image ?? ''),
+            'imageAlt'         => (string) ($this->imageAlt ?? ''),
             'gallery'          => is_array($this->gallery) ? array_values($this->gallery) : [],
             'projectUrl'       => (string) ($this->projectUrl ?? ''),
             'isFeatured'       => (bool) $this->isFeatured,
@@ -158,6 +194,7 @@ class Portfolio extends Model
             'solution'         => (string) ($this->solution ?? ''),
             'results'          => is_array($this->results) ? array_values($this->results) : [],
             'image'            => (string) ($this->image ?? ''),
+            'imageAlt'         => (string) ($this->imageAlt ?? ''),
             'gallery'          => is_array($this->gallery) ? array_values($this->gallery) : [],
             'projectUrl'       => (string) ($this->projectUrl ?? ''),
             'isFeatured'       => (bool) $this->isFeatured,

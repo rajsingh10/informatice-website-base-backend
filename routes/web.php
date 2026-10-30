@@ -6,6 +6,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\FeaturedController;
 use App\Http\Controllers\FooterController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeSectionController;
@@ -60,6 +61,10 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
     // Direct services aliases
     Route::get('/services', [ServiceController::class, 'indexPublic']);
     Route::get('/services/{slug}', [ServiceController::class, 'showPublic']);
+    Route::get('/featured', [FeaturedController::class, 'indexPublic']);
+    Route::get('/is-featured', [FeaturedController::class, 'indexPublic']);
+    Route::get('/public/featured', [FeaturedController::class, 'indexPublic']);
+    Route::get('/public/is-featured', [FeaturedController::class, 'indexPublic']);
 
     // Module 1: Top Bar public aliases
     Route::get('/topbar', [TopbarController::class, 'showPublic']);
@@ -200,7 +205,13 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
             Route::get('gallery', [AdminModuleController::class, 'getGallery']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
+            Route::get('featured', [FeaturedController::class, 'indexAdmin']);
+            Route::get('is-featured', [FeaturedController::class, 'indexAdmin']);
         });
+
+        // Featured API
+        Route::get('/admin/featured', [FeaturedController::class, 'indexAdmin']);
+        Route::get('/admin/is-featured', [FeaturedController::class, 'indexAdmin']);
 
         // Module Layouts
         Route::get('/admin/layouts', [LayoutController::class, 'indexAdmin']);

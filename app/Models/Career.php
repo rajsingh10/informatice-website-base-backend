@@ -21,12 +21,14 @@ class Career extends Model
         'requirements',
         'applyUrl',
         'status',
+        'isFeatured',
         'order',
         'postedAt',
     ];
 
     protected $casts = [
         'requirements' => 'array',
+        'isFeatured' => 'boolean',
         'order' => 'integer',
         'postedAt' => 'datetime',
     ];
@@ -147,6 +149,7 @@ class Career extends Model
             'requirements.*' => 'string|max:500',
             'applyUrl' => 'nullable|string|max:1000',
             'status' => 'nullable|string|in:open,closed',
+            'isFeatured' => 'nullable|boolean',
             'order' => 'nullable|integer|min:0',
             'postedAt' => 'nullable|date',
         ];
@@ -169,6 +172,7 @@ class Career extends Model
             'requirements' => is_array($this->requirements) ? array_values($this->requirements) : [],
             'applyUrl' => (string) ($this->applyUrl ?? ''),
             'status' => (string) ($this->status ?? 'open'),
+            'isFeatured' => (bool) $this->isFeatured,
             'order' => (int) ($this->order ?? 0),
             'postedAt' => $this->postedAt ? $this->postedAt->toISOString() : ($this->created_at ? $this->created_at->toISOString() : null),
         ];

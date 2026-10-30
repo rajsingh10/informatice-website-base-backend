@@ -22,6 +22,7 @@ class Service extends Model
         'features',
         'deliverables',
         'order',
+        'isFeatured',
         'isPublished',
         'seo',
     ];
@@ -70,6 +71,7 @@ class Service extends Model
         'features'     => 'array',
         'deliverables' => 'array',
         'order'        => 'integer',
+        'isFeatured'   => 'boolean',
         'isPublished'  => 'boolean',
         'seo'          => 'array',
     ];
@@ -141,8 +143,8 @@ class Service extends Model
             'icon'             => (string) ($this->icon ?? 'Globe'),
             'image'            => (string) ($this->image ?? ''),
             'imageAlt'         => (string) ($this->imageAlt ?? ''),
-            'altImage'         => (string) ($this->imageAlt ?? ''),
             'features'         => is_array($this->features) ? array_values($this->features) : [],
+            'isFeatured'       => (bool) $this->isFeatured,
         ];
     }
 
@@ -161,10 +163,10 @@ class Service extends Model
             'icon'             => (string) ($this->icon ?? 'Globe'),
             'image'            => (string) ($this->image ?? ''),
             'imageAlt'         => (string) ($this->imageAlt ?? ''),
-            'altImage'         => (string) ($this->imageAlt ?? ''),
             'features'         => is_array($this->features) ? array_values($this->features) : [],
             'deliverables'     => is_array($this->deliverables) ? array_values($this->deliverables) : [],
             'order'            => (int) $this->order,
+            'isFeatured'       => (bool) $this->isFeatured,
             'isPublished'      => (bool) $this->isPublished,
             'seo'              => $this->resolveSeo(),
         ];
@@ -185,10 +187,10 @@ class Service extends Model
             'icon'             => (string) ($this->icon ?? 'Globe'),
             'image'            => (string) ($this->image ?? ''),
             'imageAlt'         => (string) ($this->imageAlt ?? ''),
-            'altImage'         => (string) ($this->imageAlt ?? ''),
             'features'         => is_array($this->features) ? array_values($this->features) : [],
             'deliverables'     => is_array($this->deliverables) ? array_values($this->deliverables) : [],
             'order'            => (int) $this->order,
+            'isFeatured'       => (bool) $this->isFeatured,
             'isPublished'      => (bool) $this->isPublished,
             'seo'              => is_array($this->seo) ? $this->seo : (object)[],
             'created_at'       => $this->created_at,

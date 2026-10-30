@@ -23,8 +23,8 @@ class PortfolioController extends Controller
         }
 
         // Filter featured projects
-        if ($request->has('featured')) {
-            $query->where('isFeatured', filter_var($request->query('featured'), FILTER_VALIDATE_BOOLEAN));
+        if ($request->has('featured') || $request->has('isFeatured')) {
+            $query->where('isFeatured', filter_var($request->query('featured', $request->query('isFeatured')), FILTER_VALIDATE_BOOLEAN));
         }
 
         // Search in title, client, or shortDescription
@@ -97,6 +97,10 @@ class PortfolioController extends Controller
             $query->where('isPublished', filter_var($request->query('isPublished'), FILTER_VALIDATE_BOOLEAN));
         }
 
+        if ($request->has('featured') || $request->has('isFeatured')) {
+            $query->where('isFeatured', filter_var($request->query('featured', $request->query('isFeatured')), FILTER_VALIDATE_BOOLEAN));
+        }
+
         if ($request->filled('search')) {
             $term = '%' . $request->query('search') . '%';
             $query->where(function ($q) use ($term) {
@@ -158,6 +162,7 @@ class PortfolioController extends Controller
             'solution'         => 'sometimes|nullable|string',
             'results'          => 'sometimes|nullable|array',
             'image'            => 'sometimes|nullable|string|max:1024',
+            'imageAlt'         => 'sometimes|nullable|string|max:500',
             'gallery'          => 'sometimes|nullable|array',
             'gallery.*'        => 'string',
             'projectUrl'       => 'sometimes|nullable|string|max:1024',
@@ -174,7 +179,9 @@ class PortfolioController extends Controller
             ? Portfolio::generateSlug($request->input('slug'))
             : Portfolio::generateSlug($request->input('title'));
 
-        $project = Portfolio::create([
+        $imageAlt = (string) $request->input('imageAlt', $request->input('altImage', ''));
+
+        $createData = [
             'title'            => $request->input('title'),
             'slug'             => $slug,
             'client'           => $request->input('client', ''),
@@ -193,7 +200,17 @@ class PortfolioController extends Controller
             'order'            => (int) $request->input('order', 0),
             'isPublished'      => $request->has('isPublished') ? (bool) $request->input('isPublished') : true,
             'seo'              => $request->input('seo', []),
-        ]);
+        ];
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('portfolios', 'imageAlt')) {
+            $createData['imageAlt'] = $imageAlt;
+        } else {
+            $seo = is_array($createData['seo']) ? $createData['seo'] : [];
+            $seo['imageAlt'] = $imageAlt;
+            $createData['seo'] = $seo;
+        }
+
+        $project = Portfolio::create($createData);
 
         return response()->json([
             'success' => true,
@@ -231,6 +248,7 @@ class PortfolioController extends Controller
             'solution'         => 'sometimes|nullable|string',
             'results'          => 'sometimes|nullable|array',
             'image'            => 'sometimes|nullable|string|max:1024',
+            'imageAlt'         => 'sometimes|nullable|string|max:500',
             'gallery'          => 'sometimes|nullable|array',
             'gallery.*'        => 'string',
             'projectUrl'       => 'sometimes|nullable|string|max:1024',
@@ -259,6 +277,17 @@ class PortfolioController extends Controller
             'isPublished',
             'seo',
         ]);
+
+        if ($request->has('imageAlt') || $request->has('altImage')) {
+            $imageAlt = (string) $request->input('imageAlt', $request->input('altImage', ''));
+            if (\Illuminate\Support\Facades\Schema::hasColumn('portfolios', 'imageAlt')) {
+                $data['imageAlt'] = $imageAlt;
+            } else {
+                $seo = isset($data['seo']) && is_array($data['seo']) ? $data['seo'] : (is_array($project->seo) ? $project->seo : []);
+                $seo['imageAlt'] = $imageAlt;
+                $data['seo'] = $seo;
+            }
+        }
 
         if ($request->filled('slug')) {
             $data['slug'] = Portfolio::generateSlug($request->input('slug'), $project->id);

@@ -14,6 +14,7 @@ class Faq extends Model
         'answer',
         'category',
         'order',
+        'isFeatured',
     ];
 
     public function getFillable(): array
@@ -22,6 +23,9 @@ class Faq extends Model
         try {
             if (\Illuminate\Support\Facades\Schema::hasColumn('faqs', 'isPublished')) {
                 $fillable[] = 'isPublished';
+            }
+            if (! \Illuminate\Support\Facades\Schema::hasColumn('faqs', 'isFeatured')) {
+                $fillable = array_values(array_diff($fillable, ['isFeatured']));
             }
         } catch (\Throwable $e) {}
         return $fillable;
@@ -36,8 +40,18 @@ class Faq extends Model
         } catch (\Throwable $e) {}
     }
 
+    public function setIsFeaturedAttribute($value): void
+    {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasColumn('faqs', 'isFeatured')) {
+                $this->attributes['isFeatured'] = (bool) $value;
+            }
+        } catch (\Throwable $e) {}
+    }
+
     protected $casts = [
         'order' => 'integer',
+        'isFeatured' => 'boolean',
         'isPublished' => 'boolean',
     ];
 
@@ -93,6 +107,7 @@ class Faq extends Model
             'answer' => "{$prefix}required|string",
             'category' => 'nullable|string|max:100',
             'order' => 'nullable|integer|min:0',
+            'isFeatured' => 'nullable|boolean',
             'isPublished' => 'nullable|boolean',
         ];
     }
@@ -108,6 +123,7 @@ class Faq extends Model
             'answer' => (string) $this->answer,
             'category' => (string) ($this->category ?? 'General'),
             'order' => (int) ($this->order ?? 0),
+            'isFeatured' => isset($this->attributes['isFeatured']) ? (bool) $this->attributes['isFeatured'] : (bool) ($this->isFeatured ?? false),
             'isPublished' => isset($this->attributes['isPublished']) ? (bool) $this->attributes['isPublished'] : true,
         ];
     }

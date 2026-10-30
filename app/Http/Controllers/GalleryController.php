@@ -22,6 +22,10 @@ class GalleryController extends Controller
             $query->category($request->query('category'));
         }
 
+        if ($request->has('featured') || $request->has('isFeatured')) {
+            $query->where('isFeatured', filter_var($request->query('featured', $request->query('isFeatured')), FILTER_VALIDATE_BOOLEAN));
+        }
+
         if ($request->filled('search')) {
             $search = '%'.$request->query('search').'%';
             $query->where(function ($q) use ($search) {
@@ -79,6 +83,10 @@ class GalleryController extends Controller
 
         if ($request->filled('category')) {
             $query->category($request->query('category'));
+        }
+
+        if ($request->has('featured') || $request->has('isFeatured')) {
+            $query->where('isFeatured', filter_var($request->query('featured', $request->query('isFeatured')), FILTER_VALIDATE_BOOLEAN));
         }
 
         if ($request->has('isPublished')) {

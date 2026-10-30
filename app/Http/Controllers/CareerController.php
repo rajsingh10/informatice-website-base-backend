@@ -18,6 +18,7 @@ class CareerController extends Controller
             ->department($request->input('department'))
             ->type($request->input('type'))
             ->location($request->input('location'))
+            ->when($request->has('featured') || $request->has('isFeatured'), fn ($q) => $q->where('isFeatured', filter_var($request->input('featured', $request->input('isFeatured')), FILTER_VALIDATE_BOOLEAN)))
             ->search($request->input('q') ?? $request->input('search'))
             ->orderBy('id', 'desc');
 
@@ -60,6 +61,7 @@ class CareerController extends Controller
     {
         $query = Career::query()
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->input('status')))
+            ->when($request->has('featured') || $request->has('isFeatured'), fn ($q) => $q->where('isFeatured', filter_var($request->input('featured', $request->input('isFeatured')), FILTER_VALIDATE_BOOLEAN)))
             ->department($request->input('department'))
             ->type($request->input('type'))
             ->search($request->input('q') ?? $request->input('search'))

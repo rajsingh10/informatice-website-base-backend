@@ -6,6 +6,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\FeaturedController;
 use App\Http\Controllers\FooterController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeSectionController;
@@ -37,11 +38,16 @@ Route::get('topbar/items', [TopbarController::class, 'getItems']);
 Route::get('topbar/socials', [TopbarController::class, 'getItems']);
 Route::get('services', [ServiceController::class, 'indexPublic']);
 Route::get('services/{slug}', [ServiceController::class, 'showPublic']);
+Route::get('featured', [FeaturedController::class, 'indexPublic']);
+Route::get('is-featured', [FeaturedController::class, 'indexPublic']);
 
 // ═══════════════════════════════════════════════════════════
 //  PUBLIC routes  (No Auth)
 // ═══════════════════════════════════════════════════════════
 Route::prefix('public')->group(function () {
+    // Featured API (Shows all isFeatured items across modules)
+    Route::get('featured', [FeaturedController::class, 'indexPublic']);
+    Route::get('is-featured', [FeaturedController::class, 'indexPublic']);
     // Layouts
     Route::get('layouts', [LayoutController::class, 'index']);
     Route::match(['put', 'post'], 'layouts', [LayoutController::class, 'save']);
@@ -193,7 +199,13 @@ Route::prefix('admin')->group(function () {
             Route::get('gallery', [AdminModuleController::class, 'getGallery']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
+            Route::get('featured', [FeaturedController::class, 'indexAdmin']);
+            Route::get('is-featured', [FeaturedController::class, 'indexAdmin']);
         });
+
+        // Featured API
+        Route::get('featured', [FeaturedController::class, 'indexAdmin']);
+        Route::get('is-featured', [FeaturedController::class, 'indexAdmin']);
 
         // Layouts (Modules 1, 2, 3, 4, 5 etc.)
         Route::get('layouts', [LayoutController::class, 'indexAdmin']);

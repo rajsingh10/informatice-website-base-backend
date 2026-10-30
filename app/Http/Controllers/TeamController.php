@@ -26,6 +26,10 @@ class TeamController extends Controller
             $query->leadership(filter_var($request->query('isLeadership'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
         }
 
+        if ($request->has('featured') || $request->has('isFeatured')) {
+            $query->where('isFeatured', filter_var($request->query('featured', $request->query('isFeatured')), FILTER_VALIDATE_BOOLEAN));
+        }
+
         if ($request->filled('search')) {
             $search = '%'.$request->query('search').'%';
             $query->where(function ($q) use ($search) {
@@ -88,6 +92,10 @@ class TeamController extends Controller
 
         if ($request->has('isLeadership')) {
             $query->leadership(filter_var($request->query('isLeadership'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
+        }
+
+        if ($request->has('featured') || $request->has('isFeatured')) {
+            $query->where('isFeatured', filter_var($request->query('featured', $request->query('isFeatured')), FILTER_VALIDATE_BOOLEAN));
         }
 
         if ($request->has('isPublished')) {
