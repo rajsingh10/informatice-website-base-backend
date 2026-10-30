@@ -17,8 +17,8 @@ class NavbarConfig extends Model
 
     protected $casts = [
         'behaviors' => 'array',
-        'cta'       => 'array',
-        'items'     => 'array',
+        'cta' => 'array',
+        'items' => 'array',
     ];
 
     public static array $allowedBehaviors = [
@@ -66,8 +66,8 @@ class NavbarConfig extends Model
     {
         return [
             'enabled' => true,
-            'label'   => 'Get a Quote',
-            'url'     => '/contact',
+            'label' => 'Get a Quote',
+            'url' => '/contact',
         ];
     }
 
@@ -78,8 +78,8 @@ class NavbarConfig extends Model
     {
         return [
             'headerBehavior' => 'fixed',
-            'cta'            => static::defaultCta(),
-            'items'          => static::defaultItems(),
+            'cta' => static::defaultCta(),
+            'items' => static::defaultItems(),
         ];
     }
 
@@ -92,6 +92,7 @@ class NavbarConfig extends Model
         if (! $config) {
             $config = static::create(static::defaults());
         }
+
         return $config;
     }
 
@@ -101,6 +102,7 @@ class NavbarConfig extends Model
     public function getBehaviorsMap(): array
     {
         $stored = is_array($this->behaviors) ? $this->behaviors : [];
+
         return array_merge(static::defaultBehaviors(), $stored);
     }
 
@@ -110,11 +112,12 @@ class NavbarConfig extends Model
     public function getBehaviorForLayout(?string $layoutKey = null): string
     {
         if (! $layoutKey) {
-            $layoutRecord = \App\Models\Layout::find('navbarLayout');
+            $layoutRecord = Layout::find('navbarLayout');
             $layoutKey = $layoutRecord?->templateId ?? 'layout1';
         }
 
         $map = $this->getBehaviorsMap();
+
         return $map[$layoutKey] ?? ($this->headerBehavior ?: 'fixed');
     }
 
@@ -123,7 +126,7 @@ class NavbarConfig extends Model
      */
     public function setBehaviorForLayout(string $behavior, ?string $layoutKey = null): void
     {
-        $layoutRecord = \App\Models\Layout::find('navbarLayout');
+        $layoutRecord = Layout::find('navbarLayout');
         $currentTemplate = $layoutRecord?->templateId ?? 'layout1';
 
         $targetLayout = $layoutKey ?: $currentTemplate;
@@ -147,6 +150,7 @@ class NavbarConfig extends Model
         if (is_array($this->cta) && isset($this->cta['_navbar_enabled'])) {
             return (bool) $this->cta['_navbar_enabled'];
         }
+
         return true;
     }
 
@@ -162,15 +166,49 @@ class NavbarConfig extends Model
     }
 
     /**
-     * Format payload for public header (only enabled: true items).
+     * Recursively filter items for public display (only enabled items, preserving submenus).
+     */
+    public static function filterPublicItems(array $items): array
+    {
+        $result = [];
+        foreach ($items as $item) {
+            if (! is_array($item) || empty($item['enabled'])) {
+                continue;
+            }
+
+            $clean = [
+                'id' => (string) ($item['id'] ?? ''),
+                'label' => (string) ($item['label'] ?? ''),
+                'url' => (string) ($item['url'] ?? '/'),
+                'enabled' => true,
+            ];
+
+            if (isset($item['target'])) {
+                $clean['target'] = (string) $item['target'];
+            }
+
+            // Recursively filter submenus (submenu / children / subitems / dropdown)
+            $children = $item['submenu'] ?? ($item['children'] ?? ($item['subitems'] ?? ($item['dropdown'] ?? null)));
+            if (is_array($children) && ! empty($children)) {
+                $filteredSubmenu = static::filterPublicItems($children);
+                if (! empty($filteredSubmenu)) {
+                    $clean['submenu'] = $filteredSubmenu;
+                }
+            }
+
+            $result[] = $clean;
+        }
+
+        return array_values($result);
+    }
+
+    /**
+     * Format payload for public header (only enabled: true items, recursively).
      */
     public function toPublicPayload(): array
     {
         $items = is_array($this->items) ? $this->items : static::defaultItems();
-
-        $enabledItems = array_values(array_filter($items, function ($item) {
-            return ! empty($item['enabled']);
-        }));
+        $enabledItems = static::filterPublicItems($items);
 
         $activeBehavior = $this->getBehaviorForLayout();
         $isEnabled = $this->isNavbarEnabled();
@@ -179,18 +217,18 @@ class NavbarConfig extends Model
         unset($cleanCta['_behaviors'], $cleanCta['_navbar_enabled']);
 
         return [
-            'enabled'        => $isEnabled,
-            'visible'        => $isEnabled,
-            'status'         => $isEnabled ? 'visible' : 'hidden',
-            'behavior'       => $activeBehavior,
+            'enabled' => $isEnabled,
+            'visible' => $isEnabled,
+            'status' => $isEnabled ? 'visible' : 'hidden',
+            'behavior' => $activeBehavior,
             'headerBehavior' => $activeBehavior,
-            'cta'            => $cleanCta,
-            'items'          => $enabledItems,
+            'cta' => $cleanCta,
+            'items' => $enabledItems,
         ];
     }
 
     /**
-     * Format payload for admin header (includes disabled items).
+     * Format payload for admin header (includes disabled items and all submenu layers).
      */
     public function toAdminPayload(): array
     {
@@ -201,37 +239,63 @@ class NavbarConfig extends Model
         unset($cleanCta['_behaviors'], $cleanCta['_navbar_enabled']);
 
         return [
-            'enabled'        => $isEnabled,
-            'visible'        => $isEnabled,
-            'status'         => $isEnabled ? 'visible' : 'hidden',
-            'behavior'       => $activeBehavior,
+            'enabled' => $isEnabled,
+            'visible' => $isEnabled,
+            'status' => $isEnabled ? 'visible' : 'hidden',
+            'behavior' => $activeBehavior,
             'headerBehavior' => $activeBehavior,
-            'cta'            => $cleanCta,
-            'items'          => is_array($this->items) ? array_values($this->items) : static::defaultItems(),
+            'cta' => $cleanCta,
+            'items' => is_array($this->items) ? array_values($this->items) : static::defaultItems(),
         ];
     }
 
     /**
-     * Process array of items: assign ID if missing, preserve order, normalize boolean enabled.
-     * Supports label/name/title and url/path/href.
+     * Recursively calculate highest numeric ID in tree.
      */
-    public static function processItems(array $rawItems): array
+    public static function getMaxItemId(array $items): int
     {
-        $existingIds = [];
-        $maxNum = 0;
+        $max = 0;
+        foreach ($items as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
 
-        foreach ($rawItems as $item) {
             if (! empty($item['id']) && preg_match('/^nav-(\d+)$/', (string) $item['id'], $m)) {
                 $num = (int) $m[1];
-                if ($num > $maxNum) {
-                    $maxNum = $num;
+                if ($num > $max) {
+                    $max = $num;
                 }
-                $existingIds[$item['id']] = true;
             }
+
+            $children = $item['submenu'] ?? ($item['children'] ?? ($item['subitems'] ?? ($item['dropdown'] ?? null)));
+            if (is_array($children) && ! empty($children)) {
+                $subMax = static::getMaxItemId($children);
+                if ($subMax > $max) {
+                    $max = $subMax;
+                }
+            }
+        }
+
+        return $max;
+    }
+
+    /**
+     * Recursively process array of items down to arbitrary depth.
+     * Preserves order, assigns ID if missing, normalizes boolean enabled,
+     * and supports multiple layers of submenu / children / subitems / dropdown.
+     */
+    public static function processItems(array $rawItems, ?int &$maxNum = null): array
+    {
+        if ($maxNum === null) {
+            $maxNum = static::getMaxItemId($rawItems);
         }
 
         $processed = [];
         foreach ($rawItems as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
             $id = ! empty($item['id']) ? (string) $item['id'] : null;
 
             if (! $id) {
@@ -240,35 +304,191 @@ class NavbarConfig extends Model
             }
 
             $label = $item['label'] ?? ($item['name'] ?? ($item['title'] ?? 'Link'));
-            $url   = $item['url'] ?? ($item['path'] ?? ($item['href'] ?? '/'));
+            $url = $item['url'] ?? ($item['path'] ?? ($item['href'] ?? '/'));
 
-            $processed[] = [
-                'id'      => (string) $id,
-                'label'   => (string) $label,
-                'url'     => (string) $url,
+            $node = [
+                'id' => (string) $id,
+                'label' => (string) $label,
+                'url' => (string) $url,
                 'enabled' => isset($item['enabled']) ? filter_var($item['enabled'], FILTER_VALIDATE_BOOLEAN) : true,
             ];
+
+            if (isset($item['target'])) {
+                $node['target'] = (string) $item['target'];
+            }
+
+            // Extract children if any
+            $children = null;
+            if (isset($item['submenu']) && is_array($item['submenu'])) {
+                $children = $item['submenu'];
+            } elseif (isset($item['children']) && is_array($item['children'])) {
+                $children = $item['children'];
+            } elseif (isset($item['subitems']) && is_array($item['subitems'])) {
+                $children = $item['subitems'];
+            } elseif (isset($item['dropdown']) && is_array($item['dropdown'])) {
+                $children = $item['dropdown'];
+            }
+
+            if ($children !== null) {
+                $node['submenu'] = static::processItems($children, $maxNum);
+            }
+
+            $processed[] = $node;
         }
 
         return $processed;
     }
 
     /**
-     * Get next available navigation item ID.
+     * Recursively find item by ID anywhere in tree.
+     */
+    public static function findItemRecursive(array $items, string $id): ?array
+    {
+        foreach ($items as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            if ((string) ($item['id'] ?? '') === (string) $id) {
+                return $item;
+            }
+
+            if (! empty($item['submenu']) && is_array($item['submenu'])) {
+                $found = static::findItemRecursive($item['submenu'], $id);
+                if ($found !== null) {
+                    return $found;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Recursively find and modify item by ID anywhere in tree.
+     */
+    public static function findAndModifyItem(array &$items, string $id, callable $callback): bool
+    {
+        foreach ($items as $idx => &$item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            if ((string) ($item['id'] ?? '') === (string) $id) {
+                $item = $callback($item);
+
+                return true;
+            }
+
+            if (isset($item['submenu']) && is_array($item['submenu'])) {
+                if (static::findAndModifyItem($item['submenu'], $id, $callback)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Recursively find parent item and append new child to its submenu.
+     */
+    public static function findAndAppendChild(array &$items, string $parentId, array $newItem): bool
+    {
+        foreach ($items as &$item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            if ((string) ($item['id'] ?? '') === (string) $parentId) {
+                if (! isset($item['submenu']) || ! is_array($item['submenu'])) {
+                    $item['submenu'] = [];
+                }
+                $item['submenu'][] = $newItem;
+
+                return true;
+            }
+
+            if (isset($item['submenu']) && is_array($item['submenu'])) {
+                if (static::findAndAppendChild($item['submenu'], $parentId, $newItem)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Recursively find and delete item by ID anywhere in tree.
+     */
+    public static function findAndDeleteItem(array &$items, string $id, ?array &$deletedItem = null): bool
+    {
+        foreach ($items as $idx => &$item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            if ((string) ($item['id'] ?? '') === (string) $id) {
+                $deletedItem = $item;
+                array_splice($items, $idx, 1);
+                $items = array_values($items);
+
+                return true;
+            }
+
+            if (isset($item['submenu']) && is_array($item['submenu'])) {
+                if (static::findAndDeleteItem($item['submenu'], $id, $deletedItem)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Recursively move item up or down within its sibling array.
+     */
+    public static function findAndMoveItem(array &$items, string $id, string $direction = 'up'): bool
+    {
+        $count = count($items);
+        for ($i = 0; $i < $count; $i++) {
+            if (! is_array($items[$i])) {
+                continue;
+            }
+
+            if ((string) ($items[$i]['id'] ?? '') === (string) $id) {
+                $target = ($direction === 'down') ? $i + 1 : $i - 1;
+                if ($target >= 0 && $target < $count) {
+                    $temp = $items[$i];
+                    $items[$i] = $items[$target];
+                    $items[$target] = $temp;
+
+                    return true;
+                }
+
+                return false; // Already at boundary
+            }
+
+            if (isset($items[$i]['submenu']) && is_array($items[$i]['submenu'])) {
+                if (static::findAndMoveItem($items[$i]['submenu'], $id, $direction)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get next available navigation item ID across the whole tree.
      */
     public function getNextItemId(): string
     {
         $items = is_array($this->items) ? $this->items : static::defaultItems();
-        $maxNum = 0;
-        foreach ($items as $item) {
-            if (! empty($item['id']) && preg_match('/^nav-(\d+)$/', (string) $item['id'], $m)) {
-                $num = (int) $m[1];
-                if ($num > $maxNum) {
-                    $maxNum = $num;
-                }
-            }
-        }
-        return 'nav-' . ($maxNum + 1);
+        $maxNum = static::getMaxItemId($items);
+
+        return 'nav-'.($maxNum + 1);
     }
 }
-

@@ -104,7 +104,7 @@
                             <i class="fa-solid fa-bars text-indigo-500"></i>
                             <span>Module 2: Navbar</span>
                         </span>
-                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">6</span>
+                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">7</span>
                     </button>
 
                     <button onclick="switchTab('home')" id="tab-home" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
@@ -1129,9 +1129,9 @@
                     <!-- Add New Link Form -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 mb-4">
                         <span class="text-xs font-bold text-slate-700 uppercase tracking-wide block mb-2">
-                            <i class="fa-solid fa-plus-circle text-indigo-600 mr-1"></i> Add New Navigation Link (POST)
+                            <i class="fa-solid fa-plus-circle text-indigo-600 mr-1"></i> Add New Navigation Link / Submenu (POST)
                         </span>
-                        <div class="grid grid-cols-2 gap-2 mb-2">
+                        <div class="grid grid-cols-3 gap-2 mb-2">
                             <div>
                                 <label class="text-[11px] font-medium text-slate-600 block mb-0.5">Link Name *</label>
                                 <input type="text" id="nav-item-add-label" placeholder="e.g. Pricing, Docs, Career" value="Pricing" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none">
@@ -1139,6 +1139,10 @@
                             <div>
                                 <label class="text-[11px] font-medium text-slate-600 block mb-0.5">URL Path *</label>
                                 <input type="text" id="nav-item-add-url" placeholder="e.g. /pricing, /docs" value="/pricing" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-medium text-slate-600 block mb-0.5">Parent ID (for Submenu)</label>
+                                <input type="text" id="nav-item-add-parent" placeholder="Empty = Root, or e.g. nav-3" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none font-mono">
                             </div>
                         </div>
                         <button onclick="testAddNavbarItem()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition flex items-center justify-center space-x-1">
@@ -1150,12 +1154,12 @@
                     <!-- Edit / Toggle / Move / Delete Form -->
                     <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
                         <span class="text-xs font-bold text-slate-700 uppercase tracking-wide block mb-2">
-                            <i class="fa-solid fa-pen-to-square text-indigo-600 mr-1"></i> Edit, Show/Hide, Reorder &amp; Delete Link
+                            <i class="fa-solid fa-pen-to-square text-indigo-600 mr-1"></i> Edit, Show/Hide, Reorder &amp; Delete Link (Any Level)
                         </span>
                         <div class="grid grid-cols-3 gap-2 mb-2">
                             <div>
                                 <label class="text-[11px] font-medium text-slate-600 block mb-0.5">Item ID *</label>
-                                <input type="text" id="nav-item-edit-id" value="nav-1" placeholder="e.g. nav-1" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none font-mono">
+                                <input type="text" id="nav-item-edit-id" value="nav-1" placeholder="e.g. nav-1 or sub-id" class="w-full text-xs border border-slate-300 rounded p-1.5 outline-none font-mono">
                             </div>
                             <div>
                                 <label class="text-[11px] font-medium text-slate-600 block mb-0.5">Updated Name</label>
@@ -1186,6 +1190,63 @@
                             </button>
                         </div>
                     </div>
+                </div>
+
+                <!-- 5. Multi-Layer Submenu Hierarchy Builder (PUT /api/admin/navigation/navbar/items) -->
+                <div class="bg-white rounded-xl border border-indigo-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-indigo-900">/api/admin/navigation/navbar/items</span>
+                        </div>
+                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-bold">Multi-Layer Submenus</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-2">Configure multi-layer navigation menus (Submenus, Sub-submenus of arbitrary depth). Children can be placed under <code>submenu</code>, <code>children</code>, or <code>subitems</code>.</p>
+                    <textarea id="navbar-multi-tree-json" rows="12" class="w-full text-xs font-mono border border-slate-200 rounded p-2 mb-3 outline-none">{
+  "items": [
+    { "id": "nav-1", "label": "Home", "url": "/", "enabled": true },
+    { "id": "nav-2", "label": "About", "url": "/about", "enabled": true },
+    {
+      "id": "nav-3",
+      "label": "Services",
+      "url": "/services",
+      "enabled": true,
+      "submenu": [
+        {
+          "id": "nav-8",
+          "label": "Cloud Solutions",
+          "url": "/services/cloud",
+          "enabled": true,
+          "submenu": [
+            { "id": "nav-9", "label": "AWS Infrastructure", "url": "/services/cloud/aws", "enabled": true },
+            { "id": "nav-10", "label": "Google Cloud Architecture", "url": "/services/cloud/gcp", "enabled": true },
+            { "id": "nav-11", "label": "Azure Enterprise", "url": "/services/cloud/azure", "enabled": true }
+          ]
+        },
+        {
+          "id": "nav-12",
+          "label": "AI & Machine Learning",
+          "url": "/services/ai",
+          "enabled": true,
+          "submenu": [
+            { "id": "nav-13", "label": "LLM Orchestration", "url": "/services/ai/llm", "enabled": true },
+            { "id": "nav-14", "label": "Vector Search & RAG", "url": "/services/ai/rag", "enabled": true }
+          ]
+        },
+        { "id": "nav-15", "label": "Cybersecurity", "url": "/services/security", "enabled": true }
+      ]
+    },
+    { "id": "nav-4", "label": "Portfolio", "url": "/portfolio", "enabled": true },
+    { "id": "nav-5", "label": "Blog", "url": "/blog", "enabled": true },
+    { "id": "nav-6", "label": "Careers", "url": "/careers", "enabled": true },
+    { "id": "nav-7", "label": "Contact", "url": "/contact", "enabled": true }
+  ]
+}</textarea>
+                    <button onclick="testBulkSaveNavbarTree()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                        <i class="fa-solid fa-sitemap mr-1"></i>
+                        <span>Save Multi-Layer Menu Tree</span>
+                    </button>
+                </div>
                 </div>
             </div>
 
@@ -3901,8 +3962,20 @@
         async function testAddNavbarItem() {
             const label = document.getElementById('nav-item-add-label').value.trim();
             const url = document.getElementById('nav-item-add-url').value.trim();
+            const parentId = document.getElementById('nav-item-add-parent').value.trim();
             if (!label || !url) return alert('Link name and URL are required.');
-            await sendApi('POST', '/api/admin/navigation/navbar/items', { label, url, enabled: true }, true);
+            const body = { label, url, enabled: true };
+            if (parentId) body.parentId = parentId;
+            await sendApi('POST', '/api/admin/navigation/navbar/items', body, true);
+        }
+        async function testBulkSaveNavbarTree() {
+            let data;
+            try {
+                data = JSON.parse(document.getElementById('navbar-multi-tree-json').value);
+            } catch(e) {
+                return alert('Invalid JSON format for navbar hierarchy.');
+            }
+            await sendApi('PUT', '/api/admin/navigation/navbar/items', data, true);
         }
         async function testUpdateNavbarItem() {
             const id = document.getElementById('nav-item-edit-id').value.trim();
