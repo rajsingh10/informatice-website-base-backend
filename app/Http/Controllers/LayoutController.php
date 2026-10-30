@@ -48,19 +48,10 @@ class LayoutController extends Controller
 
         $footer = \App\Models\FooterConfig::getSingleton();
         $currentFooterTemplate = $layouts['footerLayout'] ?? ($footer->layoutId ?? 'layout1');
-        $footerItems = $footer->getItemsList();
-        $activeFooterItems = array_values(array_filter($footerItems, fn ($i) => ! empty($i['enabled'])));
-        $layouts['footerLayout'] = [
-            'layout'     => $currentFooterTemplate,
-            'enabled'    => true,
-            'visible'    => true,
-            'status'     => 'visible',
-            'items'      => $activeFooterItems,
-            'links'      => $activeFooterItems,
-            'grid'       => is_array($footer->grid) ? $footer->grid : \App\Models\FooterConfig::defaultGrid(),
-            'cta'        => is_array($footer->cta) ? $footer->cta : \App\Models\FooterConfig::defaultCta(),
-            'customCode' => is_array($footer->customCode) ? $footer->customCode : \App\Models\FooterConfig::defaultCustomCode(),
-        ];
+        $footerPayload = $footer->toPublicPayload();
+        $footerPayload['layout'] = $currentFooterTemplate;
+        $footerPayload['layoutId'] = $currentFooterTemplate;
+        $layouts['footerLayout'] = $footerPayload;
 
         return response()->json([
             'success' => true,
@@ -103,18 +94,10 @@ class LayoutController extends Controller
                 ];
             } elseif ($key === 'footerLayout') {
                 $footer = \App\Models\FooterConfig::getSingleton();
-                $footerItems = $footer->getItemsList();
-                $active[$key] = [
-                    'layout'     => $current,
-                    'enabled'    => true,
-                    'visible'    => true,
-                    'status'     => 'visible',
-                    'items'      => $footerItems,
-                    'links'      => $footerItems,
-                    'grid'       => is_array($footer->grid) ? $footer->grid : \App\Models\FooterConfig::defaultGrid(),
-                    'cta'        => is_array($footer->cta) ? $footer->cta : \App\Models\FooterConfig::defaultCta(),
-                    'customCode' => is_array($footer->customCode) ? $footer->customCode : \App\Models\FooterConfig::defaultCustomCode(),
-                ];
+                $adminPayload = $footer->toAdminPayload();
+                $adminPayload['layout'] = $current;
+                $adminPayload['layoutId'] = $current;
+                $active[$key] = $adminPayload;
             } else {
                 $active[$key] = $current;
             }
