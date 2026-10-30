@@ -98,6 +98,14 @@
                         <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold">11</span>
                     </button>
 
+                    <button onclick="switchTab('featured')" id="tab-featured" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-star text-amber-500"></i>
+                            <span class="font-bold text-amber-900">Featured (isFeature)</span>
+                        </span>
+                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">ALL</span>
+                    </button>
+
                     <button onclick="switchTab('layouts')" id="tab-layouts" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
                         <span class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-table-columns text-emerald-500"></i>
@@ -765,6 +773,116 @@
                     <button onclick="sendApi('GET', '/api/admin/layouts', null, true)" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
                         <i class="fa-solid fa-table-columns mr-1"></i> Fetch /api/admin/layouts
                     </button>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- FEATURED (isFeature) ALL MODULES APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-featured" class="space-y-4 hidden">
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-900 leading-relaxed">
+                    <p class="font-bold mb-1"><i class="fa-solid fa-star mr-1 text-amber-600"></i> Featured Modules API (isFeature / isFeatured)</p>
+                    <p>Dedicated standalone API that aggregates all entities marked <code class="bg-amber-100 px-1 py-0.5 rounded font-mono font-bold">isFeatured = true</code> across <strong>all website modules</strong>: Services, Portfolio, Blogs, Events, Team, Testimonials, Gallery, Careers, and FAQs.</p>
+                </div>
+
+                <!-- 1. Public isFeature Main Endpoint -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/isFeature</span>
+                        </div>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetches all featured items across all modules with item counts per module and overall total.</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="sendApi('GET', '/api/isFeature')" class="bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-star mr-1"></i> Fetch /api/isFeature
+                        </button>
+                        <button onclick="sendApi('GET', '/api/public/featured')" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-bolt mr-1"></i> Fetch /api/public/featured
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Public Filter by Specific Module -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/isFeature?module={name}&limit={n}</span>
+                        </div>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Filter featured items by specific module or apply a limit per module.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3">
+                        <div>
+                            <label class="block text-slate-500 text-[10px] uppercase font-bold mb-1">Module</label>
+                            <select id="featModuleSelect" class="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1.5 text-xs text-slate-800 font-medium">
+                                <option value="">All Modules</option>
+                                <option value="services">Module 4: Services</option>
+                                <option value="portfolio">Module 5: Portfolio</option>
+                                <option value="blogs">Module 6: Blogs</option>
+                                <option value="events">Module 7: Events</option>
+                                <option value="team">Module 8: Team Members</option>
+                                <option value="testimonials">Module 9: Testimonials</option>
+                                <option value="gallery">Module 10: Gallery</option>
+                                <option value="careers">Module 13: Careers</option>
+                                <option value="faqs">Module 14: FAQs</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-slate-500 text-[10px] uppercase font-bold mb-1">Limit (Optional)</label>
+                            <input id="featLimitInput" type="number" placeholder="e.g. 5" class="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1.5 text-xs text-slate-800">
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="
+                                const mod = document.getElementById('featModuleSelect').value;
+                                const lim = document.getElementById('featLimitInput').value;
+                                let params = [];
+                                if (mod) params.push('module=' + encodeURIComponent(mod));
+                                if (lim) params.push('limit=' + encodeURIComponent(lim));
+                                const qs = params.length ? '?' + params.join('&') : '';
+                                sendApi('GET', '/api/isFeature' + qs);
+                            " class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                                <i class="fa-solid fa-filter mr-1"></i> Filter Featured
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick buttons -->
+                    <div class="flex flex-wrap gap-1.5 pt-2 border-t border-slate-100 text-[11px]">
+                        <span class="text-slate-400 font-semibold self-center mr-1">Quick:</span>
+                        <button onclick="sendApi('GET', '/api/isFeature?module=services')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono">services</button>
+                        <button onclick="sendApi('GET', '/api/isFeature?module=portfolio')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono">portfolio</button>
+                        <button onclick="sendApi('GET', '/api/isFeature?module=blogs')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono">blogs</button>
+                        <button onclick="sendApi('GET', '/api/isFeature?module=events')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono">events</button>
+                        <button onclick="sendApi('GET', '/api/isFeature?module=team')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono">team</button>
+                        <button onclick="sendApi('GET', '/api/isFeature?module=testimonials')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono">testimonials</button>
+                        <button onclick="sendApi('GET', '/api/isFeature?module=gallery')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono">gallery</button>
+                        <button onclick="sendApi('GET', '/api/isFeature?module=careers')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono">careers</button>
+                        <button onclick="sendApi('GET', '/api/isFeature?module=faqs')" class="px-2 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-mono">faqs</button>
+                    </div>
+                </div>
+
+                <!-- 3. Admin Featured Endpoint -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/isFeature</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Admin view returning full administration payloads for all featured items across all modules.</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="sendApi('GET', '/api/admin/isFeature', null, true)" class="bg-purple-700 hover:bg-purple-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-shield-halved mr-1"></i> /api/admin/isFeature
+                        </button>
+                        <button onclick="sendApi('GET', '/api/admin/featured', null, true)" class="bg-slate-700 hover:bg-slate-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-shield-halved mr-1"></i> /api/admin/featured
+                        </button>
+                    </div>
                 </div>
             </div>
 

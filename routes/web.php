@@ -64,8 +64,14 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
     Route::get('/services/{slug}', [ServiceController::class, 'showPublic']);
     Route::get('/featured', [FeaturedController::class, 'indexPublic']);
     Route::get('/is-featured', [FeaturedController::class, 'indexPublic']);
+    Route::get('/is-feature', [FeaturedController::class, 'indexPublic']);
+    Route::get('/isFeature', [FeaturedController::class, 'indexPublic']);
+    Route::get('/isFeatured', [FeaturedController::class, 'indexPublic']);
     Route::get('/public/featured', [FeaturedController::class, 'indexPublic']);
     Route::get('/public/is-featured', [FeaturedController::class, 'indexPublic']);
+    Route::get('/public/is-feature', [FeaturedController::class, 'indexPublic']);
+    Route::get('/public/isFeature', [FeaturedController::class, 'indexPublic']);
+    Route::get('/public/isFeatured', [FeaturedController::class, 'indexPublic']);
 
     // Module 1: Top Bar public aliases
     Route::get('/topbar', [TopbarController::class, 'showPublic']);
@@ -217,11 +223,17 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
             Route::get('featured', [FeaturedController::class, 'indexAdmin']);
             Route::get('is-featured', [FeaturedController::class, 'indexAdmin']);
+            Route::get('is-feature', [FeaturedController::class, 'indexAdmin']);
+            Route::get('isFeature', [FeaturedController::class, 'indexAdmin']);
+            Route::get('isFeatured', [FeaturedController::class, 'indexAdmin']);
         });
 
         // Featured API
         Route::get('/admin/featured', [FeaturedController::class, 'indexAdmin']);
         Route::get('/admin/is-featured', [FeaturedController::class, 'indexAdmin']);
+        Route::get('/admin/is-feature', [FeaturedController::class, 'indexAdmin']);
+        Route::get('/admin/isFeature', [FeaturedController::class, 'indexAdmin']);
+        Route::get('/admin/isFeatured', [FeaturedController::class, 'indexAdmin']);
 
         // Module Layouts
         Route::get('/admin/layouts', [LayoutController::class, 'indexAdmin']);
