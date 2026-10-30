@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
@@ -86,6 +87,8 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
     Route::get('/public/layouts/{key}', [LayoutController::class, 'show']);
     Route::get('/footer', [FooterController::class, 'showPublic']);
     Route::get('/public/footer', [FooterController::class, 'showPublic']);
+    Route::get('/about', [AboutController::class, 'showPublic']);
+    Route::get('/public/about', [AboutController::class, 'showPublic']);
     Route::get('/public/seo/{page}', [SeoController::class, 'showPublic']);
     Route::get('/public/settings', [SiteSettingController::class, 'show']);
     Route::get('/public/navigation/navbar', [NavbarController::class, 'showPublic']);
@@ -168,6 +171,12 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
         Route::get('/admin/testimonials-feed', [AdminModuleController::class, 'getTestimonials']);
         Route::get('/admin/gallery-feed', [AdminModuleController::class, 'getGallery']);
         Route::get('/admin/about-feed', [AdminModuleController::class, 'getAbout']);
+
+        // About Page Content CRUD & Image ALT management
+        Route::get('/admin/about', [AboutController::class, 'showAdmin']);
+        Route::match(['put', 'post'], '/admin/about', [AboutController::class, 'update']);
+        Route::put('/admin/about/images', [AboutController::class, 'updateImages']);
+        Route::post('/admin/about/reset', [AboutController::class, 'reset']);
         Route::get('/admin/career', [AdminModuleController::class, 'getCareer']);
         Route::get('/admin/faq', [AdminModuleController::class, 'getFaq']);
         Route::get('/admin/terms', [AdminModuleController::class, 'getTerms']);
@@ -203,6 +212,7 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
 
             Route::get('testimonials', [AdminModuleController::class, 'getTestimonials']);
             Route::get('gallery', [AdminModuleController::class, 'getGallery']);
+            Route::get('about', [AdminModuleController::class, 'getAbout']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
             Route::get('featured', [FeaturedController::class, 'indexAdmin']);

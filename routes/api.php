@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
@@ -31,6 +32,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Public direct aliases without prefix (e.g. /api/topbar, /api/services, /api/footer)
+Route::get('about', [AboutController::class, 'showPublic']);
 Route::get('topbar', [TopbarController::class, 'showPublic']);
 Route::match(['put', 'post'], 'topbar', [TopbarController::class, 'saveTopbar']);
 Route::match(['put', 'post'], 'topbar/toggle', [TopbarController::class, 'toggle']);
@@ -55,6 +57,9 @@ Route::prefix('public')->group(function () {
 
     // Module 12: Footer
     Route::get('footer', [FooterController::class, 'showPublic']);
+
+    // Module: About Page
+    Route::get('about', [AboutController::class, 'showPublic']);
 
     // Module 1: Top Bar
     Route::get('topbar', [TopbarController::class, 'showPublic']);
@@ -160,6 +165,12 @@ Route::prefix('admin')->group(function () {
         Route::get('testimonials-feed', [AdminModuleController::class, 'getTestimonials']);
         Route::get('gallery-feed', [AdminModuleController::class, 'getGallery']);
         Route::get('about-feed', [AdminModuleController::class, 'getAbout']);
+
+        // About Page Content CRUD & Image ALT management
+        Route::get('about', [AboutController::class, 'showAdmin']);
+        Route::match(['put', 'post'], 'about', [AboutController::class, 'update']);
+        Route::put('about/images', [AboutController::class, 'updateImages']);
+        Route::post('about/reset', [AboutController::class, 'reset']);
         Route::get('career', [AdminModuleController::class, 'getCareer']);
         Route::get('faq', [AdminModuleController::class, 'getFaq']);
         Route::get('terms', [AdminModuleController::class, 'getTerms']);
@@ -197,6 +208,7 @@ Route::prefix('admin')->group(function () {
 
             Route::get('testimonials', [AdminModuleController::class, 'getTestimonials']);
             Route::get('gallery', [AdminModuleController::class, 'getGallery']);
+            Route::get('about', [AdminModuleController::class, 'getAbout']);
             Route::get('settings', [AdminModuleController::class, 'getSettings']);
             Route::get('layouts', [AdminModuleController::class, 'getLayouts']);
             Route::get('featured', [FeaturedController::class, 'indexAdmin']);

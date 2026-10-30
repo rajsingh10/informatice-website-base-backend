@@ -35,6 +35,7 @@ class PageSeo extends Model
     public static array $validPages = [
         // Original scope
         'home',
+        'about',
         'services',
         'service-detail',
         'portfolio',
