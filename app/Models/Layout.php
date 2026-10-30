@@ -44,6 +44,11 @@ class Layout extends Model
                 'layout5' => 'Minimal Corporate Overview',
             ],
         ],
+        'aboutPageLayout' => [
+            'name' => 'About',
+            'min'  => 1,
+            'max'  => 4,
+        ],
         'servicesPageLayout' => [
             'name' => 'Services catalog',
             'min' => 1,
@@ -111,11 +116,6 @@ class Layout extends Model
                 'layout4' => 'Minimal Quick Reach',
             ],
         ],
-        'footerLayout' => [
-            'name' => 'Footer',
-            'min' => 1,
-            'max' => 4,
-        ],
         'careerPageLayout' => [
             'name' => 'Career',
             'min' => 1,
@@ -135,6 +135,11 @@ class Layout extends Model
             'name' => 'Privacy',
             'min' => 1,
             'max' => 3,
+        ],
+        'footerLayout' => [
+            'name' => 'Footer',
+            'min'  => 1,
+            'max'  => 4,
         ],
     ];
 

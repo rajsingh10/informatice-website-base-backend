@@ -3574,19 +3574,19 @@
         };
 
         let currentToken = localStorage.getItem('api_admin_token') || '';
-        // Auto-detect Base URL from config('app.url'), url('/'), or current browser path (including /services)
+        // Auto-detect Base URL from browser location (on localhost, always use local server)
+        const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const configAppUrl = @json(rtrim(config('app.url') ?? '', '/'));
-        const serverDefaultBaseUrl = @json(rtrim(url('/'), '/'));
         const currentPath = window.location.pathname.replace(/\/api-tester\/?$/, '').replace(/\/+$/, '');
-        const autoBaseUrl = (configAppUrl && configAppUrl.includes('http') && !configAppUrl.includes('localhost') && !configAppUrl.includes('127.0.0.1'))
-            ? configAppUrl
-            : ((serverDefaultBaseUrl && !serverDefaultBaseUrl.includes('localhost') && !serverDefaultBaseUrl.includes('127.0.0.1'))
-                ? serverDefaultBaseUrl
-                : (window.location.origin + (currentPath && currentPath !== '/' ? currentPath : ''))).replace(/\/+$/, '');
+        const browserOriginUrl = (window.location.origin + (currentPath && currentPath !== '/' ? currentPath : '')).replace(/\/+$/, '');
+
+        const autoBaseUrl = isLocalHost
+            ? browserOriginUrl
+            : ((configAppUrl && configAppUrl.includes('http')) ? configAppUrl : browserOriginUrl);
 
         let storedBaseUrl = localStorage.getItem('api_tester_base_url');
-        // If stored Base URL was previously cached without the /services subfolder while running on /services, auto-heal it
-        if (storedBaseUrl && window.location.pathname.includes('/services') && !storedBaseUrl.includes('/services')) {
+        // If testing on localhost, discard any stored remote URL
+        if (isLocalHost && storedBaseUrl && !storedBaseUrl.includes('localhost') && !storedBaseUrl.includes('127.0.0.1')) {
             storedBaseUrl = null;
             localStorage.removeItem('api_tester_base_url');
         }

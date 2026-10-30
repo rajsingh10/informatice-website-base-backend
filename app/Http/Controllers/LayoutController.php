@@ -22,14 +22,25 @@ class LayoutController extends Controller
             $layouts[$k] = $dbLayouts[$k] ?? 'layout1';
         }
         $navbar = NavbarConfig::getSingleton();
+        $ordered = [];
 
+        // 1. topbarLayout (FIRST)
+        $currentTopbarTemplate = $layouts['topbarLayout'] ?? 'layout1';
+        $isTopbarEnabled = TopbarController::isTopbarEnabled();
+        $ordered['topbarLayout'] = [
+            'layout'   => $isTopbarEnabled ? ($currentTopbarTemplate === 'layout0' ? 'layout1' : $currentTopbarTemplate) : 'layout0',
+            'enabled'  => $isTopbarEnabled,
+            'visible'  => $isTopbarEnabled,
+            'status'   => $isTopbarEnabled ? 'visible' : 'hidden',
+        ];
+
+        // 2. navbarLayout (SECOND)
         $currentNavbarTemplate = $layouts['navbarLayout'] ?? 'layout1';
         $activeBehavior = $navbar->getBehaviorForLayout($currentNavbarTemplate);
         $isEnabled = $navbar->isNavbarEnabled();
         $navItems = is_array($navbar->items) ? array_values($navbar->items) : NavbarConfig::defaultItems();
-
-        $layouts['navbarLayout'] = [
-            'layout' => $currentNavbarTemplate,
+        $ordered['navbarLayout'] = [
+            'layout'   => $currentNavbarTemplate,
             'behavior' => $activeBehavior,
             'enabled' => $isEnabled,
             'visible' => $isEnabled,
@@ -45,17 +56,32 @@ class LayoutController extends Controller
             'visible' => $isTopbarEnabled,
             'status' => $isTopbarEnabled ? 'visible' : 'hidden',
         ];
+        // 3. Page layouts in clean architectural order
+        foreach (Layout::$modules as $modKey => $modMeta) {
+            if ($modKey === 'topbarLayout' || $modKey === 'navbarLayout' || $modKey === 'footerLayout') {
+                continue;
+            }
+            $ordered[$modKey] = $layouts[$modKey] ?? 'layout1';
+        }
 
+        // Preserve any custom or database-stored layout keys
+        foreach ($layouts as $dbKey => $dbVal) {
+            if (! isset($ordered[$dbKey]) && $dbKey !== 'footerLayout') {
+                $ordered[$dbKey] = $dbVal;
+            }
+        }
+
+        // 4. footerLayout (LAST)
         $footer = \App\Models\FooterConfig::getSingleton();
         $currentFooterTemplate = $layouts['footerLayout'] ?? ($footer->layoutId ?? 'layout1');
         $footerPayload = $footer->toPublicPayload();
         $footerPayload['layout'] = $currentFooterTemplate;
         $footerPayload['layoutId'] = $currentFooterTemplate;
-        $layouts['footerLayout'] = $footerPayload;
+        $ordered['footerLayout'] = $footerPayload;
 
         return response()->json([
             'success' => true,
-            'data' => $layouts,
+            'data'    => $ordered,
         ], 200);
     }
 
