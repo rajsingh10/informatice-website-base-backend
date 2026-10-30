@@ -130,6 +130,14 @@
                         <span class="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">4</span>
                     </button>
 
+                    <button onclick="switchTab('about')" id="tab-about" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-address-card text-sky-500"></i>
+                            <span>About Page</span>
+                        </span>
+                        <span class="text-xs bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-bold">5</span>
+                    </button>
+
                     <button onclick="switchTab('services')" id="tab-services" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
                         <span class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-briefcase text-teal-500"></i>
@@ -462,6 +470,26 @@
                     <button onclick="sendApi('GET', '/api/admin/home', null, true)" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
                         <i class="fa-solid fa-house mr-1"></i> Fetch /api/admin/home
                     </button>
+                </div>
+
+                <!-- About Page Module -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/about</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">About Page: Returns full company story, mission, vision, values, milestones, stats, layout, and image ALT attributes.</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="sendApi('GET', '/api/admin/about', null, true)" class="bg-sky-600 hover:bg-sky-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-address-card mr-1"></i> /admin/about
+                        </button>
+                        <button onclick="sendApi('GET', '/api/admin/modules/about', null, true)" class="bg-sky-800 hover:bg-sky-900 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-layer-group mr-1"></i> /admin/modules/about
+                        </button>
+                    </div>
                 </div>
 
                 <!-- 4. Services Catalog -->
@@ -1344,6 +1372,154 @@
                         </button>
                         <button onclick="testResetHomeSections()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
                             <i class="fa-solid fa-rotate-left mr-1"></i> Enable All (Reset 10/10)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- ABOUT PAGE MODULE APIS & CONTENT CRUD -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-about" class="space-y-4 hidden">
+                <!-- 1. Layout Switching -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/layouts/aboutPageLayout</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Switch About page template: layout1 (Classic Story), layout2 (Modern Timeline), layout3 (Bento Grid), layout4 (Split Editorial), layout5 (Minimal Corporate).</p>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Template (layout1 - layout5)</label>
+                            <select id="about-layout-select" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="layout1">layout1: Classic Story & Team Focus</option>
+                                <option value="layout2">layout2: Modern Timeline & Mission</option>
+                                <option value="layout3">layout3: Bento Grid with Core Values</option>
+                                <option value="layout4">layout4: Split Visual Editorial</option>
+                                <option value="layout5">layout5: Minimal Corporate Overview</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="testUpdateAboutLayout()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                                Save About Layout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Read Endpoints (Public & Admin) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/about</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetch complete About page: story, mission, vision, values, milestones, stats, and structured image ALT attributes.</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testPublicAbout()" class="bg-sky-600 hover:bg-sky-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-globe mr-1"></i> Public /api/public/about
+                        </button>
+                        <button onclick="testAdminAbout()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-lock mr-1"></i> Admin /api/admin/about
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. Update About Content & Stories -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/about</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Update company introduction, headline, mission, and vision.</p>
+                    <div class="space-y-2 mb-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Badge</label>
+                                <input id="about-badge" type="text" value="About Us" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Title</label>
+                                <input id="about-title" type="text" value="Driving Innovation & Sustainable Digital Growth" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Tagline / Subtitle</label>
+                            <input id="about-tagline" type="text" value="Empowering forward-thinking enterprises with modern cloud architecture and reliable engineering." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Story Title</label>
+                            <input id="about-story-title" type="text" value="A Decade of Engineering Excellence" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Story Content</label>
+                            <textarea id="about-story-content" rows="3" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">Founded with a clear vision to bridge complex technical challenges with elegant digital experiences, our team combines deep software engineering expertise with design-thinking to craft solutions that scale effortlessly.</textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Mission Statement</label>
+                                <textarea id="about-mission" rows="2" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">To build transformative, secure, and scalable digital solutions that empower global businesses to succeed in an ever-evolving world.</textarea>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Vision Statement</label>
+                                <textarea id="about-vision" rows="2" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">To be the most trusted technology partner recognized globally for human-centric design, engineering integrity, and innovation.</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="testUpdateAbout()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Save About Page Content
+                    </button>
+                </div>
+
+                <!-- 4. Image URLs & Proper ALT Attributes -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/about/images</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Image ALT Control</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Manage About page visual assets and configure proper ALT attributes for accessibility and SEO imageAltMap.</p>
+                    <div class="space-y-3 mb-3">
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 space-y-2">
+                            <p class="text-xs font-bold text-slate-700"><i class="fa-solid fa-image text-sky-500 mr-1"></i> Hero Image Asset</p>
+                            <div>
+                                <label class="text-[11px] font-medium text-slate-500">Hero Image URL</label>
+                                <input id="about-hero-img" type="text" value="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-medium text-emerald-700">Hero Image ALT Attribute (Screen readers & SEO)</label>
+                                <input id="about-hero-alt" type="text" value="NexGen engineering team collaborating on product architecture in a high-tech conference room" class="w-full text-xs border border-emerald-300 rounded p-1.5 mt-0.5 outline-none bg-emerald-50 text-emerald-900 font-medium">
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 space-y-2">
+                            <p class="text-xs font-bold text-slate-700"><i class="fa-solid fa-image text-sky-500 mr-1"></i> Story Image Asset</p>
+                            <div>
+                                <label class="text-[11px] font-medium text-slate-500">Story Image URL</label>
+                                <input id="about-story-img" type="text" value="https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1000&q=80" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-medium text-emerald-700">Story Image ALT Attribute (Screen readers & SEO)</label>
+                                <input id="about-story-alt" type="text" value="Software engineers reviewing system designs and strategic roadmaps on digital displays" class="w-full text-xs border border-emerald-300 rounded p-1.5 mt-0.5 outline-none bg-emerald-50 text-emerald-900 font-medium">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testUpdateAboutImages()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-tags mr-1"></i> Save Image URLs & ALTs
+                        </button>
+                        <button onclick="testResetAbout()" class="bg-slate-700 hover:bg-slate-800 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset to Defaults
                         </button>
                     </div>
                 </div>
@@ -4027,6 +4203,48 @@
         }
         async function testResetHomeSections() {
             await sendApi('POST', '/api/admin/home-sections/reset', {}, true);
+        }
+
+        // About Page Module JS
+        async function testPublicAbout() {
+            await sendApi('GET', '/api/public/about');
+        }
+
+        async function testAdminAbout() {
+            await sendApi('GET', '/api/admin/about', null, true);
+        }
+
+        async function testUpdateAboutLayout() {
+            const templateId = document.getElementById('about-layout-select').value;
+            await sendApi('PUT', '/api/admin/layouts/aboutPageLayout', { templateId }, true);
+        }
+
+        async function testUpdateAbout() {
+            const payload = {
+                badge: document.getElementById('about-badge').value,
+                title: document.getElementById('about-title').value,
+                tagline: document.getElementById('about-tagline').value,
+                storyTitle: document.getElementById('about-story-title').value,
+                storyContent: document.getElementById('about-story-content').value,
+                mission: document.getElementById('about-mission').value,
+                vision: document.getElementById('about-vision').value,
+            };
+            await sendApi('PUT', '/api/admin/about', payload, true);
+        }
+
+        async function testUpdateAboutImages() {
+            const payload = {
+                heroImage: document.getElementById('about-hero-img').value,
+                heroImageAlt: document.getElementById('about-hero-alt').value,
+                storyImage: document.getElementById('about-story-img').value,
+                storyImageAlt: document.getElementById('about-story-alt').value,
+            };
+            await sendApi('PUT', '/api/admin/about/images', payload, true);
+        }
+
+        async function testResetAbout() {
+            if (!confirm('Reset About page to default content and ALT attributes?')) return;
+            await sendApi('POST', '/api/admin/about/reset', null, true);
         }
 
         // Module 4: Services

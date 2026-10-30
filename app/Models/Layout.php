@@ -44,11 +44,6 @@ class Layout extends Model
                 'layout5' => 'Minimal Corporate Overview',
             ],
         ],
-        'aboutPageLayout' => [
-            'name' => 'About',
-            'min'  => 1,
-            'max'  => 4,
-        ],
         'servicesPageLayout' => [
             'name' => 'Services catalog',
             'min' => 1,

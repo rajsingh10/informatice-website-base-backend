@@ -128,19 +128,12 @@ class AdminModuleController extends Controller
      */
     public function getAbout(): JsonResponse
     {
-        $layoutRecord = Layout::find('aboutPageLayout');
+        $about = \App\Models\AboutPage::getSingleton();
 
         return response()->json([
             'success' => true,
-            'module' => 'about',
-            'data' => [
-                'layout' => [
-                    'key' => 'aboutPageLayout',
-                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
-                    'allowed' => Layout::allowedFor('aboutPageLayout'),
-                    'templates' => Layout::templatesFor('aboutPageLayout'),
-                ],
-            ],
+            'module'  => 'about',
+            'data'    => $about->toPayload(),
         ], 200);
     }
 
