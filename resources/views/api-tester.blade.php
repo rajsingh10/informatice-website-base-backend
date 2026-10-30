@@ -180,6 +180,42 @@
                         <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">8</span>
                     </button>
 
+                    <!-- Module 13: Careers -->
+                    <button onclick="switchTab('careers')" id="tab-careers" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-briefcase text-blue-600"></i>
+                            <span>Module 13: Careers</span>
+                        </span>
+                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">7</span>
+                    </button>
+
+                    <!-- Module 14: FAQs -->
+                    <button onclick="switchTab('faqs')" id="tab-faqs" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-circle-question text-emerald-600"></i>
+                            <span>Module 14: FAQs</span>
+                        </span>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">6</span>
+                    </button>
+
+                    <!-- Module 15: Terms -->
+                    <button onclick="switchTab('terms')" id="tab-terms" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-file-contract text-cyan-600"></i>
+                            <span>Module 15: Terms</span>
+                        </span>
+                        <span class="text-xs bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded-full font-bold">3</span>
+                    </button>
+
+                    <!-- Module 16: Privacy -->
+                    <button onclick="switchTab('privacy')" id="tab-privacy" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-shield-halved text-violet-600"></i>
+                            <span>Module 16: Privacy</span>
+                        </span>
+                        <span class="text-xs bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full font-bold">3</span>
+                    </button>
+
                     <button onclick="switchTab('seo')" id="tab-seo" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
                         <span class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-magnifying-glass-chart text-purple-500"></i>
@@ -595,6 +631,66 @@
                     <p class="text-xs text-slate-600 mb-3">Module 10: Returns gallery layout (galleryPageLayout) and all photo albums.</p>
                     <button onclick="sendApi('GET', '/api/admin/modules/gallery', null, true)" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
                         <i class="fa-solid fa-images mr-1"></i> Fetch /api/admin/modules/gallery
+                    </button>
+                </div>
+
+                <!-- 13. Careers (Job Listings & Openings) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/modules/career</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 13: Returns career layout (careerPageLayout) and all open/closed positions.</p>
+                    <button onclick="sendApi('GET', '/api/admin/modules/career', null, true)" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-briefcase mr-1"></i> Fetch /api/admin/modules/career
+                    </button>
+                </div>
+
+                <!-- 14. FAQs -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/modules/faq</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 14: Returns FAQ layout (faqPageLayout), categories, and all FAQ items.</p>
+                    <button onclick="sendApi('GET', '/api/admin/modules/faq', null, true)" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-circle-question mr-1"></i> Fetch /api/admin/modules/faq
+                    </button>
+                </div>
+
+                <!-- 15. Terms of Service -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/modules/terms</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 15: Returns terms layout (termsPageLayout) and legal text content.</p>
+                    <button onclick="sendApi('GET', '/api/admin/modules/terms', null, true)" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-file-contract mr-1"></i> Fetch /api/admin/modules/terms
+                    </button>
+                </div>
+
+                <!-- 16. Privacy Policy -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/modules/privacy</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Module 16: Returns privacy layout (privacyPageLayout) and policy content.</p>
+                    <button onclick="sendApi('GET', '/api/admin/modules/privacy', null, true)" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-shield-halved mr-1"></i> Fetch /api/admin/modules/privacy
                     </button>
                 </div>
 
@@ -2718,6 +2814,498 @@
                 </div>
             </div>
 
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- MODULE 13: CAREERS APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-careers" class="space-y-4 hidden">
+                <!-- 1. GET /api/public/careers -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/careers</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Public feed of open job positions. Supports filtering by department, type, location, search query, and limit.</p>
+                    <div class="grid grid-cols-4 gap-2 mb-3">
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Department</label>
+                            <select id="career-pub-dept" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="" selected>All Departments</option>
+                                <option value="Engineering">Engineering</option>
+                                <option value="DevOps & Cloud">DevOps & Cloud</option>
+                                <option value="Design">Design</option>
+                                <option value="AI & Data">AI & Data</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Type</label>
+                            <select id="career-pub-type" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="" selected>All Types</option>
+                                <option value="full-time">full-time</option>
+                                <option value="part-time">part-time</option>
+                                <option value="contract">contract</option>
+                                <option value="internship">internship</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Search</label>
+                            <input id="career-pub-search" type="text" placeholder="Title, keyword..." class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Limit</label>
+                            <input id="career-pub-limit" type="number" value="20" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        </div>
+                    </div>
+                    <button onclick="testPublicCareers()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-briefcase"></i>
+                        <span>Fetch Public Careers Feed</span>
+                    </button>
+                </div>
+
+                <!-- 2. GET /api/public/careers/:slug -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/careers/{slug}</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetch single open job position detail by URL slug.</p>
+                    <div class="flex space-x-2">
+                        <input id="career-pub-slug" type="text" value="senior-full-stack-engineer-laravel-react" placeholder="Job slug" class="flex-1 text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                        <button onclick="testPublicCareerDetail()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-medium transition">
+                            Fetch Job Detail
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. GET /api/admin/careers & /api/admin/careers/:id -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/careers</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Admin list of all job openings (open & closed) or single position by integer ID.</p>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Status Filter</label>
+                            <select id="career-admin-status" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="" selected>All Statuses</option>
+                                <option value="open">Open</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Department</label>
+                            <input id="career-admin-dept" type="text" placeholder="Department" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testAdminCareers()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                            Fetch All Admin Careers
+                        </button>
+                        <div class="flex space-x-1">
+                            <input id="career-admin-fetch-id" type="number" value="1" placeholder="ID" class="w-16 text-xs border border-slate-200 rounded p-1.5 outline-none font-mono">
+                            <button onclick="testAdminCareerSingle()" class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-medium text-xs py-2 rounded-lg transition">
+                                Fetch By ID
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. POST /api/admin/careers (Create) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/careers</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <div class="space-y-2 mb-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Job Title</label>
+                                <input id="career-create-title" type="text" value="Staff Systems Architect" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Department</label>
+                                <input id="career-create-dept" type="text" value="Engineering" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Location</label>
+                                <input id="career-create-loc" type="text" value="Remote / Global" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Type</label>
+                                <select id="career-create-type" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 bg-white outline-none">
+                                    <option value="full-time" selected>full-time</option>
+                                    <option value="part-time">part-time</option>
+                                    <option value="contract">contract</option>
+                                    <option value="internship">internship</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Experience</label>
+                                <input id="career-create-exp" type="text" value="5+ years" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Apply URL / Email</label>
+                                <input id="career-create-url" type="text" value="mailto:jobs@informatic.example.com" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 font-mono outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Status</label>
+                                <select id="career-create-status" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 bg-white outline-none">
+                                    <option value="open" selected>Open</option>
+                                    <option value="closed">Closed</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Requirements (JSON array or lines)</label>
+                            <textarea id="career-create-reqs" rows="2" class="w-full text-xs border border-slate-200 rounded p-1.5 font-mono mt-0.5 outline-none">["5+ years high scale architecture", "Experience with AWS, Docker, Kubernetes", "Strong communication skills"]</textarea>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Description (HTML / text)</label>
+                            <textarea id="career-create-desc" rows="2" class="w-full text-xs border border-slate-200 rounded p-1.5 font-mono mt-0.5 outline-none"><p>We are seeking a Staff Systems Architect to lead platform reliability and distributed services.</p></textarea>
+                        </div>
+                    </div>
+                    <button onclick="testCreateCareer()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-plus mr-1"></i> Create Job Opening
+                    </button>
+                </div>
+
+                <!-- 5. PUT & DELETE /api/admin/careers/:id -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="method-badge badge-del">DELETE</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/careers/{id}</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2 mb-3">
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Opening ID</label>
+                            <input id="career-manage-id" type="number" value="1" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none font-mono">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Updated Title</label>
+                            <input id="career-manage-title" type="text" placeholder="Leave blank to keep" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Status</label>
+                            <select id="career-manage-status" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="open">open</option>
+                                <option value="closed">closed</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Experience</label>
+                            <input id="career-manage-exp" type="text" placeholder="e.g. 5-7 years" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testUpdateCareer()" class="bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> Update Career Opening
+                        </button>
+                        <button onclick="testDeleteCareer()" class="bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-trash mr-1"></i> Delete Career Opening
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- MODULE 14: FAQS APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-faqs" class="space-y-4 hidden">
+                <!-- 1. GET /api/public/faqs -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/faqs</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Public list of published FAQs (supports category filtering and search query).</p>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Category</label>
+                            <select id="faq-pub-cat" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="" selected>All Categories</option>
+                                <option value="General">General</option>
+                                <option value="Process">Process</option>
+                                <option value="Billing & Contracts">Billing & Contracts</option>
+                                <option value="Security">Security</option>
+                                <option value="Support">Support</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Search Keyword</label>
+                            <input id="faq-pub-q" type="text" placeholder="Search questions & answers..." class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        </div>
+                    </div>
+                    <button onclick="testPublicFaqs()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <span>Fetch Public FAQs</span>
+                    </button>
+                </div>
+
+                <!-- 2. GET /api/admin/faqs & /api/admin/faqs/:id -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/faqs</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Admin list of all FAQs (including unpublished) or single item by ID.</p>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <button onclick="testAdminFaqs()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition">
+                            Fetch All Admin FAQs
+                        </button>
+                        <div class="flex space-x-1">
+                            <input id="faq-admin-fetch-id" type="number" value="1" placeholder="ID" class="w-16 text-xs border border-slate-200 rounded p-1.5 outline-none font-mono">
+                            <button onclick="testAdminFaqSingle()" class="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white font-medium text-xs py-2 rounded-lg transition">
+                                Fetch By ID
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. PUT /api/admin/faqs (Bulk replace-all & reorder) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/faqs</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-2">Save the whole FAQ list (replace-all, preserves order). Array of FAQ objects.</p>
+                    <textarea id="faq-bulk-json" rows="6" class="w-full text-xs font-mono border border-slate-200 rounded p-2 mb-3 outline-none">{
+  "faqs": [
+    { "id": 1, "question": "What software engineering services does Informatic provide?", "answer": "<p>We provide full-cycle engineering services including enterprise web & mobile application development, cloud architecture and DevOps, generative AI integrations, system modernization, and dedicated engineering teams.</p>", "category": "General", "order": 1, "isPublished": true },
+    { "id": 2, "question": "How does Informatic guarantee project delivery timelines and code quality?", "answer": "<p>We operate on Agile sprints with bi-weekly milestone demos, automated continuous integration (CI) test suites, rigorous peer code reviews, and transparent sprint tracking through Jira and GitHub.</p>", "category": "Process", "order": 2, "isPublished": true },
+    { "id": 3, "question": "What engagement and pricing models are available?", "answer": "<p>We offer flexible models tailored to your requirements: Dedicated Engineering Squads (monthly retainers), Time & Materials for evolving roadmaps, and Fixed-Price Milestone contracts for well-defined scopes.</p>", "category": "Billing & Contracts", "order": 3, "isPublished": true }
+  ]
+}</textarea>
+                    <button onclick="testBulkSaveFaqs()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-layer-group mr-1"></i> Bulk Save / Replace All FAQs
+                    </button>
+                </div>
+
+                <!-- 4. POST /api/admin/faqs/item (Create single) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/faqs/item</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <div class="space-y-2 mb-3">
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Question</label>
+                            <input id="faq-create-q" type="text" value="Can Informatic sign non-disclosure agreements (NDAs)?" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Answer (HTML / text)</label>
+                            <textarea id="faq-create-a" rows="2" class="w-full text-xs border border-slate-200 rounded p-1.5 font-mono mt-0.5 outline-none"><p>Yes, we execute mutual non-disclosure agreements prior to reviewing any proprietary documentation or codebase.</p></textarea>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Category</label>
+                                <input id="faq-create-cat" type="text" value="Security" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Display Order</label>
+                                <input id="faq-create-order" type="number" value="7" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Published</label>
+                                <select id="faq-create-published" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 bg-white outline-none">
+                                    <option value="1" selected>Published</option>
+                                    <option value="0">Draft</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="testCreateFaq()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-plus mr-1"></i> Create Single FAQ Item
+                    </button>
+                </div>
+
+                <!-- 5. PUT & DELETE /api/admin/faqs/:id -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="method-badge badge-del">DELETE</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/faqs/{id}</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2 mb-3">
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">FAQ ID</label>
+                            <input id="faq-manage-id" type="number" value="1" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none font-mono">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-[10px] text-slate-400 font-medium">Updated Question</label>
+                            <input id="faq-manage-q" type="text" value="Updated question text?" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-medium">Status</label>
+                            <select id="faq-manage-pub" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                                <option value="1">Published</option>
+                                <option value="0">Draft</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-[10px] text-slate-400 font-medium">Category</label>
+                        <input id="faq-manage-cat" type="text" value="General" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testUpdateFaq()" class="bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> Update FAQ Item
+                        </button>
+                        <button onclick="testDeleteFaq()" class="bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-trash mr-1"></i> Delete FAQ Item
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- MODULE 15: TERMS OF SERVICE APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-terms" class="space-y-4 hidden">
+                <!-- 1. GET Public & Admin Terms -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/terms & /api/admin/terms</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public & Admin</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetch Terms of Service content (also available under <code>/api/public/legal/terms</code> and <code>/api/admin/legal/terms</code>).</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testPublicTerms()" class="bg-cyan-600 hover:bg-cyan-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-globe"></i>
+                            <span>Fetch Public Terms</span>
+                        </button>
+                        <button onclick="testAdminTerms()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-lock"></i>
+                            <span>Fetch Admin Terms</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. PUT /api/admin/terms (Update Content) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/terms & /api/admin/legal/terms</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <div class="space-y-3 mb-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Page Title</label>
+                                <input id="terms-title" type="text" value="Terms of Service" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Last Updated String</label>
+                                <input id="terms-last-updated" type="text" value="October 2026" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Legal Content (HTML formatted)</label>
+                            <textarea id="terms-content" rows="6" class="w-full text-xs font-mono border border-slate-200 rounded p-2 outline-none"><h2>1. Acceptance of Terms</h2><p>By accessing our services, you agree to these Terms.</p><h2>2. Intellectual Property</h2><p>All source code and proprietary architectures are protected.</p><h2>3. Limitation of Liability</h2><p>We are not liable for incidental or consequential damages.</p></textarea>
+                        </div>
+                    </div>
+                    <button onclick="testUpdateTerms()" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Save Terms of Service
+                    </button>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- MODULE 16: PRIVACY POLICY APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-privacy" class="space-y-4 hidden">
+                <!-- 1. GET Public & Admin Privacy -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/privacy & /api/admin/privacy</span>
+                        </div>
+                        <span class="text-xs text-slate-400">Public & Admin</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetch Privacy Policy content (also available under <code>/api/public/legal/privacy</code> and <code>/api/admin/legal/privacy</code>).</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testPublicPrivacy()" class="bg-violet-600 hover:bg-violet-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-globe"></i>
+                            <span>Fetch Public Privacy</span>
+                        </button>
+                        <button onclick="testAdminPrivacy()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-lock"></i>
+                            <span>Fetch Admin Privacy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. PUT /api/admin/privacy (Update Content) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/privacy & /api/admin/legal/privacy</span>
+                        </div>
+                        <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
+                    </div>
+                    <div class="space-y-3 mb-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Page Title</label>
+                                <input id="privacy-title" type="text" value="Privacy Policy" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Last Updated String</label>
+                                <input id="privacy-last-updated" type="text" value="October 2026" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-medium text-slate-600">Policy Content (HTML formatted)</label>
+                            <textarea id="privacy-content" rows="6" class="w-full text-xs font-mono border border-slate-200 rounded p-2 outline-none"><h2>1. Information We Collect</h2><p>We respect your privacy and protect all client data.</p><h2>2. Security Controls</h2><p>Enterprise encryption at rest and in transit.</p><h2>3. Data Rights</h2><p>You can request your data records at any time.</p></textarea>
+                        </div>
+                    </div>
+                    <button onclick="testUpdatePrivacy()" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Save Privacy Policy
+                    </button>
+                </div>
+            </div>
+
                         <!-- ══════════════════════════════════════════════════════════ -->
             <!-- 3. SEO MODULE APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
@@ -2744,6 +3332,10 @@
                             <option value="contact">contact</option>
                             <option value="testimonials">testimonials</option>
                             <option value="gallery">gallery</option>
+                            <option value="career">career</option>
+                            <option value="faq">faq</option>
+                            <option value="terms">terms</option>
+                            <option value="privacy">privacy</option>
                             <option value="home">home</option>
                         </select>
                         <button onclick="testPublicSeo()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-xs font-medium">
@@ -3001,13 +3593,15 @@
 
         function switchTab(name) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`tab-${name}`).classList.add('active');
+            const activeBtn = document.getElementById(`tab-${name}`);
+            if (activeBtn) activeBtn.classList.add('active');
 
-            ['auth', 'modules', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'events', 'team', 'testimonials', 'gallery', 'contact', 'seo', 'media', 'settings'].forEach(s => {
+            ['auth', 'modules', 'layouts', 'navbar', 'home', 'services', 'portfolio', 'blog', 'events', 'team', 'testimonials', 'gallery', 'contact', 'careers', 'faqs', 'terms', 'privacy', 'seo', 'media', 'settings'].forEach(s => {
                 const el = document.getElementById(`section-${s}`);
                 if (el) el.classList.add('hidden');
             });
-            document.getElementById(`section-${name}`).classList.remove('hidden');
+            const activeSec = document.getElementById(`section-${name}`);
+            if (activeSec) activeSec.classList.remove('hidden');
         }
 
         async function sendApi(method, path, body = null, requireAuth = false, isFormData = false) {
@@ -3830,6 +4424,154 @@
             const id = document.getElementById('gallery-manage-id').value;
             if (!confirm(`Delete album ID ${id}?`)) return;
             await sendApi('DELETE', `/api/admin/gallery/${id}`, null, true);
+        }
+
+        // Careers Module JS
+        async function testPublicCareers() {
+            const dept = document.getElementById('career-pub-dept').value;
+            const type = document.getElementById('career-pub-type').value;
+            const q = document.getElementById('career-pub-search').value;
+            const limit = document.getElementById('career-pub-limit').value || 20;
+            let path = `/api/public/careers?limit=${limit}`;
+            if (dept) path += `&department=${encodeURIComponent(dept)}`;
+            if (type) path += `&type=${encodeURIComponent(type)}`;
+            if (q) path += `&q=${encodeURIComponent(q)}`;
+            await sendApi('GET', path);
+        }
+        async function testPublicCareerDetail() {
+            const slug = document.getElementById('career-pub-slug').value.trim();
+            if (!slug) return alert('Enter job slug.');
+            await sendApi('GET', `/api/public/careers/${slug}`);
+        }
+        async function testAdminCareers() {
+            const status = document.getElementById('career-admin-status').value;
+            const dept = document.getElementById('career-admin-dept').value;
+            let path = '/api/admin/careers';
+            const params = [];
+            if (status) params.push(`status=${encodeURIComponent(status)}`);
+            if (dept) params.push(`department=${encodeURIComponent(dept)}`);
+            if (params.length) path += '?' + params.join('&');
+            await sendApi('GET', path, null, true);
+        }
+        async function testAdminCareerSingle() {
+            const id = document.getElementById('career-admin-fetch-id').value;
+            if (!id) return alert('Enter career ID.');
+            await sendApi('GET', `/api/admin/careers/${id}`, null, true);
+        }
+        async function testCreateCareer() {
+            let reqs = [];
+            const reqsRaw = document.getElementById('career-create-reqs').value.trim();
+            if (reqsRaw.startsWith('[')) {
+                try { reqs = JSON.parse(reqsRaw); } catch(e) { return alert('Invalid JSON array for requirements.'); }
+            } else if (reqsRaw) {
+                reqs = reqsRaw.split('\n').map(s => s.trim()).filter(Boolean);
+            }
+            const body = {
+                title: document.getElementById('career-create-title').value,
+                department: document.getElementById('career-create-dept').value,
+                location: document.getElementById('career-create-loc').value,
+                type: document.getElementById('career-create-type').value,
+                experience: document.getElementById('career-create-exp').value,
+                description: document.getElementById('career-create-desc').value,
+                requirements: reqs,
+                applyUrl: document.getElementById('career-create-url').value,
+                status: document.getElementById('career-create-status').value
+            };
+            await sendApi('POST', '/api/admin/careers', body, true);
+        }
+        async function testUpdateCareer() {
+            const id = document.getElementById('career-manage-id').value;
+            if (!id) return alert('Enter career ID to update.');
+            const body = {};
+            const title = document.getElementById('career-manage-title').value.trim();
+            const status = document.getElementById('career-manage-status').value;
+            const exp = document.getElementById('career-manage-exp').value.trim();
+            if (title) body.title = title;
+            if (status) body.status = status;
+            if (exp) body.experience = exp;
+            await sendApi('PUT', `/api/admin/careers/${id}`, body, true);
+        }
+        async function testDeleteCareer() {
+            const id = document.getElementById('career-manage-id').value;
+            if (!id) return alert('Enter career ID to delete.');
+            if (!confirm(`Delete career opening ID ${id}?`)) return;
+            await sendApi('DELETE', `/api/admin/careers/${id}`, null, true);
+        }
+
+        // FAQs Module JS
+        async function testPublicFaqs() {
+            const cat = document.getElementById('faq-pub-cat').value;
+            const q = document.getElementById('faq-pub-q').value;
+            let path = '/api/public/faqs';
+            const params = [];
+            if (cat) params.push(`category=${encodeURIComponent(cat)}`);
+            if (q) params.push(`q=${encodeURIComponent(q)}`);
+            if (params.length) path += '?' + params.join('&');
+            await sendApi('GET', path);
+        }
+        async function testAdminFaqs() {
+            const cat = document.getElementById('faq-admin-cat').value;
+            let path = '/api/admin/faqs';
+            if (cat) path += `?category=${encodeURIComponent(cat)}`;
+            await sendApi('GET', path, null, true);
+        }
+        async function testAdminFaqSingle() {
+            const id = document.getElementById('faq-admin-fetch-id').value;
+            if (!id) return alert('Enter FAQ ID.');
+            await sendApi('GET', `/api/admin/faqs/${id}`, null, true);
+        }
+        async function testCreateFaq() {
+            const body = {
+                question: document.getElementById('faq-create-q').value,
+                answer: document.getElementById('faq-create-a').value,
+                category: document.getElementById('faq-create-cat').value,
+                order: parseInt(document.getElementById('faq-create-order').value || '1'),
+                isPublished: document.getElementById('faq-create-published').value === '1'
+            };
+            await sendApi('POST', '/api/admin/faqs/item', body, true);
+        }
+        async function testBulkSaveFaqs() {
+            let data;
+            try {
+                data = JSON.parse(document.getElementById('faq-bulk-json').value);
+            } catch(e) {
+                return alert('Invalid JSON in bulk FAQs payload.');
+            }
+            await sendApi('PUT', '/api/admin/faqs', data, true);
+        }
+        async function testUpdateFaq() {
+            const id = document.getElementById('faq-manage-id').value;
+            if (!id) return alert('Enter FAQ ID.');
+            const question = document.getElementById('faq-manage-q').value;
+            const category = document.getElementById('faq-manage-cat').value;
+            const isPublished = document.getElementById('faq-manage-pub').value === '1';
+            await sendApi('PUT', `/api/admin/faqs/${id}`, { question, category, isPublished }, true);
+        }
+        async function testDeleteFaq() {
+            const id = document.getElementById('faq-manage-id').value;
+            if (!id) return alert('Enter FAQ ID.');
+            if (!confirm(`Delete FAQ ID ${id}?`)) return;
+            await sendApi('DELETE', `/api/admin/faqs/${id}`, null, true);
+        }
+
+        // Terms of Service JS
+        async function testPublicTerms() { await sendApi('GET', '/api/public/terms'); }
+        async function testAdminTerms() { await sendApi('GET', '/api/admin/terms', null, true); }
+        async function testUpdateTerms() {
+            const title = document.getElementById('terms-title').value;
+            const lastUpdated = document.getElementById('terms-last-updated').value;
+            const content = document.getElementById('terms-content').value;
+            await sendApi('PUT', '/api/admin/terms', { title, lastUpdated, content }, true);
+        }
+
+        // Privacy Policy JS
+        async function testPublicPrivacy() { await sendApi('GET', '/api/public/privacy'); }
+        async function testAdminPrivacy() { await sendApi('GET', '/api/admin/privacy', null, true); }
+        async function testUpdatePrivacy() {
+            const title = document.getElementById('privacy-title').value;
+            const lastUpdated = document.getElementById('privacy-last-updated').value;
+            const content = document.getElementById('privacy-content').value;
+            await sendApi('PUT', '/api/admin/privacy', { title, lastUpdated, content }, true);
         }
 
         // SEO

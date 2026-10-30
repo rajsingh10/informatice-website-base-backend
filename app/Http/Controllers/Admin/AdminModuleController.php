@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\TopbarController;
 use App\Models\Blog;
+use App\Models\Career;
 use App\Models\Event;
+use App\Models\Faq;
 use App\Models\Gallery;
 use App\Models\HomeSection; // Contact Page API
 use App\Models\Inquiry;
 use App\Models\Layout;
+use App\Models\LegalPage;
 use App\Models\NavbarConfig;
 use App\Models\PageSeo;
 use App\Models\Portfolio;
@@ -448,6 +451,119 @@ class AdminModuleController extends Controller
                 ],
                 'total' => $albums->count(),
                 'albums' => $albums,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Module 13: Careers (Job Listings)
+     * GET /api/admin/modules/career
+     */
+    public function getCareer(Request $request): JsonResponse
+    {
+        $layoutRecord = Layout::find('careerPageLayout');
+        $careers = Career::orderBy('order', 'asc')->orderBy('id', 'desc')->get()->map(fn ($c) => $c->toAdminPayload());
+        $departments = Career::distinct()->whereNotNull('department')->pluck('department')->values();
+
+        return response()->json([
+            'success' => true,
+            'module' => 'career',
+            'data' => [
+                'layout' => [
+                    'key' => 'careerPageLayout',
+                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'allowed' => Layout::allowedFor('careerPageLayout'),
+                ],
+                'total' => $careers->count(),
+                'openCount' => Career::open()->count(),
+                'departments' => $departments,
+                'openings' => $careers,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Module 14: FAQs
+     * GET /api/admin/modules/faq
+     */
+    public function getFaq(Request $request): JsonResponse
+    {
+        $layoutRecord = Layout::find('faqPageLayout');
+        $faqs = Faq::orderBy('order', 'asc')->orderBy('id', 'asc')->get()->map(fn ($f) => $f->toAdminPayload());
+        $categories = Faq::distinct()->whereNotNull('category')->pluck('category')->values();
+
+        return response()->json([
+            'success' => true,
+            'module' => 'faq',
+            'data' => [
+                'layout' => [
+                    'key' => 'faqPageLayout',
+                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'allowed' => Layout::allowedFor('faqPageLayout'),
+                ],
+                'total' => $faqs->count(),
+                'categories' => $categories,
+                'faqs' => $faqs,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Module 15: Terms of Service
+     * GET /api/admin/modules/terms
+     */
+    public function getTerms(): JsonResponse
+    {
+        $layoutRecord = Layout::find('termsPageLayout');
+        $terms = LegalPage::firstOrCreate(
+            ['type' => 'terms'],
+            [
+                'title' => 'Terms of Service',
+                'content' => '<h2>1. Acceptance of Terms</h2><p>By accessing or using our services, you agree to be bound by these Terms.</p>',
+                'lastUpdated' => now()->format('F Y'),
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'module' => 'terms',
+            'data' => [
+                'layout' => [
+                    'key' => 'termsPageLayout',
+                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'allowed' => Layout::allowedFor('termsPageLayout'),
+                ],
+                'page' => $terms->toPayload(),
+            ],
+        ], 200);
+    }
+
+    /**
+     * Module 16: Privacy Policy
+     * GET /api/admin/modules/privacy
+     */
+    public function getPrivacy(): JsonResponse
+    {
+        $layoutRecord = Layout::find('privacyPageLayout');
+        $privacy = LegalPage::firstOrCreate(
+            ['type' => 'privacy'],
+            [
+                'title' => 'Privacy Policy',
+                'content' => '<h2>1. Information We Collect</h2><p>We respect your privacy and protect personal data.</p>',
+                'lastUpdated' => now()->format('F Y'),
+            ]
+        );
+
+        return response()->json([
+            'success' => true,
+            'module' => 'privacy',
+            'data' => [
+                'layout' => [
+                    'key' => 'privacyPageLayout',
+                    'templateId' => $layoutRecord?->templateId ?? 'layout1',
+                    'allowed' => Layout::allowedFor('privacyPageLayout'),
+                ],
+                'page' => $privacy->toPayload(),
             ],
         ], 200);
     }
