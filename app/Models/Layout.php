@@ -6,88 +6,104 @@ use Illuminate\Database\Eloquent\Model;
 
 class Layout extends Model
 {
- 
     protected $primaryKey = 'key';
+
     public $incrementing = false;
-    protected $keyType   = 'string';
+
+    protected $keyType = 'string';
+
     public $timestamps = false;
+
     protected $fillable = ['key', 'templateId', 'updatedAt'];
+
     public static array $modules = [
         'topbarLayout' => [
             'name' => 'Topbar',
-            'min'  => 0,
-            'max'  => 4, // layout0 (hidden) to layout4
+            'min' => 0,
+            'max' => 4, // layout0 (hidden) to layout4
         ],
         'navbarLayout' => [
             'name' => 'Navbar',
-            'min'  => 1,
-            'max'  => 5,
+            'min' => 1,
+            'max' => 5,
         ],
         'homePageLayout' => [
             'name' => 'Home',
-            'min'  => 1,
-            'max'  => 10,
+            'min' => 1,
+            'max' => 10,
+        ],
+        'aboutPageLayout' => [
+            'name' => 'About',
+            'min' => 1,
+            'max' => 5,
+            'templates' => [
+                'layout1' => 'Classic Story & Team Focus',
+                'layout2' => 'Modern Timeline & Mission',
+                'layout3' => 'Bento Grid with Core Values',
+                'layout4' => 'Split Visual Editorial',
+                'layout5' => 'Minimal Corporate Overview',
+            ],
         ],
         'servicesPageLayout' => [
             'name' => 'Services catalog',
-            'min'  => 1,
-            'max'  => 8,
+            'min' => 1,
+            'max' => 8,
         ],
         'serviceDetailPageLayout' => [
             'name' => 'Service detail',
-            'min'  => 1,
-            'max'  => 4,
+            'min' => 1,
+            'max' => 4,
         ],
         'portfolioPageLayout' => [
             'name' => 'Portfolio catalog',
-            'min'  => 1,
-            'max'  => 8,
+            'min' => 1,
+            'max' => 8,
         ],
         'portfolioDetailPageLayout' => [
             'name' => 'Case study detail',
-            'min'  => 1,
-            'max'  => 4,
+            'min' => 1,
+            'max' => 4,
         ],
         'blogPageLayout' => [
             'name' => 'Blog catalog',
-            'min'  => 1,
-            'max'  => 4,
+            'min' => 1,
+            'max' => 4,
         ],
         'blogDetailPageLayout' => [
             'name' => 'Blog article',
-            'min'  => 1,
-            'max'  => 3,
+            'min' => 1,
+            'max' => 3,
         ],
         'eventsPageLayout' => [
             'name' => 'Events feed',
-            'min'  => 1,
-            'max'  => 3,
+            'min' => 1,
+            'max' => 3,
         ],
         'eventDetailPageLayout' => [
             'name' => 'Event detail',
-            'min'  => 1,
-            'max'  => 4,
+            'min' => 1,
+            'max' => 4,
         ],
         'teamPageLayout' => [
             'name' => 'Team',
-            'min'  => 1,
-            'max'  => 5,
+            'min' => 1,
+            'max' => 5,
         ],
         'testimonialsPageLayout' => [
             'name' => 'Testimonials',
-            'min'  => 1,
-            'max'  => 5,
+            'min' => 1,
+            'max' => 5,
         ],
         'galleryPageLayout' => [
             'name' => 'Gallery',
-            'min'  => 1,
-            'max'  => 4,
+            'min' => 1,
+            'max' => 4,
         ],
         // [Contact Page API] - Module 11
         'contactPageLayout' => [
             'name' => 'Contact',
-            'min'  => 1,
-            'max'  => 4,
+            'min' => 1,
+            'max' => 4,
             'templates' => [
                 'layout1' => 'Split Form with Google Map',
                 'layout2' => 'Modern Card with Social Hub',
@@ -97,28 +113,28 @@ class Layout extends Model
         ],
         'footerLayout' => [
             'name' => 'Footer',
-            'min'  => 1,
-            'max'  => 4,
+            'min' => 1,
+            'max' => 4,
         ],
         'careerPageLayout' => [
             'name' => 'Career',
-            'min'  => 1,
-            'max'  => 4,
+            'min' => 1,
+            'max' => 4,
         ],
         'faqPageLayout' => [
             'name' => 'FAQ',
-            'min'  => 1,
-            'max'  => 4,
+            'min' => 1,
+            'max' => 4,
         ],
         'termsPageLayout' => [
             'name' => 'Terms',
-            'min'  => 1,
-            'max'  => 3,
+            'min' => 1,
+            'max' => 3,
         ],
         'privacyPageLayout' => [
             'name' => 'Privacy',
-            'min'  => 1,
-            'max'  => 3,
+            'min' => 1,
+            'max' => 3,
         ],
     ];
 
@@ -165,8 +181,9 @@ class Layout extends Model
         $allowed = static::allowedFor($key);
         $result = [];
         foreach ($allowed as $id) {
-            $result[$id] = "Template " . strtoupper($id);
+            $result[$id] = 'Template '.strtoupper($id);
         }
+
         return $result;
     }
 }

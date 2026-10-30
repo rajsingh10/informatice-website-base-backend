@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Layout;
 use App\Models\NavbarConfig;
+use App\Models\SiteSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class LayoutController extends Controller
 {
@@ -16,7 +16,11 @@ class LayoutController extends Controller
     // ──────────────────────────────────────────────────────────────────────
     public function index(): JsonResponse
     {
-        $layouts = Layout::all()->pluck('templateId', 'key')->toArray();
+        $dbLayouts = Layout::all()->pluck('templateId', 'key')->toArray();
+        $layouts = [];
+        foreach (Layout::validKeys() as $k) {
+            $layouts[$k] = $dbLayouts[$k] ?? 'layout1';
+        }
         $navbar = NavbarConfig::getSingleton();
 
         $currentNavbarTemplate = $layouts['navbarLayout'] ?? 'layout1';
@@ -25,26 +29,26 @@ class LayoutController extends Controller
         $navItems = is_array($navbar->items) ? array_values($navbar->items) : NavbarConfig::defaultItems();
 
         $layouts['navbarLayout'] = [
-            'layout'   => $currentNavbarTemplate,
+            'layout' => $currentNavbarTemplate,
             'behavior' => $activeBehavior,
-            'enabled'  => $isEnabled,
-            'visible'  => $isEnabled,
-            'status'   => $isEnabled ? 'visible' : 'hidden',
-            'items'    => $navItems,
+            'enabled' => $isEnabled,
+            'visible' => $isEnabled,
+            'status' => $isEnabled ? 'visible' : 'hidden',
+            'items' => $navItems,
         ];
 
         $currentTopbarTemplate = $layouts['topbarLayout'] ?? 'layout1';
         $isTopbarEnabled = TopbarController::isTopbarEnabled();
         $layouts['topbarLayout'] = [
-            'layout'   => $isTopbarEnabled ? ($currentTopbarTemplate === 'layout0' ? 'layout1' : $currentTopbarTemplate) : 'layout0',
-            'enabled'  => $isTopbarEnabled,
-            'visible'  => $isTopbarEnabled,
-            'status'   => $isTopbarEnabled ? 'visible' : 'hidden',
+            'layout' => $isTopbarEnabled ? ($currentTopbarTemplate === 'layout0' ? 'layout1' : $currentTopbarTemplate) : 'layout0',
+            'enabled' => $isTopbarEnabled,
+            'visible' => $isTopbarEnabled,
+            'status' => $isTopbarEnabled ? 'visible' : 'hidden',
         ];
 
         return response()->json([
             'success' => true,
-            'data'    => $layouts,
+            'data' => $layouts,
         ], 200);
     }
 
@@ -57,7 +61,7 @@ class LayoutController extends Controller
         $records = Layout::all()->keyBy('key');
         $navbar = NavbarConfig::getSingleton();
         $modules = [];
-        $active  = [];
+        $active = [];
 
         foreach (Layout::$modules as $key => $meta) {
             $current = $records->get($key)?->templateId ?? 'layout1';
@@ -66,38 +70,38 @@ class LayoutController extends Controller
                 $isEnabled = $navbar->isNavbarEnabled();
                 $navItems = is_array($navbar->items) ? array_values($navbar->items) : NavbarConfig::defaultItems();
                 $active[$key] = [
-                    'layout'   => $current,
+                    'layout' => $current,
                     'behavior' => $navbar->getBehaviorForLayout($current),
-                    'enabled'  => $isEnabled,
-                    'visible'  => $isEnabled,
-                    'status'   => $isEnabled ? 'visible' : 'hidden',
-                    'items'    => $navItems,
+                    'enabled' => $isEnabled,
+                    'visible' => $isEnabled,
+                    'status' => $isEnabled ? 'visible' : 'hidden',
+                    'items' => $navItems,
                 ];
             } elseif ($key === 'topbarLayout') {
                 $isTopbarEnabled = TopbarController::isTopbarEnabled();
                 $active[$key] = [
-                    'layout'   => $isTopbarEnabled ? ($current === 'layout0' ? 'layout1' : $current) : 'layout0',
-                    'enabled'  => $isTopbarEnabled,
-                    'visible'  => $isTopbarEnabled,
-                    'status'   => $isTopbarEnabled ? 'visible' : 'hidden',
+                    'layout' => $isTopbarEnabled ? ($current === 'layout0' ? 'layout1' : $current) : 'layout0',
+                    'enabled' => $isTopbarEnabled,
+                    'visible' => $isTopbarEnabled,
+                    'status' => $isTopbarEnabled ? 'visible' : 'hidden',
                 ];
             } else {
                 $active[$key] = $current;
             }
 
             $modules[] = [
-                'key'        => $key,
-                'name'       => $meta['name'],
+                'key' => $key,
+                'name' => $meta['name'],
                 'templateId' => $current,
-                'allowed'    => Layout::allowedFor($key),
-                'updatedAt'  => $records->get($key)?->updatedAt,
+                'allowed' => Layout::allowedFor($key),
+                'updatedAt' => $records->get($key)?->updatedAt,
             ];
         }
 
         return response()->json([
             'success' => true,
-            'data'    => [
-                'active'  => $active,
+            'data' => [
+                'active' => $active,
                 'modules' => $modules,
             ],
         ], 200);
@@ -114,6 +118,7 @@ class LayoutController extends Controller
     {
         if ($request->has('layout') || $request->has('templateId')) {
             $key = $request->input('key', 'navbarLayout');
+
             return $this->update($request, $key);
         }
 
@@ -133,19 +138,20 @@ class LayoutController extends Controller
             if (! in_array($val, NavbarConfig::$allowedBehaviors)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Behavior must be one of: ' . implode(', ', NavbarConfig::$allowedBehaviors),
-                    'errors'  => ['behavior' => ['Allowed: fixed, scroll, colored, transparent']],
+                    'message' => 'Behavior must be one of: '.implode(', ', NavbarConfig::$allowedBehaviors),
+                    'errors' => ['behavior' => ['Allowed: fixed, scroll, colored, transparent']],
                 ], 422);
             }
             $navbar = NavbarConfig::getSingleton();
             $navbar->setBehaviorForLayout($val, $targetLayout);
+
             return response()->json([
                 'success' => true,
                 'message' => "Navbar behavior updated to {$val}",
-                'data'    => [
-                    'layout'          => $targetLayout ?: ($navbar->getBehaviorForLayout() ?? 'layout1'),
-                    'behavior'        => $val,
-                    'navbarBehavior'  => $val,
+                'data' => [
+                    'layout' => $targetLayout ?: ($navbar->getBehaviorForLayout() ?? 'layout1'),
+                    'behavior' => $val,
+                    'navbarBehavior' => $val,
                     'navbarBehaviors' => $navbar->getBehaviorsMap(),
                 ],
             ], 200);
@@ -156,9 +162,9 @@ class LayoutController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => "Invalid layout key '{$key}'.",
-                'errors'  => [
+                'errors' => [
                     'key' => [
-                        'The key must be one of: ' . implode(', ', Layout::validKeys()) . '.',
+                        'The key must be one of: '.implode(', ', Layout::validKeys()).'.',
                     ],
                 ],
             ], 422);
@@ -176,9 +182,9 @@ class LayoutController extends Controller
         if (! $templateId || ! in_array($templateId, $allowed)) {
             return response()->json([
                 'success' => false,
-                'message' => "The layout/templateId must be within the allowed range (" . implode(', ', $allowed) . ").",
-                'errors'  => [
-                    'layout' => ['The layout/templateId field must be one of: ' . implode(', ', $allowed) . '.'],
+                'message' => 'The layout/templateId must be within the allowed range ('.implode(', ', $allowed).').',
+                'errors' => [
+                    'layout' => ['The layout/templateId field must be one of: '.implode(', ', $allowed).'.'],
                 ],
             ], 422);
         }
@@ -188,7 +194,7 @@ class LayoutController extends Controller
             ['key' => $key],
             [
                 'templateId' => $templateId,
-                'updatedAt'  => now(),
+                'updatedAt' => now(),
             ]
         );
 
@@ -222,7 +228,7 @@ class LayoutController extends Controller
                 $navbar->update(['items' => $processed]);
             }
         } elseif ($key === 'topbarLayout') {
-            $setting = \App\Models\SiteSetting::getSingleton();
+            $setting = SiteSetting::getSingleton();
             $ann = is_array($setting->announcement) ? $setting->announcement : [];
             if (! isset($ann['_topbar'])) {
                 $ann['_topbar'] = [];
@@ -247,15 +253,19 @@ class LayoutController extends Controller
                 $ann['_topbar']['enabled'] = true;
             }
 
-            if ($request->has('email')) $setting->email = (string) $request->input('email');
-            if ($request->has('phone')) $setting->phone = (string) $request->input('phone');
+            if ($request->has('email')) {
+                $setting->email = (string) $request->input('email');
+            }
+            if ($request->has('phone')) {
+                $setting->phone = (string) $request->input('phone');
+            }
             if ($request->has('cta')) {
                 $ctaIn = $request->input('cta');
                 if (is_array($ctaIn)) {
                     $ann['cta'] = [
                         'enabled' => isset($ctaIn['enabled']) ? filter_var($ctaIn['enabled'], FILTER_VALIDATE_BOOLEAN) : true,
-                        'label'   => (string) ($ctaIn['label'] ?? 'Get a Quote'),
-                        'url'     => (string) ($ctaIn['url'] ?? '/contact'),
+                        'label' => (string) ($ctaIn['label'] ?? 'Get a Quote'),
+                        'url' => (string) ($ctaIn['url'] ?? '/contact'),
                     ];
                 }
             }
@@ -273,18 +283,18 @@ class LayoutController extends Controller
         if ($key === 'topbarLayout') {
             $isTopEnabled = TopbarController::isTopbarEnabled();
             $responseData = [
-                'layout'   => $templateId,
-                'enabled'  => $isTopEnabled,
-                'visible'  => $isTopEnabled,
-                'status'   => $isTopEnabled ? 'visible' : 'hidden',
+                'layout' => $templateId,
+                'enabled' => $isTopEnabled,
+                'visible' => $isTopEnabled,
+                'status' => $isTopEnabled ? 'visible' : 'hidden',
             ];
         } else {
             $responseData = [
-                'layout'   => $templateId,
+                'layout' => $templateId,
                 'behavior' => $activeBehavior,
-                'enabled'  => $isEnabled,
-                'visible'  => $isEnabled,
-                'status'   => $isEnabled ? 'visible' : 'hidden',
+                'enabled' => $isEnabled,
+                'visible' => $isEnabled,
+                'status' => $isEnabled ? 'visible' : 'hidden',
             ];
         }
 
@@ -295,7 +305,7 @@ class LayoutController extends Controller
         return response()->json([
             'success' => true,
             'message' => "{$moduleName} layout updated to {$templateId}",
-            'data'    => $responseData,
+            'data' => $responseData,
         ], 200);
     }
 
@@ -309,6 +319,7 @@ class LayoutController extends Controller
         // Single layout payload e.g. { "layout": "layout5", "behavior": "scroll" }
         if ($request->has('layout') || ($request->has('key') && $request->has('templateId'))) {
             $key = $request->input('key', 'navbarLayout');
+
             return $this->update($request, $key);
         }
 
@@ -380,7 +391,7 @@ class LayoutController extends Controller
             if (! in_array($templateId, $allowed)) {
                 return response()->json([
                     'success' => false,
-                    'message' => "Invalid templateId '{$templateId}' for '{$key}'. Allowed: " . implode(', ', $allowed),
+                    'message' => "Invalid templateId '{$templateId}' for '{$key}'. Allowed: ".implode(', ', $allowed),
                 ], 422);
             }
 
@@ -398,18 +409,18 @@ class LayoutController extends Controller
         $navItems = is_array($navbar->fresh()->items) ? array_values($navbar->fresh()->items) : NavbarConfig::defaultItems();
 
         $saved['navbarLayout'] = [
-            'layout'   => $currTemplate,
+            'layout' => $currTemplate,
             'behavior' => $activeBehavior,
-            'enabled'  => $isEnabled,
-            'visible'  => $isEnabled,
-            'status'   => $isEnabled ? 'visible' : 'hidden',
-            'items'    => $navItems,
+            'enabled' => $isEnabled,
+            'visible' => $isEnabled,
+            'status' => $isEnabled ? 'visible' : 'hidden',
+            'items' => $navItems,
         ];
 
         return response()->json([
             'success' => true,
             'message' => 'Layout templates saved successfully.',
-            'data'    => $saved,
+            'data' => $saved,
         ], 200);
     }
 }
