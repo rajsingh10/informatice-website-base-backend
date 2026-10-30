@@ -122,6 +122,7 @@ class FooterConfig extends Model
             'layoutId'   => 'layout1',
             'cta'        => static::defaultCta(),
             'grid'       => static::defaultGrid(),
+            'items'      => static::defaultItems(),
             'links'      => static::defaultItems(),
             'customCode' => static::defaultCustomCode(),
         ];
@@ -142,23 +143,26 @@ class FooterConfig extends Model
      */
     public static function getSingleton(): static
     {
-        if (Schema::hasTable('footer_configs')) {
-            $config = static::first();
-            if (! $config) {
-                $config = static::create(static::defaults());
+        try {
+            if (Schema::hasTable('footer_configs')) {
+                $config = static::first();
+                if (! $config) {
+                    $config = static::create(static::defaults());
+                }
+                return $config;
             }
-            return $config;
+        } catch (\Throwable $e) {
+            // Fallback below if table not yet created or DB error
         }
 
         // Safe fallback in case table not yet created
         $instance = new static();
         $defaults = static::defaults();
-        $instance->layoutId = $defaults['layoutId'];
-        $instance->cta = $defaults['cta'];
-        $instance->grid = $defaults['grid'];
-        $instance->items = $defaults['items'];
-        $instance->links = $defaults['links'];
-        $instance->customCode = $defaults['customCode'];
+        $instance->layoutId   = $defaults['layoutId'] ?? 'layout1';
+        $instance->cta        = $defaults['cta'] ?? static::defaultCta();
+        $instance->grid       = $defaults['grid'] ?? static::defaultGrid();
+        $instance->links      = $defaults['links'] ?? static::defaultItems();
+        $instance->customCode = $defaults['customCode'] ?? static::defaultCustomCode();
         return $instance;
     }
 
