@@ -105,8 +105,11 @@ class FaqController extends Controller
                     'answer' => (string) $item['answer'],
                     'category' => (string) ($item['category'] ?? 'General'),
                     'order' => isset($item['order']) && is_numeric($item['order']) ? (int) $item['order'] : $order++,
-                    'isPublished' => isset($item['isPublished']) ? (bool) $item['isPublished'] : true,
                 ];
+
+                if (\Illuminate\Support\Facades\Schema::hasColumn('faqs', 'isPublished')) {
+                    $faqData['isPublished'] = isset($item['isPublished']) ? (bool) $item['isPublished'] : true;
+                }
 
                 if (! empty($item['id']) && is_numeric($item['id'])) {
                     $existing = Faq::find((int) $item['id']);
@@ -151,6 +154,10 @@ class FaqController extends Controller
 
         $validated = $request->validate(Faq::validationRules(false));
 
+        if (! \Illuminate\Support\Facades\Schema::hasColumn('faqs', 'isPublished')) {
+            unset($validated['isPublished']);
+        }
+
         if (! isset($validated['order'])) {
             $maxOrder = Faq::max('order') ?? 0;
             $validated['order'] = $maxOrder + 1;
@@ -181,6 +188,11 @@ class FaqController extends Controller
         }
 
         $validated = $request->validate(Faq::validationRules(true));
+
+        if (! \Illuminate\Support\Facades\Schema::hasColumn('faqs', 'isPublished')) {
+            unset($validated['isPublished']);
+        }
+
         $faq->update($validated);
 
         return response()->json([
