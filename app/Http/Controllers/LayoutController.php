@@ -170,7 +170,9 @@ class LayoutController extends Controller
     // ──────────────────────────────────────────────────────────────────────
     public function show(string $key): JsonResponse
     {
-        if (! in_array($key, Layout::validKeys())) {
+        $canonicalKey = Layout::canonicalKey($key);
+
+        if (! in_array($key, Layout::validKeys()) && ! in_array($canonicalKey, Layout::validKeys())) {
             return response()->json([
                 'success' => false,
                 'message' => "Invalid layout key '{$key}'.",
@@ -180,9 +182,12 @@ class LayoutController extends Controller
             ], 422);
         }
 
-        $record = Layout::find($key);
+        $record = Layout::find($key) ?? Layout::find($canonicalKey);
         $current = $record?->templateId ?? 'layout1';
-        $allowed = Layout::allowedFor($key);
+        $allowed = array_values(array_unique(array_merge(
+            Layout::allowedFor($key),
+            Layout::allowedFor($canonicalKey)
+        )));
 
         if ($key === 'navbarLayout') {
             $navbar = NavbarConfig::getSingleton();
@@ -272,8 +277,10 @@ class LayoutController extends Controller
             ], 200);
         }
 
+        $canonicalKey = Layout::canonicalKey($key);
+
         // 1. :key must be in the specification table, otherwise 422
-        if (! in_array($key, Layout::validKeys())) {
+        if (! in_array($key, Layout::validKeys()) && ! in_array($canonicalKey, Layout::validKeys())) {
             return response()->json([
                 'success' => false,
                 'message' => "Invalid layout key '{$key}'.",
@@ -286,15 +293,37 @@ class LayoutController extends Controller
         }
 
         // 2. templateId or layout must be within that key's allowed range
-        $allowed = Layout::allowedFor($key);
-        $templateId = $request->input('layout', $request->input('templateId'));
+        $allowed = array_values(array_unique(array_merge(
+            Layout::allowedFor($key),
+            Layout::allowedFor($canonicalKey)
+        )));
 
-        // [Contact Page API & Layouts] Normalize numeric layout (e.g. 1 -> layout1)
-        if (is_numeric($templateId) && in_array("layout{$templateId}", $allowed, true)) {
+        $templateId = $request->input('layout')
+            ?? $request->input('templateId')
+            ?? $request->input('template')
+            ?? $request->input('layoutId')
+            ?? $request->input($key)
+            ?? $request->input($canonicalKey)
+            ?? $request->input('value');
+
+        if (is_array($templateId)) {
+            $templateId = $templateId['layout'] ?? $templateId['templateId'] ?? $templateId['value'] ?? null;
+        }
+
+        if (is_string($templateId)) {
+            $templateId = trim($templateId);
+            if (preg_match('/^(\d+)$/', $templateId, $m)) {
+                $templateId = "layout{$m[1]}";
+            } elseif (preg_match('/^layout[-_](\d+)$/i', $templateId, $m)) {
+                $templateId = "layout{$m[1]}";
+            } elseif (preg_match('/^layout(\d+)$/i', $templateId, $m)) {
+                $templateId = "layout{$m[1]}";
+            }
+        } elseif (is_numeric($templateId)) {
             $templateId = "layout{$templateId}";
         }
 
-        if (! $templateId || ! in_array($templateId, $allowed)) {
+        if (! $templateId || ! in_array($templateId, $allowed, true)) {
             return response()->json([
                 'success' => false,
                 'message' => 'The layout/templateId must be within the allowed range ('.implode(', ', $allowed).').',
@@ -304,7 +333,7 @@ class LayoutController extends Controller
             ], 422);
         }
 
-        // 3. Update or insert the layout key
+        // 3. Update or insert the layout key (sync both terms keys if applicable)
         Layout::updateOrCreate(
             ['key' => $key],
             [
@@ -312,6 +341,17 @@ class LayoutController extends Controller
                 'updatedAt' => now(),
             ]
         );
+
+        if ($key === 'termsPageLayout' || $key === 'termsConditionsPageLayout' || $canonicalKey === 'termsPageLayout') {
+            Layout::updateOrCreate(
+                ['key' => 'termsPageLayout'],
+                ['templateId' => $templateId, 'updatedAt' => now()]
+            );
+            Layout::updateOrCreate(
+                ['key' => 'termsConditionsPageLayout'],
+                ['templateId' => $templateId, 'updatedAt' => now()]
+            );
+        }
 
         // 4. If navbarLayout was updated, sync active behavior and enabled status
         $navbar = NavbarConfig::getSingleton();

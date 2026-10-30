@@ -59,13 +59,6 @@ class Service extends Model
         return '';
     }
 
-    /**
-     * Alias for altImage.
-     */
-    public function getAltImageAttribute(): string
-    {
-        return $this->getImageAltAttribute();
-    }
 
     protected $casts = [
         'features'     => 'array',
