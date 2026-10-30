@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class Gallery extends Model
 {
@@ -14,14 +15,45 @@ class Gallery extends Model
         'category',
         'description',
         'coverImage',
+        'imageAlt',
         'images',
         'order',
+        'isFeatured',
         'isPublished',
     ];
+
+    /**
+     * Dynamically filter fillable attributes based on database columns.
+     */
+    public function getFillable(): array
+    {
+        $fillable = $this->fillable;
+        try {
+            if (! Schema::hasColumn($this->getTable(), 'imageAlt')) {
+                $fillable = array_values(array_diff($fillable, ['imageAlt']));
+            }
+        } catch (\Throwable $e) {
+            // fallback
+        }
+        return $fillable;
+    }
+
+    /**
+     * Get imageAlt attribute safely.
+     */
+    public function getImageAltAttribute(): string
+    {
+        if (array_key_exists('imageAlt', $this->attributes) && $this->attributes['imageAlt'] !== null) {
+            return (string) $this->attributes['imageAlt'];
+        }
+
+        return '';
+    }
 
     protected $casts = [
         'images' => 'array',
         'order' => 'integer',
+        'isFeatured' => 'boolean',
         'isPublished' => 'boolean',
     ];
 
@@ -75,6 +107,7 @@ class Gallery extends Model
             $normalized[] = [
                 'id' => $id,
                 'url' => (string) $img['url'],
+                'imageAlt' => (string) ($img['imageAlt'] ?? ($img['alt'] ?? ($img['title'] ?? ''))),
                 'title' => (string) ($img['title'] ?? ''),
                 'caption' => (string) ($img['caption'] ?? ''),
             ];
@@ -95,12 +128,15 @@ class Gallery extends Model
             'category' => 'nullable|string|max:100',
             'description' => 'nullable|string',
             'coverImage' => 'nullable|string|max:1000',
+            'imageAlt' => 'nullable|string|max:500',
             'images' => 'nullable|array',
             'images.*.id' => 'nullable|integer',
             'images.*.url' => 'required_with:images|string|max:1000',
+            'images.*.imageAlt' => 'nullable|string|max:500',
             'images.*.title' => 'nullable|string|max:255',
             'images.*.caption' => 'nullable|string|max:255',
             'order' => 'nullable|integer|min:0',
+            'isFeatured' => 'nullable|boolean',
             'isPublished' => 'nullable|boolean',
         ];
     }
@@ -131,8 +167,10 @@ class Gallery extends Model
             'category' => (string) ($this->category ?? 'General'),
             'description' => (string) ($this->description ?? ''),
             'coverImage' => (string) $cover,
+            'imageAlt' => (string) ($this->imageAlt ?? ''),
             'images' => $images,
             'order' => (int) ($this->order ?? 0),
+            'isFeatured' => (bool) $this->isFeatured,
             'isPublished' => (bool) $this->isPublished,
         ];
     }

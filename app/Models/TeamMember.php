@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class TeamMember extends Model
 {
@@ -14,16 +15,47 @@ class TeamMember extends Model
         'designation',
         'department',
         'photo',
+        'imageAlt',
         'bio',
         'social',
         'isLeadership',
+        'isFeatured',
         'order',
         'isPublished',
     ];
 
+    /**
+     * Dynamically filter fillable attributes based on database columns.
+     */
+    public function getFillable(): array
+    {
+        $fillable = $this->fillable;
+        try {
+            if (! Schema::hasColumn($this->getTable(), 'imageAlt')) {
+                $fillable = array_values(array_diff($fillable, ['imageAlt']));
+            }
+        } catch (\Throwable $e) {
+            // fallback
+        }
+        return $fillable;
+    }
+
+    /**
+     * Get imageAlt attribute safely.
+     */
+    public function getImageAltAttribute(): string
+    {
+        if (array_key_exists('imageAlt', $this->attributes) && $this->attributes['imageAlt'] !== null) {
+            return (string) $this->attributes['imageAlt'];
+        }
+
+        return '';
+    }
+
     protected $casts = [
         'social' => 'array',
         'isLeadership' => 'boolean',
+        'isFeatured' => 'boolean',
         'order' => 'integer',
         'isPublished' => 'boolean',
     ];
@@ -52,12 +84,14 @@ class TeamMember extends Model
             'designation' => "{$prefix}required|string|max:255",
             'department' => 'nullable|string|max:100',
             'photo' => 'nullable|string|max:1000',
+            'imageAlt' => 'nullable|string|max:500',
             'bio' => 'nullable|string',
             'social' => 'nullable|array',
             'social.linkedin' => 'nullable|string|max:255',
             'social.twitter' => 'nullable|string|max:255',
             'social.github' => 'nullable|string|max:255',
             'isLeadership' => 'nullable|boolean',
+            'isFeatured' => 'nullable|boolean',
             'order' => 'nullable|integer|min:0',
             'isPublished' => 'nullable|boolean',
         ];
@@ -119,9 +153,11 @@ class TeamMember extends Model
             'designation' => (string) $this->designation,
             'department' => (string) ($this->department ?? ''),
             'photo' => (string) ($this->photo ?? ''),
+            'imageAlt' => (string) ($this->imageAlt ?? ''),
             'bio' => (string) ($this->bio ?? ''),
             'social' => $this->resolvedSocial(),
             'isLeadership' => (bool) $this->isLeadership,
+            'isFeatured' => (bool) $this->isFeatured,
             'order' => (int) ($this->order ?? 0),
             'isPublished' => (bool) $this->isPublished,
         ];

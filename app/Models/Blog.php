@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class Blog extends Model
@@ -15,20 +16,55 @@ class Blog extends Model
         'excerpt',
         'content',
         'image',
+        'imageAlt',
         'category',
         'author',
         'date',
         'readTime',
         'tags',
+        'isFeatured',
         'status',
         'seo',
     ];
 
+    /**
+     * Dynamically filter fillable attributes based on database columns.
+     */
+    public function getFillable(): array
+    {
+        $fillable = $this->fillable;
+        try {
+            if (! Schema::hasColumn($this->getTable(), 'imageAlt')) {
+                $fillable = array_values(array_diff($fillable, ['imageAlt']));
+            }
+        } catch (\Throwable $e) {
+            // fallback
+        }
+        return $fillable;
+    }
+
+    /**
+     * Get imageAlt with graceful fallback to seo.imageAlt if column not present.
+     */
+    public function getImageAltAttribute(): string
+    {
+        if (array_key_exists('imageAlt', $this->attributes) && $this->attributes['imageAlt'] !== null) {
+            return (string) $this->attributes['imageAlt'];
+        }
+
+        if (is_array($this->seo) && ! empty($this->seo['imageAlt'])) {
+            return (string) $this->seo['imageAlt'];
+        }
+
+        return '';
+    }
+
     protected $casts = [
-        'author'   => 'array',
-        'tags'     => 'array',
-        'seo'      => 'array',
-        'date'     => 'date:Y-m-d',
+        'author'     => 'array',
+        'tags'       => 'array',
+        'isFeatured' => 'boolean',
+        'seo'        => 'array',
+        'date'       => 'date:Y-m-d',
     ];
 
     /**
@@ -105,6 +141,7 @@ class Blog extends Model
             'slug'      => (string) $this->slug,
             'excerpt'   => (string) ($this->excerpt ?? ''),
             'image'     => (string) ($this->image ?? ''),
+            'imageAlt'  => (string) ($this->imageAlt ?? ''),
             'category'  => (string) ($this->category ?? 'General'),
             'author'    => [
                 'name'   => $this->author['name'] ?? '',
@@ -113,6 +150,7 @@ class Blog extends Model
             'date'      => $this->date ? $this->date->format('Y-m-d') : date('Y-m-d'),
             'readTime'  => (string) ($this->readTime ?? '1 min'),
             'tags'      => is_array($this->tags) ? array_values($this->tags) : [],
+            'isFeatured'=> (bool) $this->isFeatured,
         ];
     }
 
@@ -129,6 +167,7 @@ class Blog extends Model
             'excerpt'   => (string) ($this->excerpt ?? ''),
             'content'   => (string) ($this->content ?? ''),
             'image'     => (string) ($this->image ?? ''),
+            'imageAlt'  => (string) ($this->imageAlt ?? ''),
             'category'  => (string) ($this->category ?? 'General'),
             'author'    => [
                 'name'        => $this->author['name'] ?? '',
@@ -138,6 +177,7 @@ class Blog extends Model
             'date'      => $this->date ? $this->date->format('Y-m-d') : date('Y-m-d'),
             'readTime'  => (string) ($this->readTime ?? '1 min'),
             'tags'      => is_array($this->tags) ? array_values($this->tags) : [],
+            'isFeatured'=> (bool) $this->isFeatured,
             'status'    => (string) ($this->status ?? 'published'),
             'seo'       => $this->resolveSeo(),
         ];
@@ -155,6 +195,7 @@ class Blog extends Model
             'excerpt'    => (string) ($this->excerpt ?? ''),
             'content'    => (string) ($this->content ?? ''),
             'image'      => (string) ($this->image ?? ''),
+            'imageAlt'   => (string) ($this->imageAlt ?? ''),
             'category'   => (string) ($this->category ?? 'General'),
             'author'     => [
                 'name'        => $this->author['name'] ?? '',
@@ -164,6 +205,7 @@ class Blog extends Model
             'date'       => $this->date ? $this->date->format('Y-m-d') : date('Y-m-d'),
             'readTime'   => (string) ($this->readTime ?? '1 min'),
             'tags'       => is_array($this->tags) ? array_values($this->tags) : [],
+            'isFeatured' => (bool) $this->isFeatured,
             'status'     => (string) ($this->status ?? 'published'),
             'seo'        => is_array($this->seo) ? $this->seo : (object)[],
             'created_at' => $this->created_at?->toISOString(),

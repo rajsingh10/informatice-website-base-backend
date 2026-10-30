@@ -17,6 +17,7 @@ class FaqController extends Controller
     {
         $query = Faq::published()
             ->category($request->input('category'))
+            ->when($request->has('featured') || $request->has('isFeatured'), fn ($q) => $q->where('isFeatured', filter_var($request->input('featured', $request->input('isFeatured')), FILTER_VALIDATE_BOOLEAN)))
             ->search($request->input('q') ?? $request->input('search'))
             ->orderBy('order', 'asc')
             ->orderBy('id', 'asc');
@@ -38,6 +39,7 @@ class FaqController extends Controller
     {
         $query = Faq::query()
             ->category($request->input('category'))
+            ->when($request->has('featured') || $request->has('isFeatured'), fn ($q) => $q->where('isFeatured', filter_var($request->input('featured', $request->input('isFeatured')), FILTER_VALIDATE_BOOLEAN)))
             ->search($request->input('q') ?? $request->input('search'))
             ->orderBy('order', 'asc')
             ->orderBy('id', 'asc');
@@ -111,6 +113,10 @@ class FaqController extends Controller
                     $faqData['isPublished'] = isset($item['isPublished']) ? (bool) $item['isPublished'] : true;
                 }
 
+                if (\Illuminate\Support\Facades\Schema::hasColumn('faqs', 'isFeatured')) {
+                    $faqData['isFeatured'] = isset($item['isFeatured']) ? (bool) $item['isFeatured'] : false;
+                }
+
                 if (! empty($item['id']) && is_numeric($item['id'])) {
                     $existing = Faq::find((int) $item['id']);
                     if ($existing) {
@@ -158,6 +164,10 @@ class FaqController extends Controller
             unset($validated['isPublished']);
         }
 
+        if (! \Illuminate\Support\Facades\Schema::hasColumn('faqs', 'isFeatured')) {
+            unset($validated['isFeatured']);
+        }
+
         if (! isset($validated['order'])) {
             $maxOrder = Faq::max('order') ?? 0;
             $validated['order'] = $maxOrder + 1;
@@ -191,6 +201,10 @@ class FaqController extends Controller
 
         if (! \Illuminate\Support\Facades\Schema::hasColumn('faqs', 'isPublished')) {
             unset($validated['isPublished']);
+        }
+
+        if (! \Illuminate\Support\Facades\Schema::hasColumn('faqs', 'isFeatured')) {
+            unset($validated['isFeatured']);
         }
 
         $faq->update($validated);

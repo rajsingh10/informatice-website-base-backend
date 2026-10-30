@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class Event extends Model
@@ -27,12 +28,47 @@ class Event extends Model
         'availableSeats',
         'agenda',
         'image',
+        'imageAlt',
+        'isFeatured',
         'status',
         'seo',
     ];
 
+    /**
+     * Dynamically filter fillable attributes based on database columns.
+     */
+    public function getFillable(): array
+    {
+        $fillable = $this->fillable;
+        try {
+            if (! Schema::hasColumn($this->getTable(), 'imageAlt')) {
+                $fillable = array_values(array_diff($fillable, ['imageAlt']));
+            }
+        } catch (\Throwable $e) {
+            // fallback
+        }
+        return $fillable;
+    }
+
+    /**
+     * Get imageAlt with graceful fallback to seo.imageAlt if column not present.
+     */
+    public function getImageAltAttribute(): string
+    {
+        if (array_key_exists('imageAlt', $this->attributes) && $this->attributes['imageAlt'] !== null) {
+            return (string) $this->attributes['imageAlt'];
+        }
+
+        if (is_array($this->seo) && ! empty($this->seo['imageAlt'])) {
+            return (string) $this->seo['imageAlt'];
+        }
+
+        return '';
+    }
+
     protected $casts = [
         'isOnline' => 'boolean',
+        'isFeatured' => 'boolean',
         'price' => 'float',
         'totalSeats' => 'integer',
         'availableSeats' => 'integer',
@@ -115,6 +151,8 @@ class Event extends Model
             'isOnline' => (bool) $this->isOnline,
             'price' => (float) ($this->price ?? 0),
             'image' => (string) ($this->image ?? ''),
+            'imageAlt' => (string) ($this->imageAlt ?? ''),
+            'isFeatured' => (bool) $this->isFeatured,
         ];
     }
 
@@ -143,6 +181,8 @@ class Event extends Model
             'availableSeats' => (int) ($this->availableSeats ?? 0),
             'agenda' => is_array($this->agenda) ? array_values($this->agenda) : [],
             'image' => (string) ($this->image ?? ''),
+            'imageAlt' => (string) ($this->imageAlt ?? ''),
+            'isFeatured' => (bool) $this->isFeatured,
             'status' => (string) ($this->status ?? 'published'),
             'seo' => $this->resolveSeo(),
         ];
@@ -172,6 +212,8 @@ class Event extends Model
             'availableSeats' => (int) ($this->availableSeats ?? 0),
             'agenda' => is_array($this->agenda) ? array_values($this->agenda) : [],
             'image' => (string) ($this->image ?? ''),
+            'imageAlt' => (string) ($this->imageAlt ?? ''),
+            'isFeatured' => (bool) $this->isFeatured,
             'status' => (string) ($this->status ?? 'published'),
             'seo' => is_array($this->seo) ? $this->seo : (object) [],
             'created_at' => $this->created_at?->toISOString(),

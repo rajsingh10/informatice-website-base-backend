@@ -22,6 +22,10 @@ class BlogController extends Controller
             $query->where('category', $request->query('category'));
         }
 
+        if ($request->has('featured') || $request->has('isFeatured')) {
+            $query->where('isFeatured', filter_var($request->query('featured', $request->query('isFeatured')), FILTER_VALIDATE_BOOLEAN));
+        }
+
         if ($request->filled('tag')) {
             $tag = $request->query('tag');
             $query->whereJsonContains('tags', $tag);
@@ -78,6 +82,10 @@ class BlogController extends Controller
 
         if ($request->filled('category')) {
             $query->where('category', $request->query('category'));
+        }
+
+        if ($request->has('featured') || $request->has('isFeatured')) {
+            $query->where('isFeatured', filter_var($request->query('featured', $request->query('isFeatured')), FILTER_VALIDATE_BOOLEAN));
         }
 
         if ($request->filled('status')) {
@@ -142,6 +150,7 @@ class BlogController extends Controller
             'excerpt'            => 'nullable|string',
             'content'            => 'nullable|string',
             'image'              => 'nullable|string|max:1000',
+            'imageAlt'           => 'nullable|string|max:500',
             'category'           => 'nullable|string|max:100',
             'author'             => 'nullable|array',
             'author.name'        => 'nullable|string|max:150',
@@ -151,6 +160,7 @@ class BlogController extends Controller
             'readTime'           => 'nullable|string|max:50',
             'tags'               => 'nullable|array',
             'tags.*'             => 'string|max:50',
+            'isFeatured'         => 'nullable|boolean',
             'status'             => 'nullable|in:published,draft,scheduled',
             'seo'                => 'nullable|array',
         ]);
@@ -172,7 +182,7 @@ class BlogController extends Controller
             'avatar'      => $validated['author']['avatar'] ?? '',
         ];
 
-        $post = Blog::create([
+        $createData = [
             'title'    => $validated['title'],
             'slug'     => $slug,
             'excerpt'  => $validated['excerpt'] ?? null,
@@ -183,9 +193,21 @@ class BlogController extends Controller
             'date'     => $validated['date'] ?? now()->toDateString(),
             'readTime' => $readTime,
             'tags'     => $validated['tags'] ?? [],
+            'isFeatured' => $request->has('isFeatured') ? filter_var($request->input('isFeatured'), FILTER_VALIDATE_BOOLEAN) : false,
             'status'   => $validated['status'] ?? 'published',
             'seo'      => $validated['seo'] ?? [],
-        ]);
+        ];
+
+        $imageAlt = (string) ($request->input('imageAlt', $request->input('altImage', '')));
+        if (\Illuminate\Support\Facades\Schema::hasColumn('blogs', 'imageAlt')) {
+            $createData['imageAlt'] = $imageAlt;
+        } else {
+            $seo = is_array($createData['seo']) ? $createData['seo'] : [];
+            $seo['imageAlt'] = $imageAlt;
+            $createData['seo'] = $seo;
+        }
+
+        $post = Blog::create($createData);
 
         return response()->json([
             'success' => true,
@@ -214,6 +236,7 @@ class BlogController extends Controller
             'excerpt'            => 'nullable|string',
             'content'            => 'nullable|string',
             'image'              => 'nullable|string|max:1000',
+            'imageAlt'           => 'nullable|string|max:500',
             'category'           => 'nullable|string|max:100',
             'author'             => 'nullable|array',
             'author.name'        => 'nullable|string|max:150',
@@ -223,6 +246,7 @@ class BlogController extends Controller
             'readTime'           => 'nullable|string|max:50',
             'tags'               => 'nullable|array',
             'tags.*'             => 'string|max:50',
+            'isFeatured'         => 'nullable|boolean',
             'status'             => 'nullable|in:published,draft,scheduled',
             'seo'                => 'nullable|array',
         ]);
@@ -249,6 +273,17 @@ class BlogController extends Controller
 
         if (array_key_exists('image', $validated)) {
             $post->image = $validated['image'];
+        }
+
+        if ($request->has('imageAlt') || $request->has('altImage')) {
+            $imageAlt = (string) $request->input('imageAlt', $request->input('altImage', ''));
+            if (\Illuminate\Support\Facades\Schema::hasColumn('blogs', 'imageAlt')) {
+                $post->imageAlt = $imageAlt;
+            } else {
+                $seo = is_array($post->seo) ? $post->seo : [];
+                $seo['imageAlt'] = $imageAlt;
+                $post->seo = $seo;
+            }
         }
 
         if (array_key_exists('category', $validated)) {
@@ -278,6 +313,10 @@ class BlogController extends Controller
 
         if (array_key_exists('status', $validated)) {
             $post->status = $validated['status'];
+        }
+
+        if ($request->has('isFeatured')) {
+            $post->isFeatured = filter_var($request->input('isFeatured'), FILTER_VALIDATE_BOOLEAN);
         }
 
         if (array_key_exists('seo', $validated)) {

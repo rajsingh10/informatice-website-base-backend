@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class Testimonial extends Model
 {
@@ -14,6 +15,7 @@ class Testimonial extends Model
         'designation',
         'company',
         'photo',
+        'imageAlt',
         'rating',
         'text',
         'isFeatured',
@@ -22,6 +24,34 @@ class Testimonial extends Model
         'order',
         'isPublished',
     ];
+
+    /**
+     * Dynamically filter fillable attributes based on database columns.
+     */
+    public function getFillable(): array
+    {
+        $fillable = $this->fillable;
+        try {
+            if (! Schema::hasColumn($this->getTable(), 'imageAlt')) {
+                $fillable = array_values(array_diff($fillable, ['imageAlt']));
+            }
+        } catch (\Throwable $e) {
+            // fallback
+        }
+        return $fillable;
+    }
+
+    /**
+     * Get imageAlt attribute safely.
+     */
+    public function getImageAltAttribute(): string
+    {
+        if (array_key_exists('imageAlt', $this->attributes) && $this->attributes['imageAlt'] !== null) {
+            return (string) $this->attributes['imageAlt'];
+        }
+
+        return '';
+    }
 
     protected $casts = [
         'rating' => 'integer',
@@ -54,6 +84,7 @@ class Testimonial extends Model
             'designation' => 'nullable|string|max:255',
             'company' => 'nullable|string|max:255',
             'photo' => 'nullable|string|max:1000',
+            'imageAlt' => 'nullable|string|max:500',
             'rating' => "{$prefix}required|integer|min:1|max:5",
             'text' => "{$prefix}required|string",
             'isFeatured' => 'nullable|boolean',
@@ -122,6 +153,7 @@ class Testimonial extends Model
             'designation' => (string) ($this->designation ?? ''),
             'company' => (string) ($this->company ?? ''),
             'photo' => (string) ($this->photo ?? ''),
+            'imageAlt' => (string) ($this->imageAlt ?? ''),
             'rating' => (int) ($this->rating ?? 5),
             'text' => (string) $this->text,
             'isFeatured' => (bool) $this->isFeatured,

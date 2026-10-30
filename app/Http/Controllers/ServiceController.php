@@ -22,6 +22,10 @@ class ServiceController extends Controller
             $query->where('category', $request->query('category'));
         }
 
+        if ($request->has('featured') || $request->has('isFeatured')) {
+            $query->where('isFeatured', filter_var($request->query('featured', $request->query('isFeatured')), FILTER_VALIDATE_BOOLEAN));
+        }
+
         // Search in title or description
         if ($request->filled('search')) {
             $term = '%' . $request->query('search') . '%';
@@ -96,6 +100,10 @@ class ServiceController extends Controller
             $query->where('isPublished', filter_var($request->query('isPublished'), FILTER_VALIDATE_BOOLEAN));
         }
 
+        if ($request->has('featured') || $request->has('isFeatured')) {
+            $query->where('isFeatured', filter_var($request->query('featured', $request->query('isFeatured')), FILTER_VALIDATE_BOOLEAN));
+        }
+
         if ($request->filled('search')) {
             $term = '%' . $request->query('search') . '%';
             $query->where(function ($q) use ($term) {
@@ -161,6 +169,7 @@ class ServiceController extends Controller
             'deliverables'     => 'sometimes|nullable|array',
             'deliverables.*'   => 'string',
             'order'            => 'sometimes|integer',
+            'isFeatured'       => 'sometimes|boolean',
             'isPublished'      => 'sometimes|boolean',
             'seo'              => 'sometimes|nullable|array',
         ], [
@@ -185,6 +194,7 @@ class ServiceController extends Controller
             'features'         => $request->input('features', []),
             'deliverables'     => $request->input('deliverables', []),
             'order'            => (int) $request->input('order', 0),
+            'isFeatured'       => $request->has('isFeatured') ? filter_var($request->input('isFeatured'), FILTER_VALIDATE_BOOLEAN) : false,
             'isPublished'      => $request->has('isPublished') ? filter_var($request->input('isPublished'), FILTER_VALIDATE_BOOLEAN) : true,
             'seo'              => $request->input('seo', []),
         ];
@@ -236,6 +246,7 @@ class ServiceController extends Controller
             'deliverables'     => 'sometimes|nullable|array',
             'deliverables.*'   => 'string',
             'order'            => 'sometimes|integer',
+            'isFeatured'       => 'sometimes|boolean',
             'isPublished'      => 'sometimes|boolean',
             'seo'              => 'sometimes|nullable|array',
         ]);
@@ -266,6 +277,10 @@ class ServiceController extends Controller
 
         if ($request->has('isPublished')) {
             $data['isPublished'] = filter_var($request->input('isPublished'), FILTER_VALIDATE_BOOLEAN);
+        }
+
+        if ($request->has('isFeatured')) {
+            $data['isFeatured'] = filter_var($request->input('isFeatured'), FILTER_VALIDATE_BOOLEAN);
         }
 
         if ($request->filled('slug')) {

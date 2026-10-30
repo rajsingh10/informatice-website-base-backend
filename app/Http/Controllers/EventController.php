@@ -44,6 +44,10 @@ class EventController extends Controller
             $query->where('type', $request->query('type'));
         }
 
+        if ($request->has('featured') || $request->has('isFeatured')) {
+            $query->where('isFeatured', filter_var($request->query('featured', $request->query('isFeatured')), FILTER_VALIDATE_BOOLEAN));
+        }
+
         if ($request->has('isOnline')) {
             $query->where('isOnline', filter_var($request->query('isOnline'), FILTER_VALIDATE_BOOLEAN));
         }
@@ -129,6 +133,10 @@ class EventController extends Controller
             $query->where('type', $request->query('type'));
         }
 
+        if ($request->has('featured') || $request->has('isFeatured')) {
+            $query->where('isFeatured', filter_var($request->query('featured', $request->query('isFeatured')), FILTER_VALIDATE_BOOLEAN));
+        }
+
         if ($request->filled('status')) {
             $query->where('status', $request->query('status'));
         }
@@ -211,6 +219,8 @@ class EventController extends Controller
             'agenda.*.time' => 'nullable|string|max:100',
             'agenda.*.topic' => 'nullable|string|max:255',
             'image' => 'nullable|string|max:1000',
+            'imageAlt' => 'nullable|string|max:500',
+            'isFeatured' => 'nullable|boolean',
             'status' => 'nullable|in:published,draft,scheduled,archived',
             'seo' => 'nullable|array',
         ]);
@@ -247,7 +257,9 @@ class EventController extends Controller
             ? Event::generateSlug($validated['slug'])
             : Event::generateSlug($validated['title']);
 
-        $event = Event::create([
+        $imageAlt = (string) ($request->input('imageAlt', $request->input('altImage', '')));
+
+        $createData = [
             'title' => $validated['title'],
             'slug' => $slug,
             'type' => $validated['type'] ?? 'Conference',
@@ -265,9 +277,20 @@ class EventController extends Controller
             'availableSeats' => $availableSeats,
             'agenda' => $validated['agenda'] ?? [],
             'image' => $validated['image'] ?? null,
+            'isFeatured' => $request->has('isFeatured') ? filter_var($request->input('isFeatured'), FILTER_VALIDATE_BOOLEAN) : false,
             'status' => $validated['status'] ?? 'published',
             'seo' => $validated['seo'] ?? [],
-        ]);
+        ];
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('events', 'imageAlt')) {
+            $createData['imageAlt'] = $imageAlt;
+        } else {
+            $seo = is_array($createData['seo']) ? $createData['seo'] : [];
+            $seo['imageAlt'] = $imageAlt;
+            $createData['seo'] = $seo;
+        }
+
+        $event = Event::create($createData);
 
         return response()->json([
             'success' => true,
@@ -310,6 +333,8 @@ class EventController extends Controller
             'agenda.*.time' => 'nullable|string|max:100',
             'agenda.*.topic' => 'nullable|string|max:255',
             'image' => 'nullable|string|max:1000',
+            'imageAlt' => 'nullable|string|max:500',
+            'isFeatured' => 'nullable|boolean',
             'status' => 'nullable|in:published,draft,scheduled,archived',
             'seo' => 'nullable|array',
         ]);
@@ -370,6 +395,22 @@ class EventController extends Controller
 
         if (array_key_exists('slug', $validated) && ! empty($validated['slug']) && $validated['slug'] !== $event->slug) {
             $validated['slug'] = Event::generateSlug($validated['slug'], $id);
+        }
+
+        if ($request->has('imageAlt') || $request->has('altImage')) {
+            $imageAlt = (string) $request->input('imageAlt', $request->input('altImage', ''));
+            if (\Illuminate\Support\Facades\Schema::hasColumn('events', 'imageAlt')) {
+                $validated['imageAlt'] = $imageAlt;
+            } else {
+                unset($validated['imageAlt']);
+                $seo = is_array($event->seo) ? $event->seo : [];
+                $seo['imageAlt'] = $imageAlt;
+                $validated['seo'] = $seo;
+            }
+        }
+
+        if ($request->has('isFeatured')) {
+            $validated['isFeatured'] = filter_var($request->input('isFeatured'), FILTER_VALIDATE_BOOLEAN);
         }
 
         $event->update($validated);
