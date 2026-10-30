@@ -124,12 +124,17 @@ class Layout extends Model
         'termsPageLayout' => [
             'name' => 'Terms',
             'min' => 1,
-            'max' => 3,
+            'max' => 5,
+        ],
+        'termsConditionsPageLayout' => [
+            'name' => 'Terms & Conditions',
+            'min' => 1,
+            'max' => 5,
         ],
         'privacyPageLayout' => [
             'name' => 'Privacy',
             'min' => 1,
-            'max' => 3,
+            'max' => 5,
         ],
         'footerLayout' => [
             'name' => 'Footer',
@@ -137,6 +142,17 @@ class Layout extends Model
             'max'  => 4,
         ],
     ];
+
+    /**
+     * Map aliases to canonical layout keys.
+     */
+    public static function canonicalKey(string $key): string
+    {
+        return match ($key) {
+            'termsConditionsPageLayout', 'termsConditionsLayout' => 'termsPageLayout',
+            default => $key,
+        };
+    }
 
     /**
      * All recognized keys from the specification table.
