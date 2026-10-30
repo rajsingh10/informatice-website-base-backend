@@ -278,6 +278,10 @@ Route::prefix('admin')->group(function () {
         Route::get('navbar/items', [NavbarController::class, 'getItems']);
         Route::post('navigation/navbar/items', [NavbarController::class, 'addItem']);
         Route::post('navbar/items', [NavbarController::class, 'addItem']);
+        Route::post('navigation/navbar/items/{parentId}/subitems', [NavbarController::class, 'addSubItem']);
+        Route::post('navbar/items/{parentId}/subitems', [NavbarController::class, 'addSubItem']);
+        Route::post('navigation/navbar/items/{parentId}/submenu', [NavbarController::class, 'addSubItem']);
+        Route::post('navbar/items/{parentId}/submenu', [NavbarController::class, 'addSubItem']);
         Route::post('navigation/navbar/item', [NavbarController::class, 'addItem']);
         Route::post('navbar/item', [NavbarController::class, 'addItem']);
         Route::put('navigation/navbar/items', [NavbarController::class, 'updateItems']);

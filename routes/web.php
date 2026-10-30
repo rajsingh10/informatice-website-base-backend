@@ -268,6 +268,10 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
         Route::get('/admin/navbar/items', [NavbarController::class, 'getItems']);
         Route::post('/admin/navigation/navbar/items', [NavbarController::class, 'addItem']);
         Route::post('/admin/navbar/items', [NavbarController::class, 'addItem']);
+        Route::post('/admin/navigation/navbar/items/{parentId}/subitems', [NavbarController::class, 'addSubItem']);
+        Route::post('/admin/navbar/items/{parentId}/subitems', [NavbarController::class, 'addSubItem']);
+        Route::post('/admin/navigation/navbar/items/{parentId}/submenu', [NavbarController::class, 'addSubItem']);
+        Route::post('/admin/navbar/items/{parentId}/submenu', [NavbarController::class, 'addSubItem']);
         Route::post('/admin/navigation/navbar/item', [NavbarController::class, 'addItem']);
         Route::post('/admin/navbar/item', [NavbarController::class, 'addItem']);
         Route::put('/admin/navigation/navbar/items', [NavbarController::class, 'updateItems']);
