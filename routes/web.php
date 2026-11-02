@@ -11,6 +11,7 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FeaturedController;
 use App\Http\Controllers\FooterController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\HeroSlideController;
 use App\Http\Controllers\HomeSectionController;
 use App\Http\Controllers\InquiryController; // [Contact Page API]
 use App\Http\Controllers\LayoutController;
@@ -63,6 +64,23 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
     // Direct services aliases
     Route::get('/services', [ServiceController::class, 'indexPublic']);
     Route::get('/services/{slug}', [ServiceController::class, 'showPublic']);
+
+    // Hero Slides aliases
+    Route::get('/hero-slides', [HeroSlideController::class, 'indexPublic']);
+    Route::get('/hero', [HeroSlideController::class, 'indexPublic']);
+    Route::get('/public/hero-slides', [HeroSlideController::class, 'indexPublic']);
+    Route::get('/public/hero', [HeroSlideController::class, 'indexPublic']);
+    Route::get('/public/hero-slides/{id}', [HeroSlideController::class, 'show']);
+    Route::get('/admin/hero-slides', [HeroSlideController::class, 'indexAdmin']);
+    Route::get('/admin/hero', [HeroSlideController::class, 'indexAdmin']);
+    Route::post('/admin/hero-slides', [HeroSlideController::class, 'store']);
+    Route::post('/admin/hero', [HeroSlideController::class, 'store']);
+    Route::get('/admin/hero-slides/{id}', [HeroSlideController::class, 'show']);
+    Route::get('/admin/hero/{id}', [HeroSlideController::class, 'show']);
+    Route::match(['put', 'post', 'patch'], '/admin/hero-slides/{id}', [HeroSlideController::class, 'update']);
+    Route::match(['put', 'post', 'patch'], '/admin/hero/{id}', [HeroSlideController::class, 'update']);
+    Route::delete('/admin/hero-slides/{id}', [HeroSlideController::class, 'destroy']);
+    Route::delete('/admin/hero/{id}', [HeroSlideController::class, 'destroy']);
     Route::get('/featured', [FeaturedController::class, 'indexPublic']);
     Route::get('/is-featured', [FeaturedController::class, 'indexPublic']);
     Route::get('/is-feature', [FeaturedController::class, 'indexPublic']);

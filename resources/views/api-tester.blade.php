@@ -138,6 +138,14 @@
                         <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">7</span>
                     </button>
 
+                    <button onclick="switchTab('hero')" id="tab-hero" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-images text-indigo-500"></i>
+                            <span>Hero Slides (CRUD)</span>
+                        </span>
+                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">5</span>
+                    </button>
+
                     <button onclick="switchTab('home')" id="tab-home" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
                         <span class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-house text-orange-500"></i>
@@ -1457,6 +1465,211 @@
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- HERO SLIDES (HERO SECTION) CRUD APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-hero" class="space-y-4 hidden">
+
+                <!-- 1. Fetch Public Hero Slides -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/hero-slides</span>
+                        </div>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Returns all published hero slides for the website homepage slider or banner.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <button onclick="testPublicHeroSlides(false)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1.5">
+                            <i class="fa-solid fa-list-check"></i>
+                            <span>All Published Slides</span>
+                        </button>
+                        <button onclick="testPublicHeroSlides(true)" class="bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1.5">
+                            <i class="fa-solid fa-star"></i>
+                            <span>Featured Only (?featured=true)</span>
+                        </button>
+                        <button onclick="testAdminHeroSlides()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1.5">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Admin List (All)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Create Hero Slide (POST) -->
+                <div class="bg-white rounded-xl border border-indigo-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-indigo-900">/api/admin/hero-slides</span>
+                        </div>
+                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Add a new slide to the homepage hero section with headlines, CTA buttons, background media, and alt text.</p>
+
+                    <div class="space-y-3 mb-4">
+                        <div>
+                            <label class="text-[11px] font-semibold text-slate-700 block mb-1">Headline Title <span class="text-red-500">*</span></label>
+                            <input id="hero-add-title" type="text" placeholder="e.g. Transforming Ideas Into Intelligent Digital Realities" class="w-full text-xs border border-slate-200 rounded p-2 outline-none focus:border-indigo-500">
+                        </div>
+
+                        <div>
+                            <label class="text-[11px] font-semibold text-slate-700 block mb-1">Subheadline Description</label>
+                            <textarea id="hero-add-subtitle" rows="2" placeholder="Compelling subtitle describing your value proposition." class="w-full text-xs border border-slate-200 rounded p-2 outline-none focus:border-indigo-500"></textarea>
+                        </div>
+
+                        <div class="flex items-center space-x-2 bg-indigo-50 border border-indigo-100 rounded-lg p-2.5">
+                            <input id="hero-add-featured" type="checkbox" checked class="w-4 h-4 text-indigo-600 rounded">
+                            <label for="hero-add-featured" class="text-xs font-semibold text-indigo-950 cursor-pointer">Featured on homepage (isFeatured)</label>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-700 block mb-1">Primary Button Text</label>
+                                <input id="hero-add-btn1-text" type="text" value="Get Started" placeholder="e.g. Get Started" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-700 block mb-1">Primary Button URL</label>
+                                <input id="hero-add-btn1-url" type="text" value="/contact" placeholder="e.g. /contact" class="w-full text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-700 block mb-1">Secondary Button Text</label>
+                                <input id="hero-add-btn2-text" type="text" value="Our Work" placeholder="e.g. Our Work" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-700 block mb-1">Secondary Button URL</label>
+                                <input id="hero-add-btn2-url" type="text" value="/portfolio" placeholder="e.g. /portfolio" class="w-full text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[11px] font-semibold text-slate-700 block mb-1">Hero Background Media (Image URL)</label>
+                            <input id="hero-add-image" type="text" value="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80" placeholder="https://..." class="w-full text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                        </div>
+
+                        <div>
+                            <label class="text-[11px] font-semibold text-slate-700 block mb-1">Image Alt Text (SEO & Accessibility) <span class="text-red-500">*</span></label>
+                            <input id="hero-add-imagealt" type="text" placeholder="Descriptive alt text for screen readers and search engines" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-700 block mb-1">Display Order</label>
+                                <input id="hero-add-order" type="number" value="1" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div class="flex items-center space-x-2 pt-5">
+                                <input id="hero-add-published" type="checkbox" checked class="w-4 h-4 text-emerald-600 rounded">
+                                <label for="hero-add-published" class="text-xs font-semibold text-slate-700 cursor-pointer">Published / Active</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="testCreateHeroSlide()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Create Hero Slide (POST /api/admin/hero-slides)</span>
+                    </button>
+                </div>
+
+                <!-- 3. Edit / Delete Hero Slide (PUT / DELETE) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="method-badge badge-del">DEL</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/hero-slides/:id</span>
+                        </div>
+                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Load, update headline, buttons, background image, SEO alt text, or delete an existing hero slide.</p>
+
+                    <div class="flex space-x-2 mb-4">
+                        <input id="hero-edit-id" type="number" value="1" placeholder="Slide ID" class="w-24 text-xs border border-slate-200 rounded p-2 text-center font-bold">
+                        <button onclick="testLoadHeroSlide()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white text-xs font-medium px-4 py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1.5">
+                            <i class="fa-solid fa-download"></i>
+                            <span>Load Slide #</span>
+                        </button>
+                    </div>
+
+                    <div class="space-y-3 mb-4">
+                        <div>
+                            <label class="text-[11px] font-semibold text-slate-700 block mb-1">Headline Title <span class="text-red-500">*</span></label>
+                            <input id="hero-edit-title" type="text" placeholder="Headline Title" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                        </div>
+
+                        <div>
+                            <label class="text-[11px] font-semibold text-slate-700 block mb-1">Subheadline Description</label>
+                            <textarea id="hero-edit-subtitle" rows="2" placeholder="Subheadline Description" class="w-full text-xs border border-slate-200 rounded p-2 outline-none"></textarea>
+                        </div>
+
+                        <div class="flex items-center space-x-2 bg-indigo-50 border border-indigo-100 rounded-lg p-2.5">
+                            <input id="hero-edit-featured" type="checkbox" class="w-4 h-4 text-indigo-600 rounded">
+                            <label for="hero-edit-featured" class="text-xs font-semibold text-indigo-950 cursor-pointer">Featured on homepage (isFeatured)</label>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-700 block mb-1">Primary Button Text</label>
+                                <input id="hero-edit-btn1-text" type="text" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-700 block mb-1">Primary Button URL</label>
+                                <input id="hero-edit-btn1-url" type="text" class="w-full text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-700 block mb-1">Secondary Button Text</label>
+                                <input id="hero-edit-btn2-text" type="text" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-700 block mb-1">Secondary Button URL</label>
+                                <input id="hero-edit-btn2-url" type="text" class="w-full text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[11px] font-semibold text-slate-700 block mb-1">Hero Background Media URL</label>
+                            <input id="hero-edit-image" type="text" class="w-full text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                            <div id="hero-edit-preview-wrap" class="mt-2 hidden">
+                                <img id="hero-edit-preview" src="" alt="Hero preview" class="w-full max-h-40 object-cover rounded-lg border border-slate-200">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[11px] font-semibold text-slate-700 block mb-1">Image Alt Text (SEO & Accessibility) <span class="text-red-500">*</span></label>
+                            <input id="hero-edit-imagealt" type="text" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-[11px] font-semibold text-slate-700 block mb-1">Display Order</label>
+                                <input id="hero-edit-order" type="number" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div class="flex items-center space-x-2 pt-5">
+                                <input id="hero-edit-published" type="checkbox" class="w-4 h-4 text-emerald-600 rounded">
+                                <label for="hero-edit-published" class="text-xs font-semibold text-slate-700 cursor-pointer">Published / Active</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testUpdateHeroSlide()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1.5">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Save Slide (PUT)</span>
+                        </button>
+                        <button onclick="testDeleteHeroSlide()" class="bg-red-600 hover:bg-red-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1.5">
+                            <i class="fa-solid fa-trash"></i>
+                            <span>Delete Slide (DEL)</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
             <!-- MODULE 3: HERO & HOME SECTIONS APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-home" class="space-y-4 hidden">
@@ -1636,6 +1849,22 @@
                                 <label class="text-xs font-medium text-slate-600">Vision Statement</label>
                                 <textarea id="about-vision" rows="2" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">To be the most trusted technology partner recognized globally for human-centric design, engineering integrity, and innovation.</textarea>
                             </div>
+                        </div>
+
+                        <!-- Featured Flags for isFeature API -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-sky-50 border border-sky-100 rounded-lg p-2.5">
+                            <label class="flex items-center space-x-2 text-xs font-semibold text-sky-950 cursor-pointer">
+                                <input id="about-featured-differentiators" type="checkbox" checked class="w-4 h-4 text-sky-600 rounded">
+                                <span>differentiatorsFeatured</span>
+                            </label>
+                            <label class="flex items-center space-x-2 text-xs font-semibold text-sky-950 cursor-pointer">
+                                <input id="about-featured-story" type="checkbox" checked class="w-4 h-4 text-sky-600 rounded">
+                                <span>storyFeatured</span>
+                            </label>
+                            <label class="flex items-center space-x-2 text-xs font-semibold text-sky-950 cursor-pointer">
+                                <input id="about-featured-values" type="checkbox" checked class="w-4 h-4 text-sky-600 rounded">
+                                <span>valuesFeatured</span>
+                            </label>
                         </div>
                     </div>
                     <button onclick="testUpdateAbout()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
@@ -4670,6 +4899,107 @@
         }
 
         // Home
+        // Hero Slides JS
+        async function testPublicHeroSlides(featuredOnly = false) {
+            const path = featuredOnly ? '/api/public/hero-slides?featured=true' : '/api/public/hero-slides';
+            await sendApi('GET', path);
+        }
+
+        async function testAdminHeroSlides() {
+            await sendApi('GET', '/api/admin/hero-slides', null, true);
+        }
+
+        async function testCreateHeroSlide() {
+            const title = document.getElementById('hero-add-title').value.trim();
+            if (!title) return alert('Headline Title is required');
+            const subtitle = document.getElementById('hero-add-subtitle').value;
+            const isFeatured = document.getElementById('hero-add-featured').checked;
+            const primaryButtonText = document.getElementById('hero-add-btn1-text').value;
+            const primaryButtonUrl = document.getElementById('hero-add-btn1-url').value;
+            const secondaryButtonText = document.getElementById('hero-add-btn2-text').value;
+            const secondaryButtonUrl = document.getElementById('hero-add-btn2-url').value;
+            const image = document.getElementById('hero-add-image').value;
+            const imageAlt = document.getElementById('hero-add-imagealt').value;
+            const order = parseInt(document.getElementById('hero-add-order').value) || 0;
+            const isPublished = document.getElementById('hero-add-published').checked;
+
+            await sendApi('POST', '/api/admin/hero-slides', {
+                title,
+                subtitle,
+                isFeatured,
+                primaryButtonText,
+                primaryButtonUrl,
+                secondaryButtonText,
+                secondaryButtonUrl,
+                image,
+                imageAlt,
+                order,
+                isPublished
+            }, true);
+        }
+
+        async function testLoadHeroSlide() {
+            const id = document.getElementById('hero-edit-id').value;
+            if (!id) return alert('Please enter or select a Slide ID');
+            const res = await sendApi('GET', `/api/admin/hero-slides/${id}`, null, true);
+            if (res && res.data) {
+                const d = res.data;
+                document.getElementById('hero-edit-title').value = d.title || '';
+                document.getElementById('hero-edit-subtitle').value = d.subtitle || d.description || '';
+                document.getElementById('hero-edit-featured').checked = !!d.isFeatured;
+                document.getElementById('hero-edit-btn1-text').value = d.primaryButtonText || '';
+                document.getElementById('hero-edit-btn1-url').value = d.primaryButtonUrl || '';
+                document.getElementById('hero-edit-btn2-text').value = d.secondaryButtonText || '';
+                document.getElementById('hero-edit-btn2-url').value = d.secondaryButtonUrl || '';
+                document.getElementById('hero-edit-image').value = d.image || '';
+                document.getElementById('hero-edit-imagealt').value = d.imageAlt || '';
+                document.getElementById('hero-edit-order').value = d.order || 0;
+                document.getElementById('hero-edit-published').checked = d.isPublished !== false;
+                if (d.image) {
+                    document.getElementById('hero-edit-preview').src = d.image;
+                    document.getElementById('hero-edit-preview-wrap').classList.remove('hidden');
+                }
+            }
+        }
+
+        async function testUpdateHeroSlide() {
+            const id = document.getElementById('hero-edit-id').value;
+            if (!id) return alert('Please enter or select a Slide ID');
+            const title = document.getElementById('hero-edit-title').value.trim();
+            if (!title) return alert('Headline Title is required');
+            const subtitle = document.getElementById('hero-edit-subtitle').value;
+            const isFeatured = document.getElementById('hero-edit-featured').checked;
+            const primaryButtonText = document.getElementById('hero-edit-btn1-text').value;
+            const primaryButtonUrl = document.getElementById('hero-edit-btn1-url').value;
+            const secondaryButtonText = document.getElementById('hero-edit-btn2-text').value;
+            const secondaryButtonUrl = document.getElementById('hero-edit-btn2-url').value;
+            const image = document.getElementById('hero-edit-image').value;
+            const imageAlt = document.getElementById('hero-edit-imagealt').value;
+            const order = parseInt(document.getElementById('hero-edit-order').value) || 0;
+            const isPublished = document.getElementById('hero-edit-published').checked;
+
+            await sendApi('PUT', `/api/admin/hero-slides/${id}`, {
+                title,
+                subtitle,
+                isFeatured,
+                primaryButtonText,
+                primaryButtonUrl,
+                secondaryButtonText,
+                secondaryButtonUrl,
+                image,
+                imageAlt,
+                order,
+                isPublished
+            }, true);
+        }
+
+        async function testDeleteHeroSlide() {
+            const id = document.getElementById('hero-edit-id').value;
+            if (!id) return alert('Please enter a Slide ID to delete');
+            if (!confirm(`Are you sure you want to permanently delete Hero Slide #${id}?`)) return;
+            await sendApi('DELETE', `/api/admin/hero-slides/${id}`, null, true);
+        }
+
         async function testPublicHomeSections() { await sendApi('GET', '/api/public/home-sections'); }
         async function testToggleHomeSection() {
             const sec = document.getElementById('home-sec-select').value;
@@ -4686,7 +5016,26 @@
         }
 
         async function testAdminAbout() {
-            await sendApi('GET', '/api/admin/about', null, true);
+            const res = await sendApi('GET', '/api/admin/about', null, true);
+            if (res && res.data) {
+                const d = res.data;
+                if (d.badge) document.getElementById('about-badge').value = d.badge;
+                if (d.title) document.getElementById('about-title').value = d.title;
+                if (d.tagline) document.getElementById('about-tagline').value = d.tagline;
+                if (d.storyTitle) document.getElementById('about-story-title').value = d.storyTitle;
+                if (d.storyContent) document.getElementById('about-story-content').value = d.storyContent;
+                if (d.mission) document.getElementById('about-mission').value = d.mission;
+                if (d.vision) document.getElementById('about-vision').value = d.vision;
+                if (document.getElementById('about-featured-differentiators')) {
+                    document.getElementById('about-featured-differentiators').checked = d.differentiatorsFeatured !== false;
+                }
+                if (document.getElementById('about-featured-story')) {
+                    document.getElementById('about-featured-story').checked = d.storyFeatured !== false;
+                }
+                if (document.getElementById('about-featured-values')) {
+                    document.getElementById('about-featured-values').checked = d.valuesFeatured !== false;
+                }
+            }
         }
 
         async function testUpdateAboutLayout() {
@@ -4703,6 +5052,9 @@
                 storyContent: document.getElementById('about-story-content').value,
                 mission: document.getElementById('about-mission').value,
                 vision: document.getElementById('about-vision').value,
+                differentiatorsFeatured: document.getElementById('about-featured-differentiators').checked,
+                storyFeatured: document.getElementById('about-featured-story').checked,
+                valuesFeatured: document.getElementById('about-featured-values').checked,
             };
             await sendApi('PUT', '/api/admin/about', payload, true);
         }

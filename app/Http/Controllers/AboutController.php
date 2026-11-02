@@ -44,26 +44,43 @@ class AboutController extends Controller
     public function update(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'badge'              => 'nullable|string|max:255',
-            'title'              => 'nullable|string|max:255',
-            'tagline'            => 'nullable|string',
-            'storyTitle'         => 'nullable|string|max:255',
-            'storyContent'       => 'nullable|string',
-            'heroImage'          => 'nullable|string|max:1024',
-            'heroImageAlt'       => 'nullable|string|max:255',
-            'storyImage'         => 'nullable|string|max:1024',
-            'storyImageAlt'      => 'nullable|string|max:255',
-            'mission'            => 'nullable|string',
-            'vision'             => 'nullable|string',
-            'values'             => 'nullable|array',
-            'milestones'         => 'nullable|array',
-            'stats'              => 'nullable|array',
-            'images'             => 'nullable|array',
-            'teamSectionEnabled' => 'nullable|boolean',
+            'badge'                   => 'nullable|string|max:255',
+            'title'                   => 'nullable|string|max:255',
+            'tagline'                 => 'nullable|string',
+            'storyTitle'              => 'nullable|string|max:255',
+            'storyContent'            => 'nullable|string',
+            'heroImage'               => 'nullable|string|max:1024',
+            'heroImageAlt'            => 'nullable|string|max:255',
+            'storyImage'              => 'nullable|string|max:1024',
+            'storyImageAlt'           => 'nullable|string|max:255',
+            'mission'                 => 'nullable|string',
+            'vision'                  => 'nullable|string',
+            'values'                  => 'nullable|array',
+            'milestones'              => 'nullable|array',
+            'stats'                   => 'nullable|array',
+            'images'                  => 'nullable|array',
+            'teamSectionEnabled'      => 'nullable|boolean',
+            'differentiatorsFeatured' => 'nullable|boolean',
+            'storyFeatured'           => 'nullable|boolean',
+            'valuesFeatured'          => 'nullable|boolean',
+            'differentiators_featured'=> 'nullable|boolean',
+            'story_featured'          => 'nullable|boolean',
+            'values_featured'         => 'nullable|boolean',
         ]);
 
         $about = AboutPage::getSingleton();
         $about->fill($validated);
+
+        if ($request->has('differentiatorsFeatured') || $request->has('differentiators_featured')) {
+            $about->differentiatorsFeatured = filter_var($request->input('differentiatorsFeatured', $request->input('differentiators_featured')), FILTER_VALIDATE_BOOLEAN);
+        }
+        if ($request->has('storyFeatured') || $request->has('story_featured')) {
+            $about->storyFeatured = filter_var($request->input('storyFeatured', $request->input('story_featured')), FILTER_VALIDATE_BOOLEAN);
+        }
+        if ($request->has('valuesFeatured') || $request->has('values_featured')) {
+            $about->valuesFeatured = filter_var($request->input('valuesFeatured', $request->input('values_featured')), FILTER_VALIDATE_BOOLEAN);
+        }
+
         $about->save();
 
         // Synchronize image alt attributes to PageSeo for 'about'

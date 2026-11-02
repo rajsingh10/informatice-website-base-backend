@@ -25,14 +25,20 @@ class AboutPage extends Model
         'stats',
         'images',
         'teamSectionEnabled',
+        'differentiatorsFeatured',
+        'storyFeatured',
+        'valuesFeatured',
     ];
 
     protected $casts = [
-        'values'             => 'array',
-        'milestones'         => 'array',
-        'stats'              => 'array',
-        'images'             => 'array',
-        'teamSectionEnabled' => 'boolean',
+        'values'                  => 'array',
+        'milestones'              => 'array',
+        'stats'                   => 'array',
+        'images'                  => 'array',
+        'teamSectionEnabled'      => 'boolean',
+        'differentiatorsFeatured' => 'boolean',
+        'storyFeatured'           => 'boolean',
+        'valuesFeatured'          => 'boolean',
     ];
 
     /**
@@ -135,7 +141,10 @@ class AboutPage extends Model
                     'alt'  => 'Team workshop fostering technical innovation and creative problem solving',
                 ],
             ],
-            'teamSectionEnabled' => true,
+            'teamSectionEnabled'      => true,
+            'differentiatorsFeatured' => true,
+            'storyFeatured'           => true,
+            'valuesFeatured'          => true,
         ];
     }
 
@@ -234,9 +243,15 @@ class AboutPage extends Model
             'milestones'         => is_array($this->milestones) ? $this->milestones : $defaults['milestones'],
             'stats'              => is_array($this->stats) ? $this->stats : $defaults['stats'],
             'images'             => is_array($this->images) ? $this->images : $defaults['images'],
-            'imageAltMap'        => (object) $altMap,
-            'teamSectionEnabled' => (bool) $this->teamSectionEnabled,
-            'layout'             => $layoutData,
+            'imageAltMap'             => (object) $altMap,
+            'teamSectionEnabled'      => (bool) $this->teamSectionEnabled,
+            'differentiatorsFeatured' => (bool) ($this->differentiatorsFeatured ?? true),
+            'storyFeatured'           => (bool) ($this->storyFeatured ?? true),
+            'valuesFeatured'          => (bool) ($this->valuesFeatured ?? true),
+            'differentiators_featured'=> (bool) ($this->differentiatorsFeatured ?? true),
+            'story_featured'          => (bool) ($this->storyFeatured ?? true),
+            'values_featured'         => (bool) ($this->valuesFeatured ?? true),
+            'layout'                  => $layoutData,
             'seo'                => $seoData,
             'updatedAt'          => $this->updated_at?->toISOString(),
         ];
