@@ -274,6 +274,27 @@ class FooterConfig extends Model
         return $out;
     }
 
+    /**
+     * Recursively filter published links and submenus for public display.
+     */
+    public static function filterPublishedLinks(array $links): array
+    {
+        $out = [];
+        foreach ($links as $link) {
+            if (! is_array($link)) continue;
+            if (! empty($link['enabled'])) {
+                $copy = $link;
+                if (! empty($copy['submenu']) && is_array($copy['submenu'])) {
+                    $copy['submenu'] = static::filterPublishedLinks($copy['submenu']);
+                } else {
+                    $copy['submenu'] = [];
+                }
+                $out[] = $copy;
+            }
+        }
+        return array_values($out);
+    }
+
     // ─────────────────────────────────────────────────────────────
     // SECTIONS VALIDATION
     // ─────────────────────────────────────────────────────────────
@@ -445,6 +466,9 @@ class FooterConfig extends Model
         $spec        = $this->toSpecPayload();
         $allItems    = $this->getItemsList();
         $activeItems = array_values(array_filter($allItems, fn ($item) => ! empty($item['enabled'])));
+
+        // In public payload, return only enabled links and enabled submenus
+        $spec['links'] = static::filterPublishedLinks($spec['links'] ?? []);
 
         return array_merge($spec, [
             'enabled' => true,
