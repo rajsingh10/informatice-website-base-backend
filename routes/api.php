@@ -45,6 +45,7 @@ Route::get('is-featured', [FeaturedController::class, 'indexPublic']);
 Route::get('is-feature', [FeaturedController::class, 'indexPublic']);
 Route::get('isFeature', [FeaturedController::class, 'indexPublic']);
 Route::get('isFeatured', [FeaturedController::class, 'indexPublic']);
+Route::get('footer', [FooterController::class, 'showPublic']);
 
 // ═══════════════════════════════════════════════════════════
 //  PUBLIC routes  (No Auth)
@@ -56,6 +57,7 @@ Route::prefix('public')->group(function () {
     Route::get('is-feature', [FeaturedController::class, 'indexPublic']);
     Route::get('isFeature', [FeaturedController::class, 'indexPublic']);
     Route::get('isFeatured', [FeaturedController::class, 'indexPublic']);
+Route::get('footer', [FooterController::class, 'showPublic']);
     // Layouts
     Route::get('layouts', [LayoutController::class, 'index']);
     Route::match(['put', 'post'], 'layouts', [LayoutController::class, 'save']);

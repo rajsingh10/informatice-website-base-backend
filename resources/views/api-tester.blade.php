@@ -211,6 +211,15 @@
                         <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">8</span>
                     </button>
 
+                    <!-- Module 12: Footer -->
+                    <button onclick="switchTab('footer')" id="tab-footer" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-shoe-prints text-teal-600"></i>
+                            <span class="font-bold text-teal-900">Module 12: Footer</span>
+                        </span>
+                        <span class="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full font-bold">5</span>
+                    </button>
+
                     <!-- Module 13: Careers -->
                     <button onclick="switchTab('careers')" id="tab-careers" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
                         <span class="flex items-center space-x-2.5">
@@ -3184,6 +3193,184 @@
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- MODULE 12: FOOTER EDITOR APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-footer" class="space-y-4 hidden">
+                <div class="bg-teal-50 border border-teal-200 rounded-xl p-4 text-xs text-teal-900 leading-relaxed">
+                    <p class="font-bold mb-1"><i class="fa-solid fa-shoe-prints mr-1 text-teal-600"></i> Module 12: Footer Editor API Persistence</p>
+                    <p>Stores complete Footer Editor settings on the backend: nested <code class="font-mono bg-teal-100 px-1 py-0.5 rounded font-bold">links</code> with submenus, <code class="font-mono bg-teal-100 px-1 py-0.5 rounded font-bold">grid</code> placement (columns, rows, cell sections in row-major order), <code class="font-mono bg-teal-100 px-1 py-0.5 rounded font-bold">cta</code> button, and <code class="font-mono bg-teal-100 px-1 py-0.5 rounded font-bold">customCode</code> (HTML/CSS/JS).</p>
+                </div>
+
+                <!-- 1. GET /api/public/footer -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/footer</span>
+                        </div>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Returns the published configuration used to render the website footer (published links, active grid sections, CTA button, and custom code).</p>
+                    <button onclick="testPublicFooter()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-eye mr-1"></i> Fetch Public Footer (GET /api/public/footer)
+                    </button>
+                </div>
+
+                <!-- 2. GET /api/admin/footer -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/footer</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Load full footer configuration into the Admin editor (including unpublished links, grid configuration, and custom code). Clicking also pre-populates the editor below.</p>
+                    <button onclick="testAdminFooter()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-shield-halved mr-1"></i> Load Admin Footer & Populate Form
+                    </button>
+                </div>
+
+                <!-- 3. PUT /api/admin/footer -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/footer</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Save the complete footer configuration. Validates grid cell counts, uniqueness of assigned non-empty sections, and normalizes nested submenus.</p>
+
+                    <div class="space-y-3 mb-4">
+                        <!-- Grid Settings -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">Grid Layout & Cell Sections</h4>
+                            <div class="grid grid-cols-2 gap-3 mb-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Columns (1 to 4)</label>
+                                    <input id="footer-grid-cols" type="number" min="1" max="4" value="3" class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 bg-white outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Rows (1 to 3)</label>
+                                    <input id="footer-grid-rows" type="number" min="1" max="3" value="2" class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 bg-white outline-none">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Sections (Row-major order JSON array, length = cols × rows; valid: about, quickLinks, services, contact, "")</label>
+                                <textarea id="footer-grid-sections" rows="2" class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 bg-white outline-none">["about", "quickLinks", "services", "contact", "", ""]</textarea>
+                            </div>
+                        </div>
+
+                        <!-- CTA Settings -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">CTA Button</h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Enabled</label>
+                                    <select id="footer-cta-enabled" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white outline-none">
+                                        <option value="1" selected>Enabled (true)</option>
+                                        <option value="0">Disabled (false)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Button Label</label>
+                                    <input id="footer-cta-label" type="text" value="Make Appointment" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Target URL</label>
+                                    <input id="footer-cta-url" type="text" value="/contact" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Links with Nested Submenus -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">Links (with nested submenu JSON)</h4>
+                            <p class="text-[11px] text-slate-500 mb-2">Each link supports: <code class="font-mono bg-white px-1 py-0.5 rounded border">id</code>, <code class="font-mono bg-white px-1 py-0.5 rounded border">label</code>, <code class="font-mono bg-white px-1 py-0.5 rounded border">url</code>, <code class="font-mono bg-white px-1 py-0.5 rounded border">enabled</code>, and <code class="font-mono bg-white px-1 py-0.5 rounded border">submenu: [...]</code></p>
+                            <textarea id="footer-links-json" rows="6" class="w-full text-xs font-mono border border-slate-200 rounded p-2 bg-white outline-none">[
+  {
+    "id": "footer-home",
+    "label": "Home",
+    "url": "/",
+    "enabled": true,
+    "submenu": [
+      {
+        "id": "footer-home-overview",
+        "label": "Overview",
+        "url": "/overview",
+        "enabled": true,
+        "submenu": []
+      }
+    ]
+  },
+  {
+    "id": "footer-services",
+    "label": "Services",
+    "url": "/services",
+    "enabled": true,
+    "submenu": [
+      {
+        "id": "footer-services-web",
+        "label": "Web Development",
+        "url": "/services/web-development",
+        "enabled": true,
+        "submenu": []
+      }
+    ]
+  }
+]</textarea>
+                        </div>
+
+                        <!-- Custom Code -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">Custom Code (Code Editor)</h4>
+                            <div class="mb-2">
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Enabled</label>
+                                <select id="footer-code-enabled" class="w-40 text-xs border border-slate-200 rounded p-1.5 bg-white outline-none">
+                                    <option value="0" selected>Disabled (false)</option>
+                                    <option value="1">Enabled (true)</option>
+                                </select>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">HTML</label>
+                                    <textarea id="footer-code-html" rows="2" placeholder="<div>...</div>" class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 bg-white outline-none"></textarea>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">CSS</label>
+                                    <textarea id="footer-code-css" rows="2" placeholder=".custom { ... }" class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 bg-white outline-none"></textarea>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">JavaScript</label>
+                                    <textarea id="footer-code-js" rows="2" placeholder="console.log('footer');" class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 bg-white outline-none"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="testUpdateFooter()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Save Complete Footer Configuration (PUT /api/admin/footer)
+                    </button>
+                </div>
+
+                <!-- 4. Reset Footer -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/footer/reset</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Reset all footer configuration back to factory default values.</p>
+                    <button onclick="testResetFooter()" class="w-full bg-red-600 hover:bg-red-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                        <i class="fa-solid fa-rotate-left mr-1"></i> Reset Footer to Defaults (POST /api/admin/footer/reset)
+                    </button>
+                </div>
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
             <!-- MODULE 13: CAREERS APIS -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div id="section-careers" class="space-y-4 hidden">
@@ -5201,6 +5388,82 @@
                 robots,
                 imageAltMap
             }, true);
+        }
+
+        // Footer
+        async function testPublicFooter() {
+            await sendApi('GET', '/api/public/footer');
+        }
+
+        async function testAdminFooter() {
+            const res = await sendApi('GET', '/api/admin/footer', null, true);
+            if (res && res.data) {
+                const d = res.data;
+                if (d.grid) {
+                    if (d.grid.columns) document.getElementById('footer-grid-cols').value = d.grid.columns;
+                    if (d.grid.rows) document.getElementById('footer-grid-rows').value = d.grid.rows;
+                    if (d.grid.sections) document.getElementById('footer-grid-sections').value = JSON.stringify(d.grid.sections);
+                }
+                if (d.cta) {
+                    document.getElementById('footer-cta-enabled').value = d.cta.enabled ? '1' : '0';
+                    if (d.cta.label) document.getElementById('footer-cta-label').value = d.cta.label;
+                    if (d.cta.url) document.getElementById('footer-cta-url').value = d.cta.url;
+                }
+                if (d.links) {
+                    document.getElementById('footer-links-json').value = JSON.stringify(d.links, null, 2);
+                }
+                if (d.customCode) {
+                    document.getElementById('footer-code-enabled').value = d.customCode.enabled ? '1' : '0';
+                    document.getElementById('footer-code-html').value = d.customCode.html || '';
+                    document.getElementById('footer-code-css').value = d.customCode.css || '';
+                    document.getElementById('footer-code-js').value = d.customCode.js || '';
+                }
+            }
+        }
+
+        async function testUpdateFooter() {
+            const cols = parseInt(document.getElementById('footer-grid-cols').value) || 3;
+            const rows = parseInt(document.getElementById('footer-grid-rows').value) || 2;
+            let sections = [];
+            try {
+                sections = JSON.parse(document.getElementById('footer-grid-sections').value);
+            } catch (e) {
+                alert('Invalid JSON in Grid Sections: ' + e.message);
+                return;
+            }
+
+            let links = [];
+            try {
+                links = JSON.parse(document.getElementById('footer-links-json').value);
+            } catch (e) {
+                alert('Invalid JSON in Links: ' + e.message);
+                return;
+            }
+
+            const cta = {
+                enabled: document.getElementById('footer-cta-enabled').value === '1',
+                label: document.getElementById('footer-cta-label').value,
+                url: document.getElementById('footer-cta-url').value,
+            };
+
+            const customCode = {
+                enabled: document.getElementById('footer-code-enabled').value === '1',
+                html: document.getElementById('footer-code-html').value,
+                css: document.getElementById('footer-code-css').value,
+                js: document.getElementById('footer-code-js').value,
+            };
+
+            await sendApi('PUT', '/api/admin/footer', {
+                grid: { columns: cols, rows: rows, sections: sections },
+                cta: cta,
+                links: links,
+                customCode: customCode,
+            }, true);
+        }
+
+        async function testResetFooter() {
+            if (!confirm('Are you sure you want to reset all footer configuration to factory defaults?')) return;
+            await sendApi('POST', '/api/admin/footer/reset', null, true);
         }
 
         // Media
