@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CareerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FeaturedController;
@@ -46,6 +47,7 @@ Route::get('is-feature', [FeaturedController::class, 'indexPublic']);
 Route::get('isFeature', [FeaturedController::class, 'indexPublic']);
 Route::get('isFeatured', [FeaturedController::class, 'indexPublic']);
 Route::get('footer', [FooterController::class, 'showPublic']);
+Route::get('dashboard', [DashboardController::class, 'index']);
 
 // ═══════════════════════════════════════════════════════════
 //  PUBLIC routes  (No Auth)
@@ -58,6 +60,7 @@ Route::prefix('public')->group(function () {
     Route::get('isFeature', [FeaturedController::class, 'indexPublic']);
     Route::get('isFeatured', [FeaturedController::class, 'indexPublic']);
 Route::get('footer', [FooterController::class, 'showPublic']);
+Route::get('dashboard', [DashboardController::class, 'index']);
     // Layouts
     Route::get('layouts', [LayoutController::class, 'index']);
     Route::match(['put', 'post'], 'layouts', [LayoutController::class, 'save']);
@@ -65,6 +68,7 @@ Route::get('footer', [FooterController::class, 'showPublic']);
 
     // Module 12: Footer
     Route::get('footer', [FooterController::class, 'showPublic']);
+Route::get('dashboard', [DashboardController::class, 'index']);
 
     // Module: About Page
     Route::get('about', [AboutController::class, 'showPublic']);
@@ -146,6 +150,7 @@ Route::prefix('admin')->group(function () {
     // ── Public Auth (Supports both /login and /auth/login) ──
     Route::post('login', [AuthController::class, 'login']);
     Route::post('auth/login', [AuthController::class, 'login']);
+    Route::get('dashboard', [DashboardController::class, 'index']);
 
     // ── Protected (Requires Bearer token) ──────────────────
     Route::middleware('auth:api')->group(function () {
