@@ -11,6 +11,7 @@ use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FeaturedController;
 use App\Http\Controllers\FooterController;
 use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\HeroSlideController;
 use App\Http\Controllers\HomeSectionController;
 use App\Http\Controllers\InquiryController; // [Contact Page API]
 use App\Http\Controllers\LayoutController;
@@ -33,6 +34,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Public direct aliases without prefix (e.g. /api/topbar, /api/services, /api/footer)
+Route::get('hero-slides', [HeroSlideController::class, 'indexPublic']);
+Route::get('hero', [HeroSlideController::class, 'indexPublic']);
 Route::get('about', [AboutController::class, 'showPublic']);
 Route::get('topbar', [TopbarController::class, 'showPublic']);
 Route::match(['put', 'post'], 'topbar', [TopbarController::class, 'saveTopbar']);
@@ -53,6 +56,11 @@ Route::get('dashboard', [DashboardController::class, 'index']);
 //  PUBLIC routes  (No Auth)
 // ═══════════════════════════════════════════════════════════
 Route::prefix('public')->group(function () {
+    // Hero Slides (Hero Section)
+    Route::get('hero-slides', [HeroSlideController::class, 'indexPublic']);
+    Route::get('hero', [HeroSlideController::class, 'indexPublic']);
+    Route::get('hero-slides/{id}', [HeroSlideController::class, 'show']);
+
     // Featured API (Shows all isFeatured items across modules)
     Route::get('featured', [FeaturedController::class, 'indexPublic']);
     Route::get('is-featured', [FeaturedController::class, 'indexPublic']);
@@ -337,6 +345,18 @@ Route::prefix('admin')->group(function () {
         Route::match(['delete', 'post'], 'navbar/items/{id}', [NavbarController::class, 'deleteItem']);
         Route::match(['delete', 'post'], 'navigation/navbar/items/{id}/delete', [NavbarController::class, 'deleteItem']);
         Route::match(['delete', 'post'], 'navbar/items/{id}/delete', [NavbarController::class, 'deleteItem']);
+
+        // Hero Slides (Hero Section CRUD)
+        Route::get('hero-slides', [HeroSlideController::class, 'indexAdmin']);
+        Route::get('hero', [HeroSlideController::class, 'indexAdmin']);
+        Route::post('hero-slides', [HeroSlideController::class, 'store']);
+        Route::post('hero', [HeroSlideController::class, 'store']);
+        Route::get('hero-slides/{id}', [HeroSlideController::class, 'show']);
+        Route::get('hero/{id}', [HeroSlideController::class, 'show']);
+        Route::match(['put', 'patch', 'post'], 'hero-slides/{id}', [HeroSlideController::class, 'update']);
+        Route::match(['put', 'patch', 'post'], 'hero/{id}', [HeroSlideController::class, 'update']);
+        Route::delete('hero-slides/{id}', [HeroSlideController::class, 'destroy']);
+        Route::delete('hero/{id}', [HeroSlideController::class, 'destroy']);
 
         // Module 3: Home Sections (GET & POST on/off toggle APIs)
         Route::get('home-sections', [HomeSectionController::class, 'index']);

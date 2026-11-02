@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AboutPage;
 use App\Models\Blog;
 use App\Models\Career;
 use App\Models\Event;
 use App\Models\Faq;
 use App\Models\Gallery;
+use App\Models\HeroSlide;
 use App\Models\Portfolio;
 use App\Models\Service;
 use App\Models\TeamMember;
@@ -167,6 +169,85 @@ class FeaturedController extends Controller
             $counts['faqs'] = count($faqs);
         }
 
+        // 10. Hero Slides
+        if (empty($requestedModule) || in_array($requestedModule, ['hero', 'hero-slides', 'heroes', 'heroslide'])) {
+            $q = HeroSlide::where('isPublished', true);
+            if (Schema::hasColumn('hero_slides', 'isFeatured')) {
+                $q->where('isFeatured', true);
+            }
+            $q->orderBy('order', 'asc')->orderBy('id', 'asc');
+            if ($limit) {
+                $q->limit($limit);
+            }
+            $hero = $q->get()->map->toPublicPayload()->values();
+            $data['heroSlides'] = $hero;
+            $data['hero'] = $hero;
+            $counts['heroSlides'] = count($hero);
+        }
+
+        // 11. About Page (Story, Values, Differentiators)
+        if (empty($requestedModule) || in_array($requestedModule, ['about', 'about-us', 'aboutpage'])) {
+            $about = AboutPage::getSingleton();
+            $aboutFeatured = [
+                'differentiatorsFeatured' => (bool) ($about->differentiatorsFeatured ?? true),
+                'storyFeatured'           => (bool) ($about->storyFeatured ?? true),
+                'valuesFeatured'          => (bool) ($about->valuesFeatured ?? true),
+                'items'                   => [],
+            ];
+
+            if ($about->storyFeatured) {
+                $aboutFeatured['story'] = [
+                    'id'         => 'about-story',
+                    'title'      => (string) $about->storyTitle,
+                    'content'    => (string) $about->storyContent,
+                    'image'      => (string) $about->storyImage,
+                    'imageAlt'   => (string) $about->storyImageAlt,
+                    'isFeatured' => true,
+                ];
+                $aboutFeatured['items'][] = [
+                    'section'    => 'story',
+                    'title'      => (string) $about->storyTitle,
+                    'isFeatured' => true,
+                ];
+            }
+
+            if ($about->valuesFeatured) {
+                $aboutFeatured['values'] = [
+                    'id'         => 'about-values',
+                    'title'      => 'Core Values',
+                    'values'     => is_array($about->values) ? $about->values : [],
+                    'isFeatured' => true,
+                ];
+                $aboutFeatured['items'][] = [
+                    'section'    => 'values',
+                    'title'      => 'Core Values',
+                    'count'      => is_array($about->values) ? count($about->values) : 0,
+                    'isFeatured' => true,
+                ];
+            }
+
+            if ($about->differentiatorsFeatured) {
+                $aboutFeatured['differentiators'] = [
+                    'id'         => 'about-differentiators',
+                    'title'      => 'Why Choose Us / Differentiators',
+                    'stats'      => is_array($about->stats) ? $about->stats : [],
+                    'milestones' => is_array($about->milestones) ? $about->milestones : [],
+                    'isFeatured' => true,
+                ];
+                $aboutFeatured['items'][] = [
+                    'section'    => 'differentiators',
+                    'title'      => 'Differentiators',
+                    'isFeatured' => true,
+                ];
+            }
+
+            $featuredSectionCount = count($aboutFeatured['items']);
+            if ($featuredSectionCount > 0 || !empty($requestedModule)) {
+                $data['about'] = $aboutFeatured;
+                $counts['about'] = $featuredSectionCount;
+            }
+        }
+
         $counts['total'] = array_sum($counts);
 
         return response()->json([
@@ -322,6 +403,85 @@ class FeaturedController extends Controller
             $faqs = $q->get()->map->toAdminPayload()->values();
             $data['faqs'] = $faqs;
             $counts['faqs'] = count($faqs);
+        }
+
+        // 10. Hero Slides
+        if (empty($requestedModule) || in_array($requestedModule, ['hero', 'hero-slides', 'heroes', 'heroslide'])) {
+            $q = HeroSlide::query();
+            if (Schema::hasColumn('hero_slides', 'isFeatured')) {
+                $q->where('isFeatured', true);
+            }
+            $q->orderBy('order', 'asc')->orderBy('id', 'asc');
+            if ($limit) {
+                $q->limit($limit);
+            }
+            $hero = $q->get()->map->toAdminPayload()->values();
+            $data['heroSlides'] = $hero;
+            $data['hero'] = $hero;
+            $counts['heroSlides'] = count($hero);
+        }
+
+        // 11. About Page (Story, Values, Differentiators)
+        if (empty($requestedModule) || in_array($requestedModule, ['about', 'about-us', 'aboutpage'])) {
+            $about = AboutPage::getSingleton();
+            $aboutFeatured = [
+                'differentiatorsFeatured' => (bool) ($about->differentiatorsFeatured ?? true),
+                'storyFeatured'           => (bool) ($about->storyFeatured ?? true),
+                'valuesFeatured'          => (bool) ($about->valuesFeatured ?? true),
+                'items'                   => [],
+            ];
+
+            if ($about->storyFeatured) {
+                $aboutFeatured['story'] = [
+                    'id'         => 'about-story',
+                    'title'      => (string) $about->storyTitle,
+                    'content'    => (string) $about->storyContent,
+                    'image'      => (string) $about->storyImage,
+                    'imageAlt'   => (string) $about->storyImageAlt,
+                    'isFeatured' => true,
+                ];
+                $aboutFeatured['items'][] = [
+                    'section'    => 'story',
+                    'title'      => (string) $about->storyTitle,
+                    'isFeatured' => true,
+                ];
+            }
+
+            if ($about->valuesFeatured) {
+                $aboutFeatured['values'] = [
+                    'id'         => 'about-values',
+                    'title'      => 'Core Values',
+                    'values'     => is_array($about->values) ? $about->values : [],
+                    'isFeatured' => true,
+                ];
+                $aboutFeatured['items'][] = [
+                    'section'    => 'values',
+                    'title'      => 'Core Values',
+                    'count'      => is_array($about->values) ? count($about->values) : 0,
+                    'isFeatured' => true,
+                ];
+            }
+
+            if ($about->differentiatorsFeatured) {
+                $aboutFeatured['differentiators'] = [
+                    'id'         => 'about-differentiators',
+                    'title'      => 'Why Choose Us / Differentiators',
+                    'stats'      => is_array($about->stats) ? $about->stats : [],
+                    'milestones' => is_array($about->milestones) ? $about->milestones : [],
+                    'isFeatured' => true,
+                ];
+                $aboutFeatured['items'][] = [
+                    'section'    => 'differentiators',
+                    'title'      => 'Differentiators',
+                    'isFeatured' => true,
+                ];
+            }
+
+            $featuredSectionCount = count($aboutFeatured['items']);
+            if ($featuredSectionCount > 0 || !empty($requestedModule)) {
+                $data['about'] = $aboutFeatured;
+                $counts['about'] = $featuredSectionCount;
+            }
         }
 
         $counts['total'] = array_sum($counts);
