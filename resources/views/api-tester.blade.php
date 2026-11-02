@@ -4647,8 +4647,9 @@
             const password = document.getElementById('login-password').value;
             const device_name = document.getElementById('login-device').value;
             const res = await sendApi('POST', '/api/admin/login', { email, password, device_name });
-            if (res && res.data && res.data.token) {
-                currentToken = res.data.token;
+            const token = res && (res.token || (res.data && res.data.token) || res.access_token);
+            if (token) {
+                currentToken = token;
                 localStorage.setItem('api_admin_token', currentToken);
                 updateTokenDisplay();
             }
