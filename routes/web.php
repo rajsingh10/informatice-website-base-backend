@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminModuleController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CareerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FeaturedController;
@@ -93,6 +94,8 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
     Route::get('/public/layouts/{key}', [LayoutController::class, 'show']);
     Route::get('/footer', [FooterController::class, 'showPublic']);
     Route::get('/public/footer', [FooterController::class, 'showPublic']);
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/public/dashboard', [DashboardController::class, 'index']);
     Route::get('/about', [AboutController::class, 'showPublic']);
     Route::get('/public/about', [AboutController::class, 'showPublic']);
     Route::get('/public/seo/{page}', [SeoController::class, 'showPublic']);
@@ -151,6 +154,7 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
     // Admin Auth aliases (public)
     Route::post('/admin/login', [AuthController::class, 'login']);
     Route::post('/admin/auth/login', [AuthController::class, 'login']);
+    Route::get('/admin/dashboard', [DashboardController::class, 'index']);
 
     // Admin aliases (protected)
     Route::middleware('auth:api')->group(function () {

@@ -90,6 +90,14 @@
                         <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">5</span>
                     </button>
 
+                    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-gauge text-blue-600"></i>
+                            <span class="font-bold text-blue-900">Dashboard</span>
+                        </span>
+                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">LIVE</span>
+                    </button>
+
                     <button onclick="switchTab('modules')" id="tab-modules" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
                         <span class="flex items-center space-x-2.5">
                             <i class="fa-solid fa-cubes text-purple-600"></i>
@@ -299,6 +307,35 @@
 
         <!-- Middle Column: API Forms -->
         <div class="lg:col-span-5 space-y-4">
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- 0. DASHBOARD API -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-dashboard" class="space-y-4 hidden">
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-xs text-blue-900 leading-relaxed">
+                    <p class="font-bold mb-1"><i class="fa-solid fa-gauge mr-1 text-blue-600"></i> Main Admin Dashboard API</p>
+                    <p>Returns complete operational overview for the Admin panel: <code class="font-mono bg-blue-100 px-1 py-0.5 rounded font-bold">siteInfo</code>, <code class="font-mono bg-blue-100 px-1 py-0.5 rounded font-bold">kpiMetrics</code> (Live Services, Case Studies, News, Layouts), <code class="font-mono bg-blue-100 px-1 py-0.5 rounded font-bold">quickContentOperations</code>, <code class="font-mono bg-blue-100 px-1 py-0.5 rounded font-bold">activeLayoutPresets</code>, and <code class="font-mono bg-blue-100 px-1 py-0.5 rounded font-bold">liveServicesFeed</code>.</p>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/dashboard</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth / Public</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetch complete real-time dashboard data including KPI counts, active layout templates, quick operations, and published services feed.</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="sendApi('GET', '/api/admin/dashboard', null, true)" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-gauge mr-1"></i> /api/admin/dashboard
+                        </button>
+                        <button onclick="sendApi('GET', '/api/dashboard')" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
+                            <i class="fa-solid fa-globe mr-1"></i> /api/dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
             <!-- 1. AUTH MODULE APIS -->
