@@ -304,6 +304,15 @@
                         </span>
                         <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">4</span>
                     </button>
+
+                    <!-- Key Metrics & Stats (Counters) -->
+                    <button onclick="switchTab('stats')" id="tab-stats" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-arrow-trend-up text-emerald-600"></i>
+                            <span class="font-bold text-emerald-900">Key Metrics (Stats)</span>
+                        </span>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">6</span>
+                    </button>
                 </nav>
 
                 <div class="mt-6 pt-4 border-t border-slate-100">
@@ -4603,6 +4612,198 @@
 
             </div>
 
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- KEY METRICS & STATS (COUNTERS) APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-stats" class="space-y-4 hidden">
+
+                <!-- 1. GET /api/admin/stats & GET /api/public/stats -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/stats & /api/public/stats</span>
+                        </div>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">Standard REST</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetch all metrics & counter statistics list. Supports Admin View (all counters) and Public View (only visible/featured counters).</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button onclick="testFetchAdminStats()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-chart-simple"></i>
+                            <span>Fetch All Stats (Admin)</span>
+                        </button>
+                        <button onclick="testFetchPublicStats()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-eye"></i>
+                            <span>Fetch Visible Stats (Public)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. POST /api/admin/stats — Add Counter -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/stats</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Add a new metric / counter to website statistics.</p>
+                    <div class="space-y-3 mb-3">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Number *</label>
+                                <input id="stat-create-number" type="number" step="any" value="500" placeholder="500" class="w-full text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Suffix</label>
+                                <input id="stat-create-suffix" type="text" value="+" placeholder="+, %, k, M" class="w-full text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Icon (Lucide)</label>
+                                <input id="stat-create-icon" type="text" value="Globe" placeholder="Globe, Briefcase, Users, Award, ThumbsUp" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Label (Title) *</label>
+                            <input id="stat-create-label" type="text" value="Global Partners" placeholder="e.g. Projects Completed, Happy Clients" class="w-full text-xs border border-slate-200 rounded p-2 outline-none font-medium">
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Description</label>
+                            <input id="stat-create-desc" type="text" value="Worldwide connected distribution" placeholder="Brief counter description..." class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <div class="flex items-center space-x-2">
+                                <input id="stat-create-order" type="number" value="5" placeholder="Order" class="w-20 text-xs border border-slate-200 rounded p-1.5 outline-none font-mono text-center">
+                                <span class="text-xs text-slate-500">Display Order</span>
+                            </div>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="stat-create-featured" checked class="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4">
+                                <span class="text-xs font-semibold text-slate-700">Visible on Website (isFeatured)</span>
+                            </label>
+                        </div>
+                    </div>
+                    <button onclick="testCreateStat()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Add Counter</span>
+                    </button>
+                </div>
+
+                <!-- 3. PUT / PATCH /api/admin/stats/:id — Update Counter -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="method-badge badge-patch">PATCH</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/stats/:id</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Load and update existing counter values, labels, suffix, or icon.</p>
+                    <div class="space-y-3 mb-3">
+                        <div class="flex space-x-2">
+                            <input id="stat-manage-id" type="number" value="1" placeholder="ID" class="w-20 text-xs border border-slate-200 rounded p-2 outline-none font-mono font-bold text-center">
+                            <button onclick="testLoadStat()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs px-3 py-2 rounded transition flex items-center space-x-1">
+                                <i class="fa-solid fa-download"></i>
+                                <span>Load Stat #</span>
+                            </button>
+                            <input id="stat-manage-label" type="text" value="Projects Completed" placeholder="Counter Label" class="flex-1 text-xs border border-slate-200 rounded p-2 outline-none font-medium">
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Number</label>
+                                <input id="stat-manage-number" type="number" step="any" value="300" placeholder="Number" class="w-full text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Suffix</label>
+                                <input id="stat-manage-suffix" type="text" value="+" placeholder="Suffix" class="w-full text-xs border border-slate-200 rounded p-2 outline-none font-mono">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Icon</label>
+                                <input id="stat-manage-icon" type="text" value="Briefcase" placeholder="Icon" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Description</label>
+                            <input id="stat-manage-desc" type="text" value="Updated project count" placeholder="Description..." class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <div class="flex items-center space-x-2">
+                                <input id="stat-manage-order" type="number" value="1" placeholder="Order" class="w-20 text-xs border border-slate-200 rounded p-1.5 outline-none font-mono text-center">
+                                <span class="text-xs text-slate-500">Display Order</span>
+                            </div>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="checkbox" id="stat-manage-featured" checked class="rounded text-blue-600 focus:ring-blue-500 w-4 h-4">
+                                <span class="text-xs font-semibold text-slate-700">Visible on Website (isFeatured)</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="testUpdateStat()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Update Counter</span>
+                        </button>
+                        <button onclick="testDeleteStat()" class="bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-trash"></i>
+                            <span>Delete Counter</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4. PATCH /api/admin/stats/:id/visibility — Toggle Visible -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-patch">PATCH</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/stats/:id/visibility</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Instant toggle switch for active visibility on website (<code class="font-mono text-emerald-700 font-bold">isFeatured: true / false</code>).</p>
+                    <div class="flex space-x-2">
+                        <input id="stat-toggle-id" type="number" value="1" placeholder="ID" class="w-24 text-xs border border-slate-200 rounded p-2 outline-none font-mono text-center font-bold">
+                        <select id="stat-toggle-val" class="text-xs border border-slate-200 rounded p-2 bg-white outline-none">
+                            <option value="true">Visible on Website (true)</option>
+                            <option value="false">Hidden from Website (false)</option>
+                        </select>
+                        <button onclick="testToggleStatVisibility()" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-toggle-on"></i>
+                            <span>Toggle Visibility</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 5. PUT / PATCH /api/admin/stats/reorder — Swap / Sequence -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="method-badge badge-patch">PATCH</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/stats/reorder</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-2">Reorder display sequence of stats. Supports array of objects with id & order or array of IDs.</p>
+                    <textarea id="stat-reorder-json" rows="4" class="w-full text-xs font-mono border border-slate-200 rounded p-2 mb-3 outline-none" placeholder="JSON payload...">[
+  { "id": 1, "order": 1 },
+  { "id": 2, "order": 2 },
+  { "id": 3, "order": 3 },
+  { "id": 4, "order": 4 }
+]</textarea>
+                    <button onclick="testReorderStats()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-arrows-up-down"></i>
+                        <span>Apply New Sequence (Reorder)</span>
+                    </button>
+                </div>
+
+            </div>
+
         </div>
 
         <!-- Right Column: Live Response Viewer -->
@@ -6361,6 +6562,98 @@
                     previewContainer.className = 'flex justify-end transition-all';
                 }
             }
+        }
+
+        // Key Metrics & Stats (Counters)
+        async function testFetchAdminStats() {
+            await sendApi('GET', '/api/admin/stats', null, true);
+        }
+
+        async function testFetchPublicStats() {
+            await sendApi('GET', '/api/public/stats');
+        }
+
+        async function testCreateStat() {
+            const number = parseFloat(document.getElementById('stat-create-number').value || 0);
+            const suffix = document.getElementById('stat-create-suffix').value;
+            const label = document.getElementById('stat-create-label').value;
+            const icon = document.getElementById('stat-create-icon').value;
+            const description = document.getElementById('stat-create-desc').value;
+            const order = parseInt(document.getElementById('stat-create-order').value || 1);
+            const isFeatured = document.getElementById('stat-create-featured').checked;
+
+            await sendApi('POST', '/api/admin/stats', {
+                number,
+                suffix,
+                label,
+                icon,
+                description,
+                order,
+                isFeatured
+            }, true);
+        }
+
+        async function testLoadStat() {
+            const id = document.getElementById('stat-manage-id').value;
+            if (!id) return alert('Enter a Stat ID');
+            const res = await sendApi('GET', `/api/admin/stats/${id}`, null, true);
+            if (res && res.data) {
+                const d = res.data;
+                if (document.getElementById('stat-manage-number')) document.getElementById('stat-manage-number').value = d.number;
+                if (document.getElementById('stat-manage-suffix')) document.getElementById('stat-manage-suffix').value = d.suffix || '';
+                if (document.getElementById('stat-manage-label')) document.getElementById('stat-manage-label').value = d.label || '';
+                if (document.getElementById('stat-manage-icon')) document.getElementById('stat-manage-icon').value = d.icon || '';
+                if (document.getElementById('stat-manage-desc')) document.getElementById('stat-manage-desc').value = d.description || '';
+                if (document.getElementById('stat-manage-order')) document.getElementById('stat-manage-order').value = d.order || 1;
+                if (document.getElementById('stat-manage-featured')) document.getElementById('stat-manage-featured').checked = !!d.isFeatured;
+            }
+        }
+
+        async function testUpdateStat() {
+            const id = document.getElementById('stat-manage-id').value;
+            if (!id) return alert('Enter a Stat ID');
+            const number = parseFloat(document.getElementById('stat-manage-number').value || 0);
+            const suffix = document.getElementById('stat-manage-suffix').value;
+            const label = document.getElementById('stat-manage-label').value;
+            const icon = document.getElementById('stat-manage-icon').value;
+            const description = document.getElementById('stat-manage-desc').value;
+            const order = parseInt(document.getElementById('stat-manage-order').value || 1);
+            const isFeatured = document.getElementById('stat-manage-featured').checked;
+
+            await sendApi('PUT', `/api/admin/stats/${id}`, {
+                number,
+                suffix,
+                label,
+                icon,
+                description,
+                order,
+                isFeatured
+            }, true);
+        }
+
+        async function testToggleStatVisibility() {
+            const id = document.getElementById('stat-toggle-id').value;
+            if (!id) return alert('Enter a Stat ID');
+            const isFeatured = document.getElementById('stat-toggle-val').value === 'true';
+
+            await sendApi('PATCH', `/api/admin/stats/${id}/visibility`, { isFeatured }, true);
+        }
+
+        async function testReorderStats() {
+            const raw = document.getElementById('stat-reorder-json').value.trim();
+            try {
+                const parsed = JSON.parse(raw);
+                await sendApi('PUT', '/api/admin/stats/reorder', parsed, true);
+            } catch (e) {
+                alert('Invalid JSON in reorder payload: ' + e.message);
+            }
+        }
+
+        async function testDeleteStat() {
+            const id = document.getElementById('stat-manage-id').value;
+            if (!id) return alert('Enter a Stat ID');
+            if (!confirm(`Delete counter ID ${id}?`)) return;
+            await sendApi('DELETE', `/api/admin/stats/${id}`, null, true);
         }
 
         initLayoutSelects();

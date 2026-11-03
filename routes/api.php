@@ -23,6 +23,7 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SiteSettingController;
+use App\Http\Controllers\StatController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\TopbarController;
@@ -53,6 +54,7 @@ Route::get('isFeatured', [FeaturedController::class, 'indexPublic']);
 Route::get('footer', [FooterController::class, 'showPublic']);
 Route::get('floating-button', [FloatingButtonController::class, 'showPublic']);
 Route::get('floating-cta', [FloatingButtonController::class, 'showPublic']);
+Route::get('stats', [StatController::class, 'indexPublic']);
 Route::get('dashboard', [DashboardController::class, 'index']);
 
 // ═══════════════════════════════════════════════════════════
@@ -73,6 +75,7 @@ Route::prefix('public')->group(function () {
 Route::get('footer', [FooterController::class, 'showPublic']);
 Route::get('floating-button', [FloatingButtonController::class, 'showPublic']);
 Route::get('floating-cta', [FloatingButtonController::class, 'showPublic']);
+Route::get('stats', [StatController::class, 'indexPublic']);
 Route::get('dashboard', [DashboardController::class, 'index']);
     // Layouts
     Route::get('layouts', [LayoutController::class, 'index']);
@@ -83,6 +86,7 @@ Route::get('dashboard', [DashboardController::class, 'index']);
     Route::get('footer', [FooterController::class, 'showPublic']);
 Route::get('floating-button', [FloatingButtonController::class, 'showPublic']);
 Route::get('floating-cta', [FloatingButtonController::class, 'showPublic']);
+Route::get('stats', [StatController::class, 'indexPublic']);
 Route::get('dashboard', [DashboardController::class, 'index']);
 
     // Module: About Page
@@ -457,6 +461,15 @@ Route::prefix('admin')->group(function () {
         Route::match(['put', 'post', 'patch'], 'floating-cta', [FloatingButtonController::class, 'update']);
         Route::match(['post', 'put', 'get'], 'floating-button/reset', [FloatingButtonController::class, 'reset']);
         Route::match(['post', 'put', 'get'], 'floating-cta/reset', [FloatingButtonController::class, 'reset']);
+
+        // Key Metrics & Stats (Counters)
+        Route::get('stats', [StatController::class, 'indexAdmin']);
+        Route::get('stats/{id}', [StatController::class, 'show'])->whereNumber('id');
+        Route::post('stats', [StatController::class, 'store']);
+        Route::match(['put', 'patch'], 'stats/reorder', [StatController::class, 'reorder']);
+        Route::match(['patch', 'put', 'post'], 'stats/{id}/visibility', [StatController::class, 'toggleVisibility'])->whereNumber('id');
+        Route::match(['put', 'patch', 'post'], 'stats/{id}', [StatController::class, 'update'])->whereNumber('id');
+        Route::delete('stats/{id}', [StatController::class, 'destroy'])->whereNumber('id');
 
         // Module 13: Careers CRUD
         Route::get('careers', [CareerController::class, 'indexAdmin']);

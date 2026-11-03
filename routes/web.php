@@ -23,6 +23,7 @@ use App\Http\Controllers\PortfolioController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SiteSettingController;
+use App\Http\Controllers\StatController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\TopbarController;
@@ -117,6 +118,8 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
     Route::get('/public/floating-button', [FloatingButtonController::class, 'showPublic']);
     Route::get('/floating-cta', [FloatingButtonController::class, 'showPublic']);
     Route::get('/public/floating-cta', [FloatingButtonController::class, 'showPublic']);
+    Route::get('/stats', [StatController::class, 'indexPublic']);
+    Route::get('/public/stats', [StatController::class, 'indexPublic']);
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::get('/public/dashboard', [DashboardController::class, 'index']);
     Route::get('/about', [AboutController::class, 'showPublic']);
@@ -444,6 +447,15 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
         Route::match(['put', 'post', 'patch'], '/admin/floating-cta', [FloatingButtonController::class, 'update']);
         Route::match(['post', 'put', 'get'], '/admin/floating-button/reset', [FloatingButtonController::class, 'reset']);
         Route::match(['post', 'put', 'get'], '/admin/floating-cta/reset', [FloatingButtonController::class, 'reset']);
+
+        // Key Metrics & Stats (Counters)
+        Route::get('/admin/stats', [StatController::class, 'indexAdmin']);
+        Route::get('/admin/stats/{id}', [StatController::class, 'show'])->whereNumber('id');
+        Route::post('/admin/stats', [StatController::class, 'store']);
+        Route::match(['put', 'patch'], '/admin/stats/reorder', [StatController::class, 'reorder']);
+        Route::match(['patch', 'put', 'post'], '/admin/stats/{id}/visibility', [StatController::class, 'toggleVisibility'])->whereNumber('id');
+        Route::match(['put', 'patch', 'post'], '/admin/stats/{id}', [StatController::class, 'update'])->whereNumber('id');
+        Route::delete('/admin/stats/{id}', [StatController::class, 'destroy'])->whereNumber('id');
 
         // Module 13: Careers
         Route::get('/admin/careers', [CareerController::class, 'indexAdmin']);
