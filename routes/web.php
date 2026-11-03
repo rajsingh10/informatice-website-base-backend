@@ -129,7 +129,9 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
     Route::get('/public/portfolio', [PortfolioController::class, 'indexPublic']);
     Route::get('/public/portfolio/{slug}', [PortfolioController::class, 'showPublic']);
     Route::get('/public/blog', [BlogController::class, 'indexPublic']);
+    Route::get('/public/blogs', [BlogController::class, 'indexPublic']);
     Route::get('/public/blog/{slug}', [BlogController::class, 'showPublic']);
+    Route::get('/public/blogs/{slug}', [BlogController::class, 'showPublic']);
 
     // Module 7: Events
     Route::get('/public/events', [EventController::class, 'indexPublic']);
@@ -372,10 +374,15 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
 
         // Module 6 Blog
         Route::get('/admin/blog', [BlogController::class, 'indexAdmin']);
+        Route::get('/admin/blogs', [BlogController::class, 'indexAdmin']);
         Route::get('/admin/blog/{id}', [BlogController::class, 'showAdmin']);
+        Route::get('/admin/blogs/{id}', [BlogController::class, 'showAdmin']);
         Route::post('/admin/blog', [BlogController::class, 'store']);
-        Route::put('/admin/blog/{id}', [BlogController::class, 'update']);
+        Route::post('/admin/blogs', [BlogController::class, 'store']);
+        Route::match(['put', 'patch', 'post'], '/admin/blog/{id}', [BlogController::class, 'update']);
+        Route::match(['put', 'patch', 'post'], '/admin/blogs/{id}', [BlogController::class, 'update']);
         Route::delete('/admin/blog/{id}', [BlogController::class, 'destroy']);
+        Route::delete('/admin/blogs/{id}', [BlogController::class, 'destroy']);
 
         // Module 7 Events
         Route::get('/admin/events', [EventController::class, 'indexAdmin']);
