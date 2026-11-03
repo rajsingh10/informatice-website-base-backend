@@ -203,7 +203,11 @@ Route::prefix('admin')->group(function () {
         // About Page Content CRUD & Image ALT management
         Route::get('about', [AboutController::class, 'showAdmin']);
         Route::match(['put', 'post'], 'about', [AboutController::class, 'update']);
-        Route::put('about/images', [AboutController::class, 'updateImages']);
+        Route::match(['put', 'post'], 'about/images', [AboutController::class, 'updateImages']);
+        Route::post('about/images/add', [AboutController::class, 'addImage']);
+        Route::post('about/image', [AboutController::class, 'addImage']);
+        Route::match(['put', 'patch', 'post'], 'about/images/{identifier}', [AboutController::class, 'updateSingleImage']);
+        Route::delete('about/images/{identifier}', [AboutController::class, 'deleteSingleImage']);
         Route::post('about/reset', [AboutController::class, 'reset']);
         Route::get('career', [AdminModuleController::class, 'getCareer']);
         Route::get('faq', [AdminModuleController::class, 'getFaq']);

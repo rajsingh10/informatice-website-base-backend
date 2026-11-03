@@ -1934,6 +1934,62 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- 5. Multiple Images Manager (Add & Edit Gallery Images) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/about/images</span>
+                        </div>
+                        <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded font-bold">Multiple Images Gallery</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Add new images and edit existing images in the About page multiple images gallery.</p>
+                    
+                    <!-- Add Image Box -->
+                    <div class="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 space-y-2 mb-3">
+                        <p class="text-xs font-bold text-slate-800 flex items-center">
+                            <i class="fa-solid fa-cloud-arrow-up text-indigo-600 mr-1.5"></i> Add New Image to About Page
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div class="sm:col-span-2">
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Image URL *</label>
+                                <input id="about-add-img-url" type="text" placeholder="https://images.unsplash.com/photo-..." class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Slot Name (optional)</label>
+                                <input id="about-add-img-slot" type="text" placeholder="e.g. img-about-team" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Alt Attribute</label>
+                                <input id="about-add-img-alt" type="text" placeholder="Accessible description for screen readers" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Title / Caption</label>
+                                <input id="about-add-img-title" type="text" placeholder="Display caption" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                            </div>
+                        </div>
+                        <button onclick="testAddAboutImage()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-plus mr-1"></i> Add Image to About Page
+                        </button>
+                    </div>
+
+                    <!-- Existing Images List / Editor -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-xs font-bold text-slate-700">Existing Multiple Images</label>
+                            <button onclick="testLoadAboutImages()" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center space-x-1">
+                                <i class="fa-solid fa-rotate mr-1"></i> Refresh Images List
+                            </button>
+                        </div>
+                        <div id="about-images-list" class="space-y-2">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
@@ -5482,6 +5538,86 @@
         async function testResetAbout() {
             if (!confirm('Reset About page to default content and ALT attributes?')) return;
             await sendApi('POST', '/api/admin/about/reset', null, true);
+        }
+
+        async function testAddAboutImage() {
+            const url = document.getElementById('about-add-img-url').value.trim();
+            if (!url) return alert('Enter an Image URL');
+            const alt = document.getElementById('about-add-img-alt').value.trim();
+            const title = document.getElementById('about-add-img-title').value.trim();
+            const slot = document.getElementById('about-add-img-slot').value.trim();
+
+            const res = await sendApi('POST', '/api/admin/about/images/add', { url, alt, title, slot }, true);
+            if (res && res.success) {
+                document.getElementById('about-add-img-url').value = '';
+                document.getElementById('about-add-img-alt').value = '';
+                document.getElementById('about-add-img-title').value = '';
+                document.getElementById('about-add-img-slot').value = '';
+                if (res.data && res.data.images) {
+                    renderAboutImagesList(res.data.images);
+                }
+            }
+        }
+
+        async function testLoadAboutImages() {
+            const res = await sendApi('GET', '/api/admin/about', null, true);
+            if (res && res.data && res.data.images) {
+                renderAboutImagesList(res.data.images);
+            }
+        }
+
+        async function testEditAboutImage(identifier) {
+            const url = document.getElementById(`about-img-url-${identifier}`)?.value.trim();
+            const alt = document.getElementById(`about-img-alt-${identifier}`)?.value.trim();
+
+            const res = await sendApi('PUT', `/api/admin/about/images/${identifier}`, { url, alt }, true);
+            if (res && res.data && res.data.images) {
+                renderAboutImagesList(res.data.images);
+            }
+        }
+
+        async function testDeleteAboutImage(identifier) {
+            if (!confirm(`Delete this image (${identifier})?`)) return;
+            const res = await sendApi('DELETE', `/api/admin/about/images/${identifier}`, null, true);
+            if (res && res.data && res.data.images) {
+                renderAboutImagesList(res.data.images);
+            }
+        }
+
+        function renderAboutImagesList(images) {
+            const container = document.getElementById('about-images-list');
+            if (!container) return;
+            if (!images || !images.length) {
+                container.innerHTML = '<p class="text-xs text-slate-400 italic">No multiple images added yet.</p>';
+                return;
+            }
+
+            container.innerHTML = images.map((img, idx) => {
+                const id = img.id || (idx + 1);
+                const slot = img.slot || `img-about-${id}`;
+                return `
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-slate-700">Image #${id} (${slot})</span>
+                        <div class="flex items-center space-x-1.5">
+                            <button type="button" onclick="testEditAboutImage('${id}')" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-semibold px-2 py-0.5 rounded transition shadow-sm">
+                                <i class="fa-solid fa-floppy-disk mr-1"></i> Update
+                            </button>
+                            <button type="button" onclick="testDeleteAboutImage('${id}')" class="bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-semibold px-2 py-0.5 rounded transition shadow-sm">
+                                <i class="fa-solid fa-trash mr-1"></i> Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
+                        <div class="sm:col-span-2">
+                            <input id="about-img-url-${id}" type="text" value="${img.url || ''}" placeholder="Image URL" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                        </div>
+                        <div>
+                            <input id="about-img-alt-${id}" type="text" value="${img.alt || ''}" placeholder="ALT Attribute" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none bg-white">
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
         }
 
         // Module 4: Services
