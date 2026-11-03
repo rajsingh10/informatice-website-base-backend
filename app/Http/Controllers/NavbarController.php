@@ -46,6 +46,19 @@ class NavbarController extends Controller
     {
         $config = NavbarConfig::getSingleton();
 
+        // 0. Navbar Layout Template update (e.g. layout1, layout2, ...)
+        if ($request->has('layout') || $request->has('navbarLayout') || $request->has('templateId')) {
+            $newLayout = $request->input('layout', $request->input('navbarLayout', $request->input('templateId')));
+            if ($newLayout && in_array($newLayout, Layout::allowedFor('navbarLayout'))) {
+                $layoutRec = Layout::find('navbarLayout');
+                if ($layoutRec) {
+                    $layoutRec->templateId = $newLayout;
+                    $layoutRec->updatedAt = now();
+                    $layoutRec->save();
+                }
+            }
+        }
+
         // 1. Behavior update
         $behavior = $request->input('behavior', $request->input('headerBehavior'));
         $targetLayout = $request->input('layout', $request->input('navbarLayout'));
