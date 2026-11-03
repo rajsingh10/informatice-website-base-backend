@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FeaturedController;
+use App\Http\Controllers\FloatingButtonController;
 use App\Http\Controllers\FooterController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HeroSlideController;
@@ -50,6 +51,8 @@ Route::get('is-feature', [FeaturedController::class, 'indexPublic']);
 Route::get('isFeature', [FeaturedController::class, 'indexPublic']);
 Route::get('isFeatured', [FeaturedController::class, 'indexPublic']);
 Route::get('footer', [FooterController::class, 'showPublic']);
+Route::get('floating-button', [FloatingButtonController::class, 'showPublic']);
+Route::get('floating-cta', [FloatingButtonController::class, 'showPublic']);
 Route::get('dashboard', [DashboardController::class, 'index']);
 
 // ═══════════════════════════════════════════════════════════
@@ -68,6 +71,8 @@ Route::prefix('public')->group(function () {
     Route::get('isFeature', [FeaturedController::class, 'indexPublic']);
     Route::get('isFeatured', [FeaturedController::class, 'indexPublic']);
 Route::get('footer', [FooterController::class, 'showPublic']);
+Route::get('floating-button', [FloatingButtonController::class, 'showPublic']);
+Route::get('floating-cta', [FloatingButtonController::class, 'showPublic']);
 Route::get('dashboard', [DashboardController::class, 'index']);
     // Layouts
     Route::get('layouts', [LayoutController::class, 'index']);
@@ -76,6 +81,8 @@ Route::get('dashboard', [DashboardController::class, 'index']);
 
     // Module 12: Footer
     Route::get('footer', [FooterController::class, 'showPublic']);
+Route::get('floating-button', [FloatingButtonController::class, 'showPublic']);
+Route::get('floating-cta', [FloatingButtonController::class, 'showPublic']);
 Route::get('dashboard', [DashboardController::class, 'index']);
 
     // Module: About Page
@@ -442,6 +449,14 @@ Route::prefix('admin')->group(function () {
         Route::get('footer/custom-code', [FooterController::class, 'getCustomCode']);
         Route::match(['put', 'post', 'patch'], 'footer/custom-code', [FooterController::class, 'updateCustomCode']);
         Route::match(['post', 'put', 'get'], 'footer/reset', [FooterController::class, 'reset']);
+
+        // Floating Button (Floating CTA Settings)
+        Route::get('floating-button', [FloatingButtonController::class, 'showAdmin']);
+        Route::get('floating-cta', [FloatingButtonController::class, 'showAdmin']);
+        Route::match(['put', 'post', 'patch'], 'floating-button', [FloatingButtonController::class, 'update']);
+        Route::match(['put', 'post', 'patch'], 'floating-cta', [FloatingButtonController::class, 'update']);
+        Route::match(['post', 'put', 'get'], 'floating-button/reset', [FloatingButtonController::class, 'reset']);
+        Route::match(['post', 'put', 'get'], 'floating-cta/reset', [FloatingButtonController::class, 'reset']);
 
         // Module 13: Careers CRUD
         Route::get('careers', [CareerController::class, 'indexAdmin']);

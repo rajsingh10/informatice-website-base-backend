@@ -295,6 +295,15 @@
                         </span>
                         <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">2</span>
                     </button>
+
+                    <!-- Floating Button -->
+                    <button onclick="switchTab('floating-button')" id="tab-floating-button" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-circle-dot text-blue-600"></i>
+                            <span class="font-bold text-blue-900">Floating Button</span>
+                        </span>
+                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">4</span>
+                    </button>
                 </nav>
 
                 <div class="mt-6 pt-4 border-t border-slate-100">
@@ -4436,6 +4445,150 @@
                 </div>
             </div>
 
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- FLOATING BUTTON (FLOATING CTA SETTINGS) -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-floating-button" class="space-y-4 hidden">
+
+                <!-- 1. Public Floating Button GET -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/public/floating-button</span>
+                        </div>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">Public (No Auth)</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Read published floating call-to-action button settings for rendering on public website pages.</p>
+                    <button onclick="testPublicFloatingButton()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-eye"></i>
+                        <span>Read Public Floating Button</span>
+                    </button>
+                </div>
+
+                <!-- 2. Admin Floating Button GET -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/floating-button</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetch current administrative configuration. Automatically synchronizes into the editor form below.</p>
+                    <button onclick="testAdminFloatingButton()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-download"></i>
+                        <span>Load Admin Configuration</span>
+                    </button>
+                </div>
+
+                <!-- 3. Admin Floating Button Editor (Matches UI Screenshot Exactly) -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-xs font-semibold text-slate-800">/api/admin/floating-button</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full font-bold">Admin Auth</span>
+                    </div>
+
+                    <div class="border-b border-slate-100 pb-4 mb-5">
+                        <h2 class="text-xl font-bold text-slate-900 tracking-tight">Floating Button</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Configure a fixed call-to-action button shown on public website pages.</p>
+                    </div>
+
+                    <!-- Button settings toggle -->
+                    <div class="bg-slate-50/80 rounded-xl p-4 border border-slate-100 mb-5 flex items-center justify-between">
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900">Button settings</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Turn it on and choose its text, destination, and appearance.</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="fb-enabled" checked onchange="updateFloatingButtonPreview()" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Button text -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Button text</label>
+                            <input type="text" id="fb-text" value="Contact us" oninput="updateFloatingButtonPreview()" placeholder="e.g. Contact us, Chat Now" class="w-full text-xs border border-slate-200 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                        </div>
+
+                        <!-- Button link -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Button link</label>
+                            <input type="text" id="fb-link" value="/contact" placeholder="e.g. /contact, https://wa.me/1234567890, tel:+1234567890" class="w-full text-xs border border-slate-200 rounded-xl px-3.5 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                            <p class="text-[11px] text-slate-400 mt-1">Use a website path, https:// URL, mailto: address, or tel: number.</p>
+                        </div>
+
+                        <!-- Color pickers -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Button color -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Button color</label>
+                                <div class="flex items-center space-x-2 border border-slate-200 rounded-xl px-3 py-2 bg-white">
+                                    <input type="color" id="fb-button-color-picker" value="#2563eb" oninput="document.getElementById('fb-button-color').value = this.value; updateFloatingButtonPreview();" class="w-7 h-7 rounded border-0 cursor-pointer p-0 bg-transparent">
+                                    <input type="text" id="fb-button-color" value="#2563eb" oninput="document.getElementById('fb-button-color-picker').value = this.value; updateFloatingButtonPreview();" class="text-xs font-mono text-slate-800 flex-1 outline-none">
+                                </div>
+                            </div>
+
+                            <!-- Text color -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Text color</label>
+                                <div class="flex items-center space-x-2 border border-slate-200 rounded-xl px-3 py-2 bg-white">
+                                    <input type="color" id="fb-text-color-picker" value="#ffffff" oninput="document.getElementById('fb-text-color').value = this.value; updateFloatingButtonPreview();" class="w-7 h-7 rounded border border-slate-200 cursor-pointer p-0 bg-transparent">
+                                    <input type="text" id="fb-text-color" value="#ffffff" oninput="document.getElementById('fb-text-color-picker').value = this.value; updateFloatingButtonPreview();" class="text-xs font-mono text-slate-800 flex-1 outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Screen position -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-2">Screen position</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="relative flex items-center p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/40">
+                                    <input type="radio" name="fb-position" id="fb-pos-left" value="bottom-left" onchange="updateFloatingButtonPreview()" class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500">
+                                    <span class="ml-2.5 text-xs font-semibold text-slate-800">Bottom Left</span>
+                                </label>
+                                <label class="relative flex items-center p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/40">
+                                    <input type="radio" name="fb-position" id="fb-pos-right" value="bottom-right" checked onchange="updateFloatingButtonPreview()" class="w-4 h-4 text-blue-600 border-slate-300 focus:ring-blue-500">
+                                    <span class="ml-2.5 text-xs font-semibold text-slate-800">Bottom Right</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Live Visual Preview Sandbox -->
+                        <div class="mt-4 pt-4 border-t border-slate-100">
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Live Button Preview on Website</label>
+                            <div class="bg-gradient-to-b from-slate-100 to-slate-200 rounded-xl p-4 border border-slate-200 relative min-h-[110px] flex flex-col justify-end">
+                                <div class="text-[10px] text-slate-400 absolute top-2 left-3 font-mono">Website Viewport Simulation</div>
+                                <div id="fb-preview-container" class="flex justify-end transition-all">
+                                    <button type="button" id="fb-live-btn" style="background-color: #2563eb; color: #ffffff;" class="px-4 py-2.5 rounded-full text-xs font-semibold shadow-lg hover:shadow-xl transition-all flex items-center space-x-1.5 pointer-events-none">
+                                        <i class="fa-solid fa-message mr-1"></i>
+                                        <span id="fb-live-btn-text">Contact us</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons (Reset and Save Settings) -->
+                        <div class="pt-4 flex items-center justify-between border-t border-slate-100">
+                            <button type="button" onclick="testResetFloatingButton()" class="px-4 py-2.5 border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded-xl transition flex items-center space-x-1.5">
+                                <i class="fa-solid fa-rotate-left text-slate-500"></i>
+                                <span>Reset</span>
+                            </button>
+                            <button type="button" onclick="testUpdateFloatingButton()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition shadow-sm flex items-center space-x-2">
+                                <i class="fa-solid fa-floppy-disk"></i>
+                                <span>Save settings</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
 
         <!-- Right Column: Live Response Viewer -->
@@ -6077,6 +6230,108 @@
             const phone = document.getElementById('settings-phone').value;
             const address = document.getElementById('settings-address').value;
             await sendApi('PUT', '/api/admin/settings', { siteName, email, phone, address }, true);
+        }
+
+        // Floating Button
+        async function testPublicFloatingButton() {
+            await sendApi('GET', '/api/public/floating-button');
+        }
+
+        async function testAdminFloatingButton() {
+            const res = await sendApi('GET', '/api/admin/floating-button', null, true);
+            if (res && res.data) {
+                populateFloatingButtonForm(res.data);
+            }
+        }
+
+        async function testUpdateFloatingButton() {
+            const enabled = document.getElementById('fb-enabled').checked;
+            const buttonText = document.getElementById('fb-text').value;
+            const buttonLink = document.getElementById('fb-link').value;
+            const buttonColor = document.getElementById('fb-button-color').value;
+            const textColor = document.getElementById('fb-text-color').value;
+            const position = document.querySelector('input[name="fb-position"]:checked')?.value || 'bottom-right';
+
+            const res = await sendApi('PUT', '/api/admin/floating-button', {
+                enabled,
+                buttonText,
+                buttonLink,
+                buttonColor,
+                textColor,
+                position
+            }, true);
+
+            if (res && res.data) {
+                populateFloatingButtonForm(res.data);
+            }
+        }
+
+        async function testResetFloatingButton() {
+            if (!confirm('Are you sure you want to reset Floating Button to default settings?')) return;
+            const res = await sendApi('POST', '/api/admin/floating-button/reset', null, true);
+            if (res && res.data) {
+                populateFloatingButtonForm(res.data);
+            }
+        }
+
+        function populateFloatingButtonForm(d) {
+            if (!d) return;
+            if (document.getElementById('fb-enabled')) {
+                document.getElementById('fb-enabled').checked = !!d.enabled;
+            }
+            if (document.getElementById('fb-text')) {
+                document.getElementById('fb-text').value = d.buttonText || d.text || 'Contact us';
+            }
+            if (document.getElementById('fb-link')) {
+                document.getElementById('fb-link').value = d.buttonLink || d.link || '/contact';
+            }
+            if (document.getElementById('fb-button-color')) {
+                document.getElementById('fb-button-color').value = d.buttonColor || d.button_color || '#2563eb';
+            }
+            if (document.getElementById('fb-button-color-picker')) {
+                document.getElementById('fb-button-color-picker').value = d.buttonColor || d.button_color || '#2563eb';
+            }
+            if (document.getElementById('fb-text-color')) {
+                document.getElementById('fb-text-color').value = d.textColor || d.text_color || '#ffffff';
+            }
+            if (document.getElementById('fb-text-color-picker')) {
+                document.getElementById('fb-text-color-picker').value = d.textColor || d.text_color || '#ffffff';
+            }
+            const pos = (d.position || d.screenPosition || 'bottom-right').toLowerCase();
+            const leftRadio = document.getElementById('fb-pos-left');
+            const rightRadio = document.getElementById('fb-pos-right');
+            if (pos.includes('left') && leftRadio) {
+                leftRadio.checked = true;
+            } else if (rightRadio) {
+                rightRadio.checked = true;
+            }
+            updateFloatingButtonPreview();
+        }
+
+        function updateFloatingButtonPreview() {
+            const previewBtn = document.getElementById('fb-live-btn');
+            const previewText = document.getElementById('fb-live-btn-text');
+            const previewContainer = document.getElementById('fb-preview-container');
+            if (!previewBtn) return;
+
+            const enabled = document.getElementById('fb-enabled')?.checked ?? true;
+            const text = document.getElementById('fb-text')?.value || 'Contact us';
+            const btnColor = document.getElementById('fb-button-color')?.value || '#2563eb';
+            const txtColor = document.getElementById('fb-text-color')?.value || '#ffffff';
+            const pos = document.querySelector('input[name="fb-position"]:checked')?.value || 'bottom-right';
+
+            if (previewText) previewText.innerText = text;
+            previewBtn.style.backgroundColor = btnColor;
+            previewBtn.style.color = txtColor;
+            previewBtn.style.opacity = enabled ? '1' : '0.25';
+
+            if (previewContainer) {
+                if (pos.includes('left')) {
+                    previewContainer.className = 'flex justify-start transition-all';
+                } else {
+                    previewContainer.className = 'flex justify-end transition-all';
+                }
+            }
         }
 
         initLayoutSelects();

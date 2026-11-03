@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\FeaturedController;
+use App\Http\Controllers\FloatingButtonController;
 use App\Http\Controllers\FooterController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HeroSlideController;
@@ -112,6 +113,10 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
     Route::get('/public/layouts/{key}', [LayoutController::class, 'show']);
     Route::get('/footer', [FooterController::class, 'showPublic']);
     Route::get('/public/footer', [FooterController::class, 'showPublic']);
+    Route::get('/floating-button', [FloatingButtonController::class, 'showPublic']);
+    Route::get('/public/floating-button', [FloatingButtonController::class, 'showPublic']);
+    Route::get('/floating-cta', [FloatingButtonController::class, 'showPublic']);
+    Route::get('/public/floating-cta', [FloatingButtonController::class, 'showPublic']);
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::get('/public/dashboard', [DashboardController::class, 'index']);
     Route::get('/about', [AboutController::class, 'showPublic']);
@@ -431,6 +436,14 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
         Route::get('/admin/footer/custom-code', [FooterController::class, 'getCustomCode']);
         Route::match(['put', 'post', 'patch'], '/admin/footer/custom-code', [FooterController::class, 'updateCustomCode']);
         Route::match(['post', 'put', 'get'], '/admin/footer/reset', [FooterController::class, 'reset']);
+
+        // Floating Button
+        Route::get('/admin/floating-button', [FloatingButtonController::class, 'showAdmin']);
+        Route::get('/admin/floating-cta', [FloatingButtonController::class, 'showAdmin']);
+        Route::match(['put', 'post', 'patch'], '/admin/floating-button', [FloatingButtonController::class, 'update']);
+        Route::match(['put', 'post', 'patch'], '/admin/floating-cta', [FloatingButtonController::class, 'update']);
+        Route::match(['post', 'put', 'get'], '/admin/floating-button/reset', [FloatingButtonController::class, 'reset']);
+        Route::match(['post', 'put', 'get'], '/admin/floating-cta/reset', [FloatingButtonController::class, 'reset']);
 
         // Module 13: Careers
         Route::get('/admin/careers', [CareerController::class, 'indexAdmin']);
