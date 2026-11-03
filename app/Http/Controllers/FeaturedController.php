@@ -11,6 +11,7 @@ use App\Models\Gallery;
 use App\Models\HeroSlide;
 use App\Models\Portfolio;
 use App\Models\Service;
+use App\Models\Stat;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
 use Illuminate\Http\JsonResponse;
@@ -248,6 +249,17 @@ class FeaturedController extends Controller
             }
         }
 
+        // 12. Stats / Key Metrics (Counters)
+        if (empty($requestedModule) || in_array($requestedModule, ['stats', 'stat', 'counters', 'key-metrics'])) {
+            $q = Stat::where('isFeatured', true)->orderBy('order', 'asc')->orderBy('id', 'asc');
+            if ($limit) {
+                $q->limit($limit);
+            }
+            $stats = $q->get()->map->toPayload()->values();
+            $data['stats'] = $stats;
+            $counts['stats'] = count($stats);
+        }
+
         $counts['total'] = array_sum($counts);
 
         return response()->json([
@@ -482,6 +494,17 @@ class FeaturedController extends Controller
                 $data['about'] = $aboutFeatured;
                 $counts['about'] = $featuredSectionCount;
             }
+        }
+
+        // 12. Stats / Key Metrics (Counters)
+        if (empty($requestedModule) || in_array($requestedModule, ['stats', 'stat', 'counters', 'key-metrics'])) {
+            $q = Stat::where('isFeatured', true)->orderBy('order', 'asc')->orderBy('id', 'asc');
+            if ($limit) {
+                $q->limit($limit);
+            }
+            $stats = $q->get()->map->toPayload()->values();
+            $data['stats'] = $stats;
+            $counts['stats'] = count($stats);
         }
 
         $counts['total'] = array_sum($counts);
