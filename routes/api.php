@@ -115,7 +115,9 @@ Route::get('dashboard', [DashboardController::class, 'index']);
 
     // Module 6: Blog
     Route::get('blog', [BlogController::class, 'indexPublic']);
+    Route::get('blogs', [BlogController::class, 'indexPublic']);
     Route::get('blog/{slug}', [BlogController::class, 'showPublic']);
+    Route::get('blogs/{slug}', [BlogController::class, 'showPublic']);
 
     // Module 7: Events
     Route::get('events', [EventController::class, 'indexPublic']);
@@ -383,10 +385,15 @@ Route::prefix('admin')->group(function () {
 
         // Module 6: Blog CRUD
         Route::get('blog', [BlogController::class, 'indexAdmin']);
+        Route::get('blogs', [BlogController::class, 'indexAdmin']);
         Route::get('blog/{id}', [BlogController::class, 'showAdmin']);
+        Route::get('blogs/{id}', [BlogController::class, 'showAdmin']);
         Route::post('blog', [BlogController::class, 'store']);
-        Route::put('blog/{id}', [BlogController::class, 'update']);
+        Route::post('blogs', [BlogController::class, 'store']);
+        Route::match(['put', 'patch', 'post'], 'blog/{id}', [BlogController::class, 'update']);
+        Route::match(['put', 'patch', 'post'], 'blogs/{id}', [BlogController::class, 'update']);
         Route::delete('blog/{id}', [BlogController::class, 'destroy']);
+        Route::delete('blogs/{id}', [BlogController::class, 'destroy']);
 
         // Module 7: Events CRUD
         Route::get('events', [EventController::class, 'indexAdmin']);

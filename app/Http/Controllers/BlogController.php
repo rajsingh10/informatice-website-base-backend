@@ -149,6 +149,10 @@ class BlogController extends Controller
             'slug'               => 'nullable|string|max:255|unique:blogs,slug',
             'excerpt'            => 'nullable|string',
             'content'            => 'nullable|string',
+            'features'           => 'nullable|array',
+            'sections'           => 'nullable|array',
+            'keyTakeaways'       => 'nullable|array',
+            'conclusion'         => 'nullable|string',
             'image'              => 'nullable|string|max:1000',
             'imageAlt'           => 'nullable|string|max:500',
             'category'           => 'nullable|string|max:100',
@@ -182,20 +186,26 @@ class BlogController extends Controller
             'avatar'      => $validated['author']['avatar'] ?? '',
         ];
 
+        $featuresInput = $request->input('features', $request->input('sections', []));
+
         $createData = [
-            'title'    => $validated['title'],
-            'slug'     => $slug,
-            'excerpt'  => $validated['excerpt'] ?? null,
-            'content'  => $validated['content'] ?? null,
-            'image'    => $validated['image'] ?? null,
-            'category' => $validated['category'] ?? 'General',
-            'author'   => $author,
-            'date'     => $validated['date'] ?? now()->toDateString(),
-            'readTime' => $readTime,
-            'tags'     => $validated['tags'] ?? [],
-            'isFeatured' => $request->has('isFeatured') ? filter_var($request->input('isFeatured'), FILTER_VALIDATE_BOOLEAN) : false,
-            'status'   => $validated['status'] ?? 'published',
-            'seo'      => $validated['seo'] ?? [],
+            'title'        => $validated['title'],
+            'slug'         => $slug,
+            'excerpt'      => $validated['excerpt'] ?? null,
+            'content'      => $validated['content'] ?? null,
+            'features'     => is_array($featuresInput) ? array_values($featuresInput) : [],
+            'sections'     => is_array($featuresInput) ? array_values($featuresInput) : [],
+            'keyTakeaways' => is_array($request->input('keyTakeaways')) ? array_values($request->input('keyTakeaways')) : null,
+            'conclusion'   => $request->filled('conclusion') ? (string) $request->input('conclusion') : null,
+            'image'        => $validated['image'] ?? null,
+            'category'     => $validated['category'] ?? 'General',
+            'author'       => $author,
+            'date'         => $validated['date'] ?? now()->toDateString(),
+            'readTime'     => $readTime,
+            'tags'         => $validated['tags'] ?? [],
+            'isFeatured'   => $request->has('isFeatured') ? filter_var($request->input('isFeatured'), FILTER_VALIDATE_BOOLEAN) : false,
+            'status'       => $validated['status'] ?? 'published',
+            'seo'          => $validated['seo'] ?? [],
         ];
 
         $imageAlt = (string) ($request->input('imageAlt', $request->input('altImage', '')));
@@ -235,6 +245,10 @@ class BlogController extends Controller
             'slug'               => 'nullable|string|max:255|unique:blogs,slug,' . $id,
             'excerpt'            => 'nullable|string',
             'content'            => 'nullable|string',
+            'features'           => 'nullable|array',
+            'sections'           => 'nullable|array',
+            'keyTakeaways'       => 'nullable|array',
+            'conclusion'         => 'nullable|string',
             'image'              => 'nullable|string|max:1000',
             'imageAlt'           => 'nullable|string|max:500',
             'category'           => 'nullable|string|max:100',
@@ -269,6 +283,20 @@ class BlogController extends Controller
             if (empty($validated['readTime'])) {
                 $post->readTime = Blog::calculateReadTime($post->content);
             }
+        }
+
+        if ($request->has('features') || $request->has('sections')) {
+            $feat = $request->input('features', $request->input('sections'));
+            $post->features = is_array($feat) ? array_values($feat) : [];
+            $post->sections = is_array($feat) ? array_values($feat) : [];
+        }
+
+        if ($request->has('keyTakeaways')) {
+            $post->keyTakeaways = is_array($request->input('keyTakeaways')) ? array_values($request->input('keyTakeaways')) : [];
+        }
+
+        if ($request->has('conclusion')) {
+            $post->conclusion = (string) $request->input('conclusion');
         }
 
         if (array_key_exists('image', $validated)) {

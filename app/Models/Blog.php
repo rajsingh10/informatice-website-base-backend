@@ -15,6 +15,10 @@ class Blog extends Model
         'slug',
         'excerpt',
         'content',
+        'features',
+        'sections',
+        'keyTakeaways',
+        'conclusion',
         'image',
         'imageAlt',
         'category',
@@ -60,11 +64,14 @@ class Blog extends Model
     }
 
     protected $casts = [
-        'author'     => 'array',
-        'tags'       => 'array',
-        'isFeatured' => 'boolean',
-        'seo'        => 'array',
-        'date'       => 'date:Y-m-d',
+        'author'       => 'array',
+        'tags'         => 'array',
+        'features'     => 'array',
+        'sections'     => 'array',
+        'keyTakeaways' => 'array',
+        'isFeatured'   => 'boolean',
+        'seo'          => 'array',
+        'date'         => 'date:Y-m-d',
     ];
 
     /**
@@ -130,27 +137,135 @@ class Blog extends Model
     }
 
     /**
+     * Return structured features/sections array with:
+     * - title (e.g. "Key Takeaways", "Conclusion", "Title 2")
+     * - points (array of bullet points)
+     * - content (paragraph text)
+     */
+    public function getNormalizedFeatures(): array
+    {
+        $raw = $this->features ?: $this->sections;
+        $items = [];
+
+        if (is_array($raw)) {
+            foreach ($raw as $sec) {
+                if (is_array($sec)) {
+                    $title = trim((string) ($sec['title'] ?? $sec['name'] ?? ''));
+                    $points = [];
+                    if (isset($sec['points']) && is_array($sec['points'])) {
+                        $points = array_values(array_filter(array_map('trim', $sec['points']), fn ($p) => $p !== ''));
+                    } elseif (isset($sec['items']) && is_array($sec['items'])) {
+                        $points = array_values(array_filter(array_map('trim', $sec['items']), fn ($p) => $p !== ''));
+                    }
+                    $content = trim((string) ($sec['content'] ?? $sec['description'] ?? $sec['text'] ?? ''));
+                    if ($title !== '' || ! empty($points) || $content !== '') {
+                        $items[] = [
+                            'title'   => $title,
+                            'points'  => $points,
+                            'content' => $content,
+                        ];
+                    }
+                }
+            }
+        }
+
+        // If direct keyTakeaways column or attribute exists and isn't represented, add it
+        if (is_array($this->keyTakeaways) && ! empty($this->keyTakeaways)) {
+            $hasKeyTakeaways = false;
+            foreach ($items as $item) {
+                if (strtolower($item['title']) === 'key takeaways') {
+                    $hasKeyTakeaways = true;
+                    break;
+                }
+            }
+            if (! $hasKeyTakeaways) {
+                $items[] = [
+                    'title'   => 'Key Takeaways',
+                    'points'  => array_values(array_filter(array_map('trim', $this->keyTakeaways), fn ($p) => $p !== '')),
+                    'content' => '',
+                ];
+            }
+        }
+
+        // If direct conclusion column or attribute exists and isn't represented, add it
+        if (! empty($this->conclusion)) {
+            $hasConclusion = false;
+            foreach ($items as $item) {
+                if (strtolower($item['title']) === 'conclusion') {
+                    $hasConclusion = true;
+                    break;
+                }
+            }
+            if (! $hasConclusion) {
+                $items[] = [
+                    'title'   => 'Conclusion',
+                    'points'  => [],
+                    'content' => (string) $this->conclusion,
+                ];
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * Extract Key Takeaways bullet list.
+     */
+    public function getKeyTakeawaysList(): array
+    {
+        if (is_array($this->keyTakeaways) && ! empty($this->keyTakeaways)) {
+            return array_values($this->keyTakeaways);
+        }
+        foreach ($this->getNormalizedFeatures() as $f) {
+            if (strtolower(trim($f['title'])) === 'key takeaways') {
+                return $f['points'];
+            }
+        }
+        return [];
+    }
+
+    /**
+     * Extract Conclusion paragraph text.
+     */
+    public function getConclusionText(): string
+    {
+        if (! empty($this->conclusion)) {
+            return (string) $this->conclusion;
+        }
+        foreach ($this->getNormalizedFeatures() as $f) {
+            if (strtolower(trim($f['title'])) === 'conclusion') {
+                return $f['content'];
+            }
+        }
+        return '';
+    }
+
+    /**
      * Compact payload for public feed:
      * id, title, slug, excerpt, image, category, author { name, avatar }, date, readTime, tags
      */
     public function toListPayload(): array
     {
         return [
-            'id'        => (int) $this->id,
-            'title'     => (string) $this->title,
-            'slug'      => (string) $this->slug,
-            'excerpt'   => (string) ($this->excerpt ?? ''),
-            'image'     => (string) ($this->image ?? ''),
-            'imageAlt'  => (string) ($this->imageAlt ?? ''),
-            'category'  => (string) ($this->category ?? 'General'),
-            'author'    => [
+            'id'           => (int) $this->id,
+            'title'        => (string) $this->title,
+            'slug'         => (string) $this->slug,
+            'excerpt'      => (string) ($this->excerpt ?? ''),
+            'features'     => $this->getNormalizedFeatures(),
+            'sections'     => $this->getNormalizedFeatures(),
+            'keyTakeaways' => $this->getKeyTakeawaysList(),
+            'conclusion'   => $this->getConclusionText(),
+            'image'        => (string) ($this->image ?? ''),
+            'imageAlt'     => (string) ($this->imageAlt ?? ''),
+            'category'     => (string) ($this->category ?? 'General'),
+            'author'       => [
                 'name'   => $this->author['name'] ?? '',
                 'avatar' => $this->author['avatar'] ?? '',
             ],
-            'date'      => $this->date ? $this->date->format('Y-m-d') : date('Y-m-d'),
-            'readTime'  => (string) ($this->readTime ?? '1 min'),
-            'tags'      => is_array($this->tags) ? array_values($this->tags) : [],
-            'isFeatured'=> (bool) $this->isFeatured,
+            'date'         => $this->date ? $this->date->format('Y-m-d') : date('Y-m-d'),
+            'readTime'     => (string) ($this->readTime ?? '1 min'),
+            'tags'         => is_array($this->tags) ? array_values($this->tags) : [],
+            'isFeatured'   => (bool) $this->isFeatured,
         ];
     }
 
@@ -161,25 +276,29 @@ class Blog extends Model
     public function toDetailPayload(): array
     {
         return [
-            'id'        => (int) $this->id,
-            'title'     => (string) $this->title,
-            'slug'      => (string) $this->slug,
-            'excerpt'   => (string) ($this->excerpt ?? ''),
-            'content'   => (string) ($this->content ?? ''),
-            'image'     => (string) ($this->image ?? ''),
-            'imageAlt'  => (string) ($this->imageAlt ?? ''),
-            'category'  => (string) ($this->category ?? 'General'),
-            'author'    => [
+            'id'           => (int) $this->id,
+            'title'        => (string) $this->title,
+            'slug'         => (string) $this->slug,
+            'excerpt'      => (string) ($this->excerpt ?? ''),
+            'content'      => (string) ($this->content ?? ''),
+            'features'     => $this->getNormalizedFeatures(),
+            'sections'     => $this->getNormalizedFeatures(),
+            'keyTakeaways' => $this->getKeyTakeawaysList(),
+            'conclusion'   => $this->getConclusionText(),
+            'image'        => (string) ($this->image ?? ''),
+            'imageAlt'     => (string) ($this->imageAlt ?? ''),
+            'category'     => (string) ($this->category ?? 'General'),
+            'author'       => [
                 'name'        => $this->author['name'] ?? '',
                 'designation' => $this->author['designation'] ?? '',
                 'avatar'      => $this->author['avatar'] ?? '',
             ],
-            'date'      => $this->date ? $this->date->format('Y-m-d') : date('Y-m-d'),
-            'readTime'  => (string) ($this->readTime ?? '1 min'),
-            'tags'      => is_array($this->tags) ? array_values($this->tags) : [],
-            'isFeatured'=> (bool) $this->isFeatured,
-            'status'    => (string) ($this->status ?? 'published'),
-            'seo'       => $this->resolveSeo(),
+            'date'         => $this->date ? $this->date->format('Y-m-d') : date('Y-m-d'),
+            'readTime'     => (string) ($this->readTime ?? '1 min'),
+            'tags'         => is_array($this->tags) ? array_values($this->tags) : [],
+            'isFeatured'   => (bool) $this->isFeatured,
+            'status'       => (string) ($this->status ?? 'published'),
+            'seo'          => $this->resolveSeo(),
         ];
     }
 
@@ -189,27 +308,31 @@ class Blog extends Model
     public function toAdminPayload(): array
     {
         return [
-            'id'         => (int) $this->id,
-            'title'      => (string) $this->title,
-            'slug'       => (string) $this->slug,
-            'excerpt'    => (string) ($this->excerpt ?? ''),
-            'content'    => (string) ($this->content ?? ''),
-            'image'      => (string) ($this->image ?? ''),
-            'imageAlt'   => (string) ($this->imageAlt ?? ''),
-            'category'   => (string) ($this->category ?? 'General'),
-            'author'     => [
+            'id'           => (int) $this->id,
+            'title'        => (string) $this->title,
+            'slug'         => (string) $this->slug,
+            'excerpt'      => (string) ($this->excerpt ?? ''),
+            'content'      => (string) ($this->content ?? ''),
+            'features'     => $this->getNormalizedFeatures(),
+            'sections'     => $this->getNormalizedFeatures(),
+            'keyTakeaways' => $this->getKeyTakeawaysList(),
+            'conclusion'   => $this->getConclusionText(),
+            'image'        => (string) ($this->image ?? ''),
+            'imageAlt'     => (string) ($this->imageAlt ?? ''),
+            'category'     => (string) ($this->category ?? 'General'),
+            'author'       => [
                 'name'        => $this->author['name'] ?? '',
                 'designation' => $this->author['designation'] ?? '',
                 'avatar'      => $this->author['avatar'] ?? '',
             ],
-            'date'       => $this->date ? $this->date->format('Y-m-d') : date('Y-m-d'),
-            'readTime'   => (string) ($this->readTime ?? '1 min'),
-            'tags'       => is_array($this->tags) ? array_values($this->tags) : [],
-            'isFeatured' => (bool) $this->isFeatured,
-            'status'     => (string) ($this->status ?? 'published'),
-            'seo'        => is_array($this->seo) ? $this->seo : (object)[],
-            'created_at' => $this->created_at?->toISOString(),
-            'updated_at' => $this->updated_at?->toISOString(),
+            'date'         => $this->date ? $this->date->format('Y-m-d') : date('Y-m-d'),
+            'readTime'     => (string) ($this->readTime ?? '1 min'),
+            'tags'         => is_array($this->tags) ? array_values($this->tags) : [],
+            'isFeatured'   => (bool) $this->isFeatured,
+            'status'       => (string) ($this->status ?? 'published'),
+            'seo'          => is_array($this->seo) ? $this->seo : (object)[],
+            'created_at'   => $this->created_at?->toISOString(),
+            'updated_at'   => $this->updated_at?->toISOString(),
         ];
     }
 }

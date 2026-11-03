@@ -2423,6 +2423,27 @@
                             <label class="text-xs font-medium text-slate-600">HTML Content</label>
                             <textarea id="blog-create-content" rows="3" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">&lt;h2&gt;Decoupling the Web&lt;/h2&gt;&lt;p&gt;Micro-frontends allow multi-team enterprise organizations to independently build and deploy modular web applications.&lt;/p&gt;</textarea>
                         </div>
+
+                        <!-- Dynamic Extra Feature Sections (Multiple Titles & Details) -->
+                        <div class="border border-rose-200 rounded-lg p-3 bg-rose-50/40 space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
+                                        <i class="fa-solid fa-list-check text-rose-500"></i>
+                                        <span>Extra Feature Sections (Multiple Titles & Details)</span>
+                                    </label>
+                                    <p class="text-[10px] text-slate-500">Add multiple titles with details/points (e.g. 1) Key Takeaways, 2) Conclusion)</p>
+                                </div>
+                                <button type="button" onclick="addBlogCreateSection()" class="bg-rose-600 hover:bg-rose-700 text-white text-[11px] font-semibold px-2.5 py-1 rounded transition shadow-sm flex items-center space-x-1">
+                                    <i class="fa-solid fa-plus text-[10px]"></i>
+                                    <span>Add Section</span>
+                                </button>
+                            </div>
+
+                            <div id="blog-create-sections-list" class="space-y-2">
+                                <!-- Dynamic Section Cards will be rendered here -->
+                            </div>
+                        </div>
                     </div>
                     <button onclick="testCreateBlog()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
                         Create Blog Post
@@ -2439,14 +2460,34 @@
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
-                    <div class="grid grid-cols-3 gap-2 mb-3">
-                        <div>
-                            <label class="text-xs font-medium text-slate-600">Post ID</label>
-                            <input id="blog-manage-id" type="number" value="1" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono">
+                    <div class="space-y-2 mb-3">
+                        <div class="flex space-x-2">
+                            <input id="blog-manage-id" type="number" value="6" placeholder="ID" class="w-20 text-xs border border-slate-200 rounded p-1.5 outline-none font-mono font-bold text-center">
+                            <button onclick="testLoadBlogAdmin()" class="bg-slate-700 hover:bg-slate-800 text-white text-xs px-3 py-1.5 rounded transition">
+                                <i class="fa-solid fa-download mr-1"></i> Load Post #
+                            </button>
+                            <input id="blog-manage-title" type="text" value="10 Web Design Trends That Will Dominate 2025" placeholder="Post Title" class="flex-1 text-xs border border-slate-200 rounded p-1.5 outline-none">
                         </div>
-                        <div class="col-span-2">
-                            <label class="text-xs font-medium text-slate-600">Updated Title</label>
-                            <input id="blog-manage-title" type="text" value="The Evolution of Enterprise Design Systems (Updated)" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+
+                        <!-- Dynamic Extra Feature Sections (Manage / Update) -->
+                        <div class="border border-indigo-200 rounded-lg p-3 bg-indigo-50/40 space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label class="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
+                                        <i class="fa-solid fa-list-check text-indigo-500"></i>
+                                        <span>Extra Feature Sections (Multiple Titles & Details)</span>
+                                    </label>
+                                    <p class="text-[10px] text-slate-500">Edit or add multiple titles & details for this post</p>
+                                </div>
+                                <button type="button" onclick="addBlogManageSection()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-semibold px-2.5 py-1 rounded transition shadow-sm flex items-center space-x-1">
+                                    <i class="fa-solid fa-plus text-[10px]"></i>
+                                    <span>Add Section</span>
+                                </button>
+                            </div>
+
+                            <div id="blog-manage-sections-list" class="space-y-2">
+                                <!-- Dynamic Section Cards will be rendered here -->
+                            </div>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
@@ -5224,8 +5265,140 @@
         async function testAdminBlog() {
             await sendApi('GET', '/api/admin/blog', null, true);
         }
+        // ─── Blog Features / Structured Sections Dynamic Repeater ───
+        let blogCreateSections = [
+            {
+                title: "Key Takeaways",
+                details: "Stay ahead of the curve by understanding emerging trends early.\nImplement best practices consistently across all projects.\nFocus on user experience as the primary driver of success.\nLeverage modern tools and frameworks for efficiency."
+            },
+            {
+                title: "Conclusion",
+                details: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            }
+        ];
+
+        let blogManageSections = [];
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function renderBlogCreateSections() {
+            const container = document.getElementById('blog-create-sections-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            blogCreateSections.forEach((sec, idx) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white border border-rose-200/80 rounded-lg p-2.5 shadow-xs space-y-1.5';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-rose-900 flex items-center space-x-1">
+                            <span class="w-4 h-4 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center text-[10px]">${idx + 1}</span>
+                            <span>Section ${idx + 1}</span>
+                        </span>
+                        <button type="button" onclick="removeBlogCreateSection(${idx})" class="text-slate-400 hover:text-red-600 text-xs transition" title="Remove Section">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-semibold text-slate-600 uppercase tracking-wider block">Title (e.g. Key Takeaways or Conclusion)</label>
+                        <input type="text" value="${escapeHtml(sec.title)}" oninput="blogCreateSections[${idx}].title = this.value" placeholder="e.g. Key Takeaways" class="w-full text-xs font-semibold border border-slate-200 rounded p-1.5 mt-0.5 outline-none focus:border-rose-400">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-semibold text-slate-600 uppercase tracking-wider block">Details / Points (Enter one point per line, or paragraph)</label>
+                        <textarea rows="3" oninput="blogCreateSections[${idx}].details = this.value" placeholder="Point 1&#10;Point 2&#10;Point 3..." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono focus:border-rose-400">${escapeHtml(sec.details)}</textarea>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addBlogCreateSection(title = '', details = '') {
+            blogCreateSections.push({
+                title: title || `Title ${blogCreateSections.length + 1}`,
+                details: details || 'point 1\npoint 2'
+            });
+            renderBlogCreateSections();
+        }
+
+        function removeBlogCreateSection(idx) {
+            blogCreateSections.splice(idx, 1);
+            renderBlogCreateSections();
+        }
+
+        function renderBlogManageSections() {
+            const container = document.getElementById('blog-manage-sections-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (blogManageSections.length === 0) {
+                container.innerHTML = `<p class="text-[11px] text-slate-400 italic py-1">No feature sections loaded. Click "+ Add Section" or "Load Post #" above.</p>`;
+                return;
+            }
+
+            blogManageSections.forEach((sec, idx) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white border border-indigo-200/80 rounded-lg p-2.5 shadow-xs space-y-1.5';
+                card.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-indigo-900 flex items-center space-x-1">
+                            <span class="w-4 h-4 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-[10px]">${idx + 1}</span>
+                            <span>Section ${idx + 1}</span>
+                        </span>
+                        <button type="button" onclick="removeBlogManageSection(${idx})" class="text-slate-400 hover:text-red-600 text-xs transition" title="Remove Section">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-semibold text-slate-600 uppercase tracking-wider block">Title</label>
+                        <input type="text" value="${escapeHtml(sec.title)}" oninput="blogManageSections[${idx}].title = this.value" placeholder="e.g. Key Takeaways" class="w-full text-xs font-semibold border border-slate-200 rounded p-1.5 mt-0.5 outline-none focus:border-indigo-400">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-semibold text-slate-600 uppercase tracking-wider block">Details / Points (One per line)</label>
+                        <textarea rows="3" oninput="blogManageSections[${idx}].details = this.value" placeholder="Point 1&#10;Point 2..." class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none font-mono focus:border-indigo-400">${escapeHtml(sec.details)}</textarea>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function addBlogManageSection(title = '', details = '') {
+            blogManageSections.push({
+                title: title || `Title ${blogManageSections.length + 1}`,
+                details: details || 'point 1\npoint 2'
+            });
+            renderBlogManageSections();
+        }
+
+        function removeBlogManageSection(idx) {
+            blogManageSections.splice(idx, 1);
+            renderBlogManageSections();
+        }
+
+        function parseSectionsToPayload(sections) {
+            return sections.map(s => {
+                const title = (s.title || '').trim();
+                const rawDetails = (s.details || '').trim();
+                const lines = rawDetails.split('\n').map(l => l.trim()).filter(Boolean);
+                const isSingleParagraph = lines.length === 1 && lines[0].length > 80;
+
+                return {
+                    title: title,
+                    points: isSingleParagraph ? [] : lines,
+                    content: isSingleParagraph ? lines[0] : (lines.length > 0 ? '' : '')
+                };
+            }).filter(s => s.title !== '' || s.points.length > 0 || s.content !== '');
+        }
+
         async function testCreateBlog() {
             const tags = document.getElementById('blog-create-tags').value.split(',').map(s => s.trim()).filter(Boolean);
+            const features = parseSectionsToPayload(blogCreateSections);
             const body = {
                 title: document.getElementById('blog-create-title').value,
                 category: document.getElementById('blog-create-cat').value,
@@ -5235,14 +5408,44 @@
                 },
                 tags: tags,
                 content: document.getElementById('blog-create-content').value,
+                features: features,
+                sections: features,
                 status: 'published'
             };
             await sendApi('POST', '/api/admin/blog', body, true);
         }
+
+        async function testLoadBlogAdmin() {
+            const id = document.getElementById('blog-manage-id').value;
+            if (!id) return alert('Enter a Blog Post ID');
+            const res = await sendApi('GET', `/api/admin/blog/${id}`, null, true);
+            if (res && res.data) {
+                const d = res.data;
+                if (d.title) document.getElementById('blog-manage-title').value = d.title;
+                const feats = d.features || d.sections || [];
+                blogManageSections = feats.map(f => {
+                    const points = Array.isArray(f.points) ? f.points.join('\n') : '';
+                    const content = f.content || '';
+                    const details = points || content;
+                    return {
+                        title: f.title || '',
+                        details: details
+                    };
+                });
+                renderBlogManageSections();
+            }
+        }
+
         async function testUpdateBlog() {
             const id = document.getElementById('blog-manage-id').value;
             const title = document.getElementById('blog-manage-title').value;
-            await sendApi('PUT', `/api/admin/blog/${id}`, { title }, true);
+            const features = parseSectionsToPayload(blogManageSections);
+            const payload = {
+                title: title,
+                features: features,
+                sections: features
+            };
+            await sendApi('PUT', `/api/admin/blog/${id}`, payload, true);
         }
         async function testDeleteBlog() {
             const id = document.getElementById('blog-manage-id').value;
@@ -5878,6 +6081,8 @@
 
         initLayoutSelects();
         updateTokenDisplay();
+        renderBlogCreateSections();
+        renderBlogManageSections();
     </script>
 </body>
 </html>
