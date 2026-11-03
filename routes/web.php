@@ -213,7 +213,11 @@ Route::middleware([ForceJsonResponse::class])->group(function () {
         // About Page Content CRUD & Image ALT management
         Route::get('/admin/about', [AboutController::class, 'showAdmin']);
         Route::match(['put', 'post'], '/admin/about', [AboutController::class, 'update']);
-        Route::put('/admin/about/images', [AboutController::class, 'updateImages']);
+        Route::match(['put', 'post'], '/admin/about/images', [AboutController::class, 'updateImages']);
+        Route::post('/admin/about/images/add', [AboutController::class, 'addImage']);
+        Route::post('/admin/about/image', [AboutController::class, 'addImage']);
+        Route::match(['put', 'patch', 'post'], '/admin/about/images/{identifier}', [AboutController::class, 'updateSingleImage']);
+        Route::delete('/admin/about/images/{identifier}', [AboutController::class, 'deleteSingleImage']);
         Route::post('/admin/about/reset', [AboutController::class, 'reset']);
         Route::get('/admin/career', [AdminModuleController::class, 'getCareer']);
         Route::get('/admin/faq', [AdminModuleController::class, 'getFaq']);

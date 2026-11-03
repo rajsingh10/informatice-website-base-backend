@@ -187,6 +187,180 @@ class AboutPage extends Model
     }
 
     /**
+     * Get normalized multiple images array.
+     */
+    public function getNormalizedImages(): array
+    {
+        $raw = is_array($this->images) ? $this->images : static::defaults()['images'];
+        $normalized = [];
+
+        foreach ($raw as $index => $item) {
+            $norm = static::normalizeImageItem($item, $index);
+            if ($norm) {
+                $normalized[] = $norm;
+            }
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Normalize a single image item.
+     */
+    public static function normalizeImageItem(mixed $item, int $index = 0): ?array
+    {
+        if (empty($item)) {
+            return null;
+        }
+
+        if (is_string($item)) {
+            $url = trim($item);
+            if ($url === '') return null;
+            return [
+                'id'    => $index + 1,
+                'slot'  => 'img-about-' . ($index + 1),
+                'url'   => $url,
+                'alt'   => '',
+                'title' => '',
+            ];
+        }
+
+        if (is_array($item)) {
+            $url = (string) ($item['url'] ?? $item['image'] ?? $item['src'] ?? '');
+            if (trim($url) === '') return null;
+            $slot = (string) ($item['slot'] ?? ('img-about-' . ($index + 1)));
+            $alt = (string) ($item['alt'] ?? $item['imageAlt'] ?? $item['caption'] ?? '');
+            $title = (string) ($item['title'] ?? $item['name'] ?? '');
+            $id = isset($item['id']) && is_numeric($item['id']) ? (int) $item['id'] : ($index + 1);
+
+            return [
+                'id'    => $id,
+                'slot'  => $slot,
+                'url'   => $url,
+                'alt'   => $alt,
+                'title' => $title,
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * Add a new image to the multiple images list.
+     */
+    public function addImage(array $imageData): array
+    {
+        $images = $this->getNormalizedImages();
+        $nextId = 1;
+        foreach ($images as $img) {
+            if (isset($img['id']) && $img['id'] >= $nextId) {
+                $nextId = $img['id'] + 1;
+            }
+        }
+
+        $newImage = [
+            'id'    => $nextId,
+            'slot'  => ! empty($imageData['slot']) ? (string) $imageData['slot'] : ('img-about-' . $nextId),
+            'url'   => (string) ($imageData['url'] ?? ''),
+            'alt'   => (string) ($imageData['alt'] ?? $imageData['imageAlt'] ?? ''),
+            'title' => (string) ($imageData['title'] ?? ''),
+        ];
+
+        $images[] = $newImage;
+        $this->images = $images;
+        $this->save();
+
+        return $newImage;
+    }
+
+    /**
+     * Update an existing image in the multiple images list by id, slot, or 0-based index.
+     */
+    public function updateImage(string|int $identifier, array $imageData): ?array
+    {
+        $images = $this->getNormalizedImages();
+        $targetIndex = null;
+
+        // Try matching by id or slot
+        foreach ($images as $idx => $img) {
+            if (isset($img['id']) && (string) $img['id'] === (string) $identifier) {
+                $targetIndex = $idx;
+                break;
+            }
+            if (isset($img['slot']) && $img['slot'] === (string) $identifier) {
+                $targetIndex = $idx;
+                break;
+            }
+        }
+
+        // Fallback to array index if numeric and within range
+        if ($targetIndex === null && is_numeric($identifier) && isset($images[(int) $identifier])) {
+            $targetIndex = (int) $identifier;
+        }
+
+        if ($targetIndex === null) {
+            return null;
+        }
+
+        $current = $images[$targetIndex];
+
+        if (array_key_exists('url', $imageData)) {
+            $current['url'] = (string) $imageData['url'];
+        }
+        if (array_key_exists('alt', $imageData)) {
+            $current['alt'] = (string) $imageData['alt'];
+        } elseif (array_key_exists('imageAlt', $imageData)) {
+            $current['alt'] = (string) $imageData['imageAlt'];
+        }
+        if (array_key_exists('title', $imageData)) {
+            $current['title'] = (string) $imageData['title'];
+        }
+        if (array_key_exists('slot', $imageData) && ! empty($imageData['slot'])) {
+            $current['slot'] = (string) $imageData['slot'];
+        }
+
+        $images[$targetIndex] = $current;
+        $this->images = $images;
+        $this->save();
+
+        return $current;
+    }
+
+    /**
+     * Delete an existing image from the multiple images list.
+     */
+    public function deleteImage(string|int $identifier): bool
+    {
+        $images = $this->getNormalizedImages();
+        $targetIndex = null;
+
+        foreach ($images as $idx => $img) {
+            if (isset($img['id']) && (string) $img['id'] === (string) $identifier) {
+                $targetIndex = $idx;
+                break;
+            }
+            if (isset($img['slot']) && $img['slot'] === (string) $identifier) {
+                $targetIndex = $idx;
+                break;
+            }
+        }
+
+        if ($targetIndex === null && is_numeric($identifier) && isset($images[(int) $identifier])) {
+            $targetIndex = (int) $identifier;
+        }
+
+        if ($targetIndex === null) {
+            return false;
+        }
+
+        array_splice($images, $targetIndex, 1);
+        $this->images = array_values($images);
+        $this->save();
+
+        return true;
+    }
+
+    /**
      * Format payload for public consumers.
      */
     public function toPayload(): array
@@ -242,7 +416,7 @@ class AboutPage extends Model
             'values'             => is_array($this->values) ? $this->values : $defaults['values'],
             'milestones'         => is_array($this->milestones) ? $this->milestones : $defaults['milestones'],
             'stats'              => is_array($this->stats) ? $this->stats : $defaults['stats'],
-            'images'             => is_array($this->images) ? $this->images : $defaults['images'],
+            'images'             => $this->getNormalizedImages(),
             'imageAltMap'             => (object) $altMap,
             'teamSectionEnabled'      => (bool) $this->teamSectionEnabled,
             'differentiatorsFeatured' => (bool) ($this->differentiatorsFeatured ?? true),
