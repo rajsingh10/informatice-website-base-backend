@@ -18,8 +18,12 @@ class BlogController extends Controller
         $query = Blog::where('status', 'published')
             ->where('date', '<=', now()->toDateString());
 
-        if ($request->filled('category')) {
-            $query->where('category', $request->query('category'));
+        $categoryFilter = $request->query('category') ?? $request->query('categories');
+        if (! empty($categoryFilter)) {
+            $query->where(function ($q) use ($categoryFilter) {
+                $q->where('category', $categoryFilter)
+                  ->orWhereJsonContains('categories', $categoryFilter);
+            });
         }
 
         if ($request->has('featured') || $request->has('isFeatured')) {
@@ -80,8 +84,12 @@ class BlogController extends Controller
     {
         $query = Blog::query();
 
-        if ($request->filled('category')) {
-            $query->where('category', $request->query('category'));
+        $categoryFilter = $request->query('category') ?? $request->query('categories');
+        if (! empty($categoryFilter)) {
+            $query->where(function ($q) use ($categoryFilter) {
+                $q->where('category', $categoryFilter)
+                  ->orWhereJsonContains('categories', $categoryFilter);
+            });
         }
 
         if ($request->has('featured') || $request->has('isFeatured')) {
@@ -156,6 +164,7 @@ class BlogController extends Controller
             'image'              => 'nullable|string|max:1000',
             'imageAlt'           => 'nullable|string|max:500',
             'category'           => 'nullable|string|max:100',
+            'categories'         => 'nullable',
             'author'             => 'nullable|array',
             'author.name'        => 'nullable|string|max:150',
             'author.designation' => 'nullable|string|max:150',
@@ -188,6 +197,30 @@ class BlogController extends Controller
 
         $featuresInput = $request->input('features', $request->input('sections', []));
 
+        // Resolve category & categories
+        $rawCategories = $request->input('categories');
+        $categoriesList = [];
+        if (is_array($rawCategories)) {
+            $categoriesList = array_values(array_filter(array_map('trim', $rawCategories), fn ($v) => $v !== ''));
+        } elseif (is_string($rawCategories) && trim($rawCategories) !== '') {
+            if (str_contains($rawCategories, ',')) {
+                $categoriesList = array_values(array_filter(array_map('trim', explode(',', $rawCategories)), fn ($v) => $v !== ''));
+            } else {
+                $categoriesList = [trim($rawCategories)];
+            }
+        }
+
+        $category = $request->filled('category') ? trim((string) $request->input('category')) : null;
+
+        if (empty($category) && ! empty($categoriesList)) {
+            $category = $categoriesList[0];
+        } elseif (! empty($category) && empty($categoriesList)) {
+            $categoriesList = [$category];
+        } elseif (empty($category) && empty($categoriesList)) {
+            $category = 'General';
+            $categoriesList = ['General'];
+        }
+
         $createData = [
             'title'        => $validated['title'],
             'slug'         => $slug,
@@ -198,7 +231,8 @@ class BlogController extends Controller
             'keyTakeaways' => is_array($request->input('keyTakeaways')) ? array_values($request->input('keyTakeaways')) : null,
             'conclusion'   => $request->filled('conclusion') ? (string) $request->input('conclusion') : null,
             'image'        => $validated['image'] ?? null,
-            'category'     => $validated['category'] ?? 'General',
+            'category'     => $category,
+            'categories'   => $categoriesList,
             'author'       => $author,
             'date'         => $validated['date'] ?? now()->toDateString(),
             'readTime'     => $readTime,
@@ -252,6 +286,7 @@ class BlogController extends Controller
             'image'              => 'nullable|string|max:1000',
             'imageAlt'           => 'nullable|string|max:500',
             'category'           => 'nullable|string|max:100',
+            'categories'         => 'nullable',
             'author'             => 'nullable|array',
             'author.name'        => 'nullable|string|max:150',
             'author.designation' => 'nullable|string|max:150',
@@ -314,8 +349,35 @@ class BlogController extends Controller
             }
         }
 
-        if (array_key_exists('category', $validated)) {
-            $post->category = $validated['category'] ?: 'General';
+        if ($request->has('categories') || $request->has('category')) {
+            $rawCategories = $request->input('categories');
+            $categoriesList = [];
+            if (is_array($rawCategories)) {
+                $categoriesList = array_values(array_filter(array_map('trim', $rawCategories), fn ($v) => $v !== ''));
+            } elseif (is_string($rawCategories) && trim($rawCategories) !== '') {
+                if (str_contains($rawCategories, ',')) {
+                    $categoriesList = array_values(array_filter(array_map('trim', explode(',', $rawCategories)), fn ($v) => $v !== ''));
+                } else {
+                    $categoriesList = [trim($rawCategories)];
+                }
+            }
+
+            $category = $request->has('category') && $request->filled('category') 
+                ? trim((string) $request->input('category')) 
+                : null;
+
+            if ($category && empty($categoriesList)) {
+                $categoriesList = [$category];
+            } elseif (! empty($categoriesList) && ! $category) {
+                $category = $categoriesList[0];
+            }
+
+            if ($category) {
+                $post->category = $category;
+            }
+            if (! empty($categoriesList)) {
+                $post->categories = $categoriesList;
+            }
         }
 
         if (array_key_exists('author', $validated) && is_array($validated['author'])) {

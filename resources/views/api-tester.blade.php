@@ -2404,14 +2404,18 @@
                     </div>
                     <p class="text-xs text-slate-600 mb-3">Create new post (auto-computes readTime if not provided, auto-generates slug).</p>
                     <div class="space-y-2 mb-3">
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
                             <div>
                                 <label class="text-xs font-medium text-slate-600">Title *</label>
                                 <input id="blog-create-title" type="text" value="Modern Micro-Frontends at Scale" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
                             </div>
                             <div>
-                                <label class="text-xs font-medium text-slate-600">Category</label>
-                                <input id="blog-create-cat" type="text" value="Architecture" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                                <label class="text-xs font-medium text-slate-600">Category (Primary)</label>
+                                <input id="blog-create-cat" type="text" value="Design" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-slate-600">Categories (List / Array)</label>
+                                <input id="blog-create-categories" type="text" value="Design, Marketing" placeholder="e.g. Design, Marketing" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
@@ -2476,6 +2480,16 @@
                                 <i class="fa-solid fa-download mr-1"></i> Load Post #
                             </button>
                             <input id="blog-manage-title" type="text" value="10 Web Design Trends That Will Dominate 2025" placeholder="Post Title" class="flex-1 text-xs border border-slate-200 rounded p-1.5 outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block">Category (Primary)</label>
+                                <input id="blog-manage-cat" type="text" value="Design" placeholder="Category" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block">Categories (comma-separated or array)</label>
+                                <input id="blog-manage-categories" type="text" value="Design, Marketing" placeholder="e.g. Design, Marketing" class="w-full text-xs border border-slate-200 rounded p-1.5 outline-none">
+                            </div>
                         </div>
 
                         <!-- Dynamic Extra Feature Sections (Manage / Update) -->
@@ -5552,9 +5566,13 @@
         async function testCreateBlog() {
             const tags = document.getElementById('blog-create-tags').value.split(',').map(s => s.trim()).filter(Boolean);
             const features = parseSectionsToPayload(blogCreateSections);
+            const cat = document.getElementById('blog-create-cat').value.trim();
+            const categoriesRaw = document.getElementById('blog-create-categories')?.value || '';
+            const categories = categoriesRaw ? categoriesRaw.split(',').map(s => s.trim()).filter(Boolean) : (cat ? [cat] : ['General']);
             const body = {
                 title: document.getElementById('blog-create-title').value,
-                category: document.getElementById('blog-create-cat').value,
+                category: cat,
+                categories: categories,
                 author: {
                     name: document.getElementById('blog-create-author-name').value,
                     designation: document.getElementById('blog-create-author-desig').value,
@@ -5575,6 +5593,12 @@
             if (res && res.data) {
                 const d = res.data;
                 if (d.title) document.getElementById('blog-manage-title').value = d.title;
+                if (d.category && document.getElementById('blog-manage-cat')) {
+                    document.getElementById('blog-manage-cat').value = d.category;
+                }
+                if (d.categories && document.getElementById('blog-manage-categories')) {
+                    document.getElementById('blog-manage-categories').value = Array.isArray(d.categories) ? d.categories.join(', ') : d.categories;
+                }
                 const feats = d.features || d.sections || [];
                 blogManageSections = feats.map(f => {
                     const points = Array.isArray(f.points) ? f.points.join('\n') : '';
@@ -5592,9 +5616,14 @@
         async function testUpdateBlog() {
             const id = document.getElementById('blog-manage-id').value;
             const title = document.getElementById('blog-manage-title').value;
+            const cat = document.getElementById('blog-manage-cat')?.value.trim();
+            const categoriesRaw = document.getElementById('blog-manage-categories')?.value || '';
+            const categories = categoriesRaw ? categoriesRaw.split(',').map(s => s.trim()).filter(Boolean) : (cat ? [cat] : undefined);
             const features = parseSectionsToPayload(blogManageSections);
             const payload = {
                 title: title,
+                category: cat,
+                categories: categories,
                 features: features,
                 sections: features
             };

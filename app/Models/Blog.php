@@ -22,6 +22,7 @@ class Blog extends Model
         'image',
         'imageAlt',
         'category',
+        'categories',
         'author',
         'date',
         'readTime',
@@ -66,6 +67,7 @@ class Blog extends Model
     protected $casts = [
         'author'       => 'array',
         'tags'         => 'array',
+        'categories'   => 'array',
         'features'     => 'array',
         'sections'     => 'array',
         'keyTakeaways' => 'array',
@@ -241,6 +243,43 @@ class Blog extends Model
     }
 
     /**
+     * Get categories list as an array of strings.
+     * Always returns an array e.g. ["Design", "Marketing"].
+     */
+    public function getCategoriesList(): array
+    {
+        // 1. If categories attribute is already a non-empty array
+        if (! empty($this->categories) && is_array($this->categories)) {
+            $cleaned = array_values(array_filter(array_map('trim', $this->categories), fn ($v) => $v !== ''));
+            if (! empty($cleaned)) {
+                return $cleaned;
+            }
+        }
+
+        // 2. If categories was stored as a JSON string or comma-separated string
+        if (is_string($this->categories) && trim($this->categories) !== '') {
+            $decoded = json_decode($this->categories, true);
+            if (is_array($decoded) && ! empty($decoded)) {
+                return array_values(array_filter(array_map('trim', $decoded), fn ($v) => $v !== ''));
+            }
+            if (str_contains($this->categories, ',')) {
+                return array_values(array_filter(array_map('trim', explode(',', $this->categories)), fn ($v) => $v !== ''));
+            }
+            return [trim($this->categories)];
+        }
+
+        // 3. Fallback to primary category string
+        if (! empty($this->category) && is_string($this->category)) {
+            if (str_contains($this->category, ',')) {
+                return array_values(array_filter(array_map('trim', explode(',', $this->category)), fn ($v) => $v !== ''));
+            }
+            return [trim($this->category)];
+        }
+
+        return ['General'];
+    }
+
+    /**
      * Compact payload for public feed:
      * id, title, slug, excerpt, image, category, author { name, avatar }, date, readTime, tags
      */
@@ -258,6 +297,7 @@ class Blog extends Model
             'image'        => (string) ($this->image ?? ''),
             'imageAlt'     => (string) ($this->imageAlt ?? ''),
             'category'     => (string) ($this->category ?? 'General'),
+            'categories'   => $this->getCategoriesList(),
             'author'       => [
                 'name'   => $this->author['name'] ?? '',
                 'avatar' => $this->author['avatar'] ?? '',
@@ -288,6 +328,7 @@ class Blog extends Model
             'image'        => (string) ($this->image ?? ''),
             'imageAlt'     => (string) ($this->imageAlt ?? ''),
             'category'     => (string) ($this->category ?? 'General'),
+            'categories'   => $this->getCategoriesList(),
             'author'       => [
                 'name'        => $this->author['name'] ?? '',
                 'designation' => $this->author['designation'] ?? '',
@@ -320,6 +361,7 @@ class Blog extends Model
             'image'        => (string) ($this->image ?? ''),
             'imageAlt'     => (string) ($this->imageAlt ?? ''),
             'category'     => (string) ($this->category ?? 'General'),
+            'categories'   => $this->getCategoriesList(),
             'author'       => [
                 'name'        => $this->author['name'] ?? '',
                 'designation' => $this->author['designation'] ?? '',
