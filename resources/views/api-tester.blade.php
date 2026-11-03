@@ -1307,6 +1307,26 @@
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">Navbar Layout Template</label>
+                                <select id="navbar-template-select" class="w-full text-xs border border-indigo-300 rounded-lg p-2 font-mono bg-indigo-50/50">
+                                    <option value="layout1" selected>layout1: Standard Classic (Logo Left, Nav Center, CTA Right)</option>
+                                    <option value="layout2">layout2: Transparent Floating (Logo Left, Nav Center)</option>
+                                    <option value="layout3">layout3: Full Width Colored Banner (Logo Left)</option>
+                                    <option value="layout4">layout4: Centered Brand Logo (2-Tier Header)</option>
+                                    <option value="layout5">layout5: Minimal Clean Inline (Logo Left)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-700 mb-1">Logo Alignment</label>
+                                <select id="navbar-logo-alignment" class="w-full text-xs border border-slate-300 rounded-lg p-2 font-mono">
+                                    <option value="left" selected>Left (Standard)</option>
+                                    <option value="center">Center</option>
+                                    <option value="right">Right</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
                                 <label class="block text-xs font-medium text-slate-700 mb-1">CTA Label</label>
                                 <input type="text" id="navbar-update-cta-label" value="Get a Quote" class="w-full text-xs border border-slate-300 rounded-lg p-2">
                             </div>
@@ -4494,32 +4514,185 @@
                         </div>
                         <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-medium">Auth Required</span>
                     </div>
-                    <p class="text-xs text-slate-600 mb-3">Update global site metadata, branding, contacts, and socials.</p>
-                    <div class="space-y-2 mb-3">
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="text-xs font-medium text-slate-600">Site Name</label>
-                                <input id="settings-sitename" type="text" value="NexGen Digital" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                    <p class="text-xs text-slate-600 mb-3">Update global site metadata, branding, styling, spacing, typography, buttons, and custom code.</p>
+                    
+                    <div class="space-y-4 mb-4">
+                        <!-- General Site Info -->
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 space-y-2">
+                            <p class="text-xs font-bold text-slate-800"><i class="fa-solid fa-globe mr-1 text-amber-600"></i> General Information & Header</p>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[11px] font-medium text-slate-600">Site Name</label>
+                                    <input id="settings-sitename" type="text" value="NexGen Digital Enterprise" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-medium text-slate-600">Contact Email</label>
+                                    <input id="settings-email" type="email" value="hello@nexgensolutions.com" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                </div>
                             </div>
-                            <div>
-                                <label class="text-xs font-medium text-slate-600">Contact Email</label>
-                                <input id="settings-email" type="email" value="contact@nexgen.io" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[11px] font-medium text-slate-600">Phone</label>
+                                    <input id="settings-phone" type="text" value="+91 98765 43210" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-medium text-slate-600">Address</label>
+                                    <input id="settings-address" type="text" value="100 Innovation Way, Silicon Valley, CA" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[11px] font-medium text-slate-600">Logo Position / Alignment</label>
+                                    <select id="settings-logoposition" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                        <option value="left" selected>Left (Standard Classic Navbar)</option>
+                                        <option value="center">Center (Centered Brand Navbar)</option>
+                                        <option value="right">Right</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-medium text-slate-600">Logo URL</label>
+                                    <input id="settings-logourl" type="text" value="https://example.com/logo.png" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
+                                </div>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="text-xs font-medium text-slate-600">Phone</label>
-                                <input id="settings-phone" type="text" value="+1 (800) 555-0199" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+
+                        <!-- 1. Spacing -->
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 space-y-2">
+                            <p class="text-xs font-bold text-slate-800"><i class="fa-solid fa-arrows-up-down-left-right mr-1 text-blue-600"></i> Spacing</p>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500">outerMargin</label>
+                                    <input id="settings-outermargin" type="text" value="0px" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">paddingX</label>
+                                    <input id="settings-paddingx" type="text" value="16px" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">paddingY</label>
+                                    <input id="settings-paddingy" type="text" value="24px" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
                             </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500">borderRadius</label>
+                                    <input id="settings-borderradius" type="text" value="12px" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">cardRadius</label>
+                                    <input id="settings-cardradius" type="text" value="16px" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Text Design -->
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 space-y-2">
+                            <p class="text-xs font-bold text-slate-800"><i class="fa-solid fa-font mr-1 text-purple-600"></i> Text Design (Typography)</p>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500">fontFamilyHeading</label>
+                                    <input id="settings-fontheading" type="text" value="Plus Jakarta Sans" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">fontFamilyBody</label>
+                                    <input id="settings-fontbody" type="text" value="Inter" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500">fontSizeBase</label>
+                                    <input id="settings-fontsizebase" type="text" value="16px" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">fontWeightHeading</label>
+                                    <input id="settings-fontweightheading" type="text" value="700" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">fontWeightBody</label>
+                                    <input id="settings-fontweightbody" type="text" value="400" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Button Style -->
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 space-y-2">
+                            <p class="text-xs font-bold text-slate-800"><i class="fa-solid fa-square-check mr-1 text-emerald-600"></i> Button Style</p>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500">buttonRadius</label>
+                                    <input id="settings-btnradius" type="text" value="8px" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">buttonPaddingX</label>
+                                    <input id="settings-btnpadx" type="text" value="20px" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">buttonPaddingY</label>
+                                    <input id="settings-btnpady" type="text" value="10px" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500">buttonShadow</label>
+                                    <input id="settings-btnshadow" type="text" value="sm" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">buttonHoverAnimation</label>
+                                    <input id="settings-btnhover" type="text" value="scale" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Advanced -->
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 space-y-2">
+                            <p class="text-xs font-bold text-slate-800"><i class="fa-solid fa-code mr-1 text-slate-600"></i> Advanced Code & Tracking</p>
                             <div>
-                                <label class="text-xs font-medium text-slate-600">Address</label>
-                                <input id="settings-address" type="text" value="100 Innovation Way, Suite 400, San Francisco, CA" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none">
+                                <label class="text-[10px] text-slate-500">googleAnalyticsId</label>
+                                <input id="settings-gaid" type="text" placeholder="G-XXXXXXXXXX" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500">customHeaderCode</label>
+                                    <textarea id="settings-headercode" rows="2" placeholder="<script>...</script>" class="w-full text-xs border border-slate-200 rounded p-1.5 font-mono bg-white"></textarea>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">customFooterCode</label>
+                                    <textarea id="settings-footercode" rows="2" placeholder="<script>...</script>" class="w-full text-xs border border-slate-200 rounded p-1.5 font-mono bg-white"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. Branding -->
+                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 space-y-2">
+                            <p class="text-xs font-bold text-slate-800"><i class="fa-solid fa-palette mr-1 text-pink-600"></i> Branding Colors</p>
+                            <div class="grid grid-cols-5 gap-2">
+                                <div>
+                                    <label class="text-[10px] text-slate-500">primaryColor</label>
+                                    <input id="settings-primarycolor" type="text" value="#2563eb" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">secondaryColor</label>
+                                    <input id="settings-secondarycolor" type="text" value="#475569" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">accentColor</label>
+                                    <input id="settings-accentcolor" type="text" value="#f59e0b" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">textColor</label>
+                                    <input id="settings-textcolor" type="text" value="#0f172a" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] text-slate-500">backgroundColor</label>
+                                    <input id="settings-bgcolor" type="text" value="#ffffff" class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white">
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <button onclick="testUpdateSettings()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+
+                    <button onclick="testUpdateSettings()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
                         <i class="fa-solid fa-floppy-disk"></i>
-                        <span>Save Site Settings</span>
+                        <span>Save All Site Settings</span>
                     </button>
                 </div>
             </div>
@@ -5303,10 +5476,13 @@
 
         async function testPublicNavbar() { await sendApi('GET', '/api/public/navigation/navbar'); }
         async function testUpdateNavbarQuick() {
+            const layout = document.getElementById('navbar-template-select')?.value || 'layout1';
             const behavior = document.getElementById('navbar-update-behavior').value;
             const ctaLabel = document.getElementById('navbar-update-cta-label').value;
             const ctaUrl = document.getElementById('navbar-update-cta-url').value;
             const body = {
+                layout: layout,
+                navbarLayout: layout,
                 behavior: behavior,
                 cta: {
                     enabled: true,
@@ -6589,13 +6765,97 @@
 
         // Settings
         async function testPublicSettings() { await sendApi('GET', '/api/public/settings'); }
-        async function testAdminSettings() { await sendApi('GET', '/api/admin/settings', null, true); }
+        async function testAdminSettings() {
+            const res = await sendApi('GET', '/api/admin/settings', null, true);
+            if (res && res.data) {
+                const d = res.data;
+                const setVal = (id, val) => { const el = document.getElementById(id); if (el && val !== undefined && val !== null) el.value = val; };
+                setVal('settings-sitename', d.siteName);
+                setVal('settings-email', d.email);
+                setVal('settings-phone', d.phone);
+                setVal('settings-address', d.address);
+                setVal('settings-logoposition', d.logoPosition || d.logoAlignment || 'left');
+                setVal('settings-logourl', d.logoUrl);
+
+                // Spacing
+                setVal('settings-outermargin', d.outerMargin || d.spacing?.outerMargin);
+                setVal('settings-paddingx', d.paddingX || d.spacing?.paddingX);
+                setVal('settings-paddingy', d.paddingY || d.spacing?.paddingY);
+                setVal('settings-borderradius', d.borderRadius || d.spacing?.borderRadius);
+                setVal('settings-cardradius', d.cardRadius || d.spacing?.cardRadius);
+
+                // Text Design
+                setVal('settings-fontheading', d.fontFamilyHeading || d.textDesign?.fontFamilyHeading);
+                setVal('settings-fontbody', d.fontFamilyBody || d.textDesign?.fontFamilyBody);
+                setVal('settings-fontsizebase', d.fontSizeBase || d.textDesign?.fontSizeBase);
+                setVal('settings-fontweightheading', d.fontWeightHeading || d.textDesign?.fontWeightHeading);
+                setVal('settings-fontweightbody', d.fontWeightBody || d.textDesign?.fontWeightBody);
+
+                // Button Style
+                setVal('settings-btnradius', d.buttonRadius || d.buttonStyle?.buttonRadius);
+                setVal('settings-btnpadx', d.buttonPaddingX || d.buttonStyle?.buttonPaddingX);
+                setVal('settings-btnpady', d.buttonPaddingY || d.buttonStyle?.buttonPaddingY);
+                setVal('settings-btnshadow', d.buttonShadow || d.buttonStyle?.buttonShadow);
+                setVal('settings-btnhover', d.buttonHoverAnimation || d.buttonStyle?.buttonHoverAnimation);
+
+                // Advanced
+                setVal('settings-gaid', d.googleAnalyticsId || d.advanced?.googleAnalyticsId);
+                setVal('settings-headercode', d.customHeaderCode || d.advanced?.customHeaderCode);
+                setVal('settings-footercode', d.customFooterCode || d.advanced?.customFooterCode);
+
+                // Branding
+                setVal('settings-primarycolor', d.primaryColor || d.branding?.primaryColor);
+                setVal('settings-secondarycolor', d.secondaryColor || d.branding?.secondaryColor);
+                setVal('settings-accentcolor', d.accentColor || d.branding?.accentColor);
+                setVal('settings-textcolor', d.textColor || d.branding?.textColor);
+                setVal('settings-bgcolor', d.backgroundColor || d.branding?.backgroundColor);
+            }
+        }
         async function testUpdateSettings() {
-            const siteName = document.getElementById('settings-sitename').value;
-            const email = document.getElementById('settings-email').value;
-            const phone = document.getElementById('settings-phone').value;
-            const address = document.getElementById('settings-address').value;
-            await sendApi('PUT', '/api/admin/settings', { siteName, email, phone, address }, true);
+            const getVal = (id) => document.getElementById(id)?.value ?? '';
+            const payload = {
+                siteName: getVal('settings-sitename'),
+                email: getVal('settings-email'),
+                phone: getVal('settings-phone'),
+                address: getVal('settings-address'),
+                logoPosition: getVal('settings-logoposition'),
+                logoAlignment: getVal('settings-logoposition'),
+                logoUrl: getVal('settings-logourl'),
+
+                // Spacing
+                outerMargin: getVal('settings-outermargin'),
+                paddingX: getVal('settings-paddingx'),
+                paddingY: getVal('settings-paddingy'),
+                borderRadius: getVal('settings-borderradius'),
+                cardRadius: getVal('settings-cardradius'),
+
+                // Text Design
+                fontFamilyHeading: getVal('settings-fontheading'),
+                fontFamilyBody: getVal('settings-fontbody'),
+                fontSizeBase: getVal('settings-fontsizebase'),
+                fontWeightHeading: getVal('settings-fontweightheading'),
+                fontWeightBody: getVal('settings-fontweightbody'),
+
+                // Button Style
+                buttonRadius: getVal('settings-btnradius'),
+                buttonPaddingX: getVal('settings-btnpadx'),
+                buttonPaddingY: getVal('settings-btnpady'),
+                buttonShadow: getVal('settings-btnshadow'),
+                buttonHoverAnimation: getVal('settings-btnhover'),
+
+                // Advanced
+                googleAnalyticsId: getVal('settings-gaid'),
+                customHeaderCode: getVal('settings-headercode'),
+                customFooterCode: getVal('settings-footercode'),
+
+                // Branding
+                primaryColor: getVal('settings-primarycolor'),
+                secondaryColor: getVal('settings-secondarycolor'),
+                accentColor: getVal('settings-accentcolor'),
+                textColor: getVal('settings-textcolor'),
+                backgroundColor: getVal('settings-bgcolor')
+            };
+            await sendApi('PUT', '/api/admin/settings', payload, true);
         }
 
         // Floating Button

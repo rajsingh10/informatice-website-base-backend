@@ -210,7 +210,9 @@ class NavbarConfig extends Model
         $items = is_array($this->items) ? $this->items : static::defaultItems();
         $enabledItems = static::filterPublicItems($items);
 
-        $activeBehavior = $this->getBehaviorForLayout();
+        $layoutRecord = Layout::find('navbarLayout');
+        $activeLayout = $layoutRecord?->templateId ?? 'layout1';
+        $activeBehavior = $this->getBehaviorForLayout($activeLayout);
         $isEnabled = $this->isNavbarEnabled();
 
         $cleanCta = is_array($this->cta) ? $this->cta : static::defaultCta();
@@ -220,6 +222,10 @@ class NavbarConfig extends Model
             'enabled' => $isEnabled,
             'visible' => $isEnabled,
             'status' => $isEnabled ? 'visible' : 'hidden',
+            'layout' => $activeLayout,
+            'navbarLayout' => $activeLayout,
+            'logoPosition' => 'left',
+            'logoAlignment' => 'left',
             'behavior' => $activeBehavior,
             'headerBehavior' => $activeBehavior,
             'cta' => $cleanCta,
@@ -232,7 +238,9 @@ class NavbarConfig extends Model
      */
     public function toAdminPayload(): array
     {
-        $activeBehavior = $this->getBehaviorForLayout();
+        $layoutRecord = Layout::find('navbarLayout');
+        $activeLayout = $layoutRecord?->templateId ?? 'layout1';
+        $activeBehavior = $this->getBehaviorForLayout($activeLayout);
         $isEnabled = $this->isNavbarEnabled();
 
         $cleanCta = is_array($this->cta) ? $this->cta : static::defaultCta();
@@ -242,6 +250,10 @@ class NavbarConfig extends Model
             'enabled' => $isEnabled,
             'visible' => $isEnabled,
             'status' => $isEnabled ? 'visible' : 'hidden',
+            'layout' => $activeLayout,
+            'navbarLayout' => $activeLayout,
+            'logoPosition' => 'left',
+            'logoAlignment' => 'left',
             'behavior' => $activeBehavior,
             'headerBehavior' => $activeBehavior,
             'cta' => $cleanCta,

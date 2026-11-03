@@ -26,6 +26,13 @@ class Layout extends Model
             'name' => 'Navbar',
             'min' => 1,
             'max' => 5,
+            'templates' => [
+                'layout1' => 'Standard Classic (Logo Left, Nav Center/Right, CTA Right)',
+                'layout2' => 'Transparent Floating (Logo Left, Nav Center)',
+                'layout3' => 'Full Width Colored Banner (Logo Left)',
+                'layout4' => 'Centered Brand Logo with Secondary Nav Bar',
+                'layout5' => 'Minimal Clean Inline (Logo Left)',
+            ],
         ],
         'homePageLayout' => [
             'name' => 'Home',
