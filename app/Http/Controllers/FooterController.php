@@ -18,10 +18,13 @@ class FooterController extends Controller
     public function showPublic(): JsonResponse
     {
         $footer = FooterConfig::getSingleton();
+        $payload = $footer->toPublicPayload();
 
         return response()->json([
             'success' => true,
-            'data'    => $footer->toPublicPayload(),
+            'module'  => 'footer',
+            'bottom'  => $payload['bottom'] ?? $footer->getBottomPayload(true),
+            'data'    => $payload,
         ], 200);
     }
 
@@ -32,11 +35,13 @@ class FooterController extends Controller
     public function showAdmin(): JsonResponse
     {
         $footer = FooterConfig::getSingleton();
+        $payload = $footer->toAdminPayload();
 
         return response()->json([
             'success' => true,
             'module'  => 'footer',
-            'data'    => $footer->toAdminPayload(),
+            'bottom'  => $payload['bottom'] ?? $footer->getBottomPayload(false),
+            'data'    => $payload,
         ], 200);
     }
 
@@ -50,6 +55,18 @@ class FooterController extends Controller
     // ─────────────────────────────────────────────────────────────────────
     public function updateFooter(Request $request): JsonResponse
     {
+        $rawContent = $request->getContent();
+        if (empty($request->all()) && ! empty($rawContent)) {
+            $decoded = json_decode($rawContent, true);
+            if (! is_array($decoded)) {
+                $clean = mb_convert_encoding($rawContent, 'UTF-8', 'UTF-8, ISO-8859-1, Windows-1252');
+                $decoded = json_decode($clean, true);
+            }
+            if (is_array($decoded)) {
+                $request->merge($decoded);
+            }
+        }
+
         $footer = FooterConfig::getSingleton();
 
         // ── 1. Layout / Template ──────────────────────────────────────────
@@ -156,12 +173,42 @@ class FooterController extends Controller
             }
         }
 
+        // ── 6. Bottom (copyrightText, copyright, links) ───────────────────
+        $bottom = $request->input('bottom') ?? $request->json('bottom');
+        if (is_null($bottom) && ! empty($rawContent)) {
+            $rawDecoded = json_decode($rawContent, true);
+            if (is_array($rawDecoded) && isset($rawDecoded['bottom'])) {
+                $bottom = $rawDecoded['bottom'];
+            }
+        }
+
+        if (! is_null($bottom)) {
+            if (is_string($bottom)) {
+                $decoded = json_decode($bottom, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    $bottom = $decoded;
+                }
+            }
+            if (is_array($bottom)) {
+                $footer->bottom = FooterConfig::normalizeBottom($bottom);
+            }
+        } elseif ($request->has('copyrightText') || $request->has('copyright')) {
+            $existingBottom = is_array($footer->bottom) ? $footer->bottom : FooterConfig::defaultBottom();
+            $existingBottom['copyrightText'] = $request->input('copyrightText', $request->input('copyright'));
+            $existingBottom['copyright'] = $existingBottom['copyrightText'];
+            $footer->bottom = FooterConfig::normalizeBottom($existingBottom);
+        }
+
         $footer->save();
+
+        $adminPayload = $footer->toAdminPayload();
 
         return response()->json([
             'success' => true,
             'message' => 'Footer configuration updated successfully.',
-            'data'    => $footer->toAdminPayload(),
+            'module'  => 'footer',
+            'bottom'  => $adminPayload['bottom'] ?? $footer->getBottomPayload(false),
+            'data'    => $adminPayload,
         ], 200);
     }
 
@@ -400,6 +447,60 @@ class FooterController extends Controller
     }
 
     // ─────────────────────────────────────────────────────────────────────
+    // GET /api/public/footer/bottom
+    // ─────────────────────────────────────────────────────────────────────
+    public function getBottomPublic(): JsonResponse
+    {
+        $footer = FooterConfig::getSingleton();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $footer->getBottomPayload(true),
+            'bottom'  => $footer->getBottomPayload(true),
+        ], 200);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // GET /api/admin/footer/bottom — Auth Required
+    // ─────────────────────────────────────────────────────────────────────
+    public function getBottom(): JsonResponse
+    {
+        $footer = FooterConfig::getSingleton();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $footer->getBottomPayload(false),
+            'bottom'  => $footer->getBottomPayload(false),
+        ], 200);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // PUT/POST /api/admin/footer/bottom — Auth Required
+    // ─────────────────────────────────────────────────────────────────────
+    public function updateBottom(Request $request): JsonResponse
+    {
+        $footer = FooterConfig::getSingleton();
+        $rawBottom = $request->input('bottom', $request->all());
+        if (is_string($rawBottom)) {
+            $decoded = json_decode($rawBottom, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $rawBottom = $decoded;
+            }
+        }
+        if (is_array($rawBottom)) {
+            $footer->bottom = FooterConfig::normalizeBottom($rawBottom);
+            $footer->save();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Footer bottom configuration updated successfully.',
+            'data'    => $footer->getBottomPayload(false),
+            'bottom'  => $footer->getBottomPayload(false),
+        ], 200);
+    }
+
+    // ─────────────────────────────────────────────────────────────────────
     // POST /api/admin/footer/reset — Auth Required
     // ─────────────────────────────────────────────────────────────────────
     public function reset(): JsonResponse
@@ -413,6 +514,7 @@ class FooterController extends Controller
         $footer->sections   = $defaults['sections'];
         $footer->links      = $defaults['links'];
         $footer->customCode = $defaults['customCode'];
+        $footer->bottom     = $defaults['bottom'];
         $footer->save();
 
         Layout::updateOrCreate(

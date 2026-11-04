@@ -16,6 +16,7 @@ class FooterConfig extends Model
         'sections',
         'links',
         'customCode',
+        'bottom',
     ];
 
     protected $casts = [
@@ -24,6 +25,7 @@ class FooterConfig extends Model
         'sections'   => 'array',
         'links'      => 'array',
         'customCode' => 'array',
+        'bottom'     => 'array',
     ];
 
     /** Valid section IDs for grid cells */
@@ -152,13 +154,84 @@ class FooterConfig extends Model
     public static function defaultBottom(): array
     {
         return [
-            'copyright' => '© ' . date('Y') . ' NexGen Solutions. All rights reserved.',
-            'links'     => [
-                ['label' => 'Privacy Policy',   'url' => '/privacy'],
-                ['label' => 'Terms of Service', 'url' => '/terms'],
-                ['label' => 'Contact',          'url' => '/contact'],
+            'copyrightText' => '© {year} {siteName}. All rights reserved.',
+            'copyright'     => '© {year} {siteName}. All rights reserved.',
+            'links'         => [
+                [
+                    'id'      => 'legal-disclaimer',
+                    'label'   => 'Disclaimer',
+                    'url'     => '/disclaimer',
+                    'enabled' => true,
+                ],
+                [
+                    'id'      => 'legal-privacy',
+                    'label'   => 'Privacy Policy',
+                    'url'     => '/privacy',
+                    'enabled' => true,
+                ],
+                [
+                    'id'      => 'legal-terms',
+                    'label'   => 'Terms of Usage',
+                    'url'     => '/terms',
+                    'enabled' => true,
+                ],
             ],
         ];
+    }
+
+    /**
+     * Normalize bottom object { copyrightText, copyright, links: [{ id, label, url, enabled }] }.
+     */
+    public static function normalizeBottom(?array $bottom): array
+    {
+        $default = static::defaultBottom();
+        if (! is_array($bottom)) {
+            return $default;
+        }
+
+        $copyrightText = (string) ($bottom['copyrightText'] ?? $bottom['copyright'] ?? $default['copyrightText']);
+
+        $rawLinks = $bottom['links'] ?? ($bottom['items'] ?? $default['links']);
+        $links = [];
+        if (is_array($rawLinks)) {
+            foreach ($rawLinks as $idx => $link) {
+                if (! is_array($link)) continue;
+                $id      = (string) ($link['id']    ?? "bottom-link-{$idx}");
+                $label   = (string) ($link['label'] ?? $link['title'] ?? 'Link');
+                $url     = (string) ($link['url']   ?? $link['href']  ?? '/');
+                $enabled = isset($link['enabled']) ? (bool) filter_var($link['enabled'], FILTER_VALIDATE_BOOLEAN) : true;
+
+                $links[] = [
+                    'id'      => $id,
+                    'label'   => $label,
+                    'url'     => $url,
+                    'enabled' => $enabled,
+                ];
+            }
+        } else {
+            $links = $default['links'];
+        }
+
+        return [
+            'copyrightText' => $copyrightText,
+            'copyright'     => $copyrightText,
+            'links'         => array_values($links),
+        ];
+    }
+
+    /**
+     * Retrieve bottom payload with optional filtering of unpublished links for public view.
+     */
+    public function getBottomPayload(bool $isPublic = false): array
+    {
+        $stored = is_array($this->bottom) ? $this->bottom : null;
+        $normalized = static::normalizeBottom($stored);
+
+        if ($isPublic) {
+            $normalized['links'] = array_values(array_filter($normalized['links'], fn ($l) => ! empty($l['enabled'])));
+        }
+
+        return $normalized;
     }
 
     public static function defaultCustomCode(): array
@@ -180,6 +253,7 @@ class FooterConfig extends Model
             'sections'   => static::defaultSections(),
             'links'      => static::defaultLinks(),
             'customCode' => static::defaultCustomCode(),
+            'bottom'     => static::defaultBottom(),
         ];
     }
 
@@ -205,6 +279,17 @@ class FooterConfig extends Model
     {
         try {
             if (Schema::hasTable('footer_configs')) {
+                if (! Schema::hasColumn('footer_configs', 'bottom')) {
+                    Schema::table('footer_configs', function (\Illuminate\Database\Schema\Blueprint $table) {
+                        $table->json('bottom')->nullable()->after('customCode');
+                    });
+                }
+                if (! Schema::hasColumn('footer_configs', 'sections')) {
+                    Schema::table('footer_configs', function (\Illuminate\Database\Schema\Blueprint $table) {
+                        $table->json('sections')->nullable()->after('grid');
+                    });
+                }
+
                 $config = static::first();
                 if (! $config) {
                     $config = static::create(static::defaults());
@@ -223,6 +308,7 @@ class FooterConfig extends Model
         $instance->sections   = $defaults['sections']   ?? static::defaultSections();
         $instance->links      = $defaults['links']      ?? static::defaultLinks();
         $instance->customCode = $defaults['customCode'] ?? static::defaultCustomCode();
+        $instance->bottom     = $defaults['bottom']     ?? static::defaultBottom();
         return $instance;
     }
 
@@ -314,6 +400,7 @@ class FooterConfig extends Model
         }
 
         $seen = [];
+        $normalizedSections = [];
         foreach ($sections as $i => $cell) {
             // Normalize null → empty string
             if ($cell === null || $cell === false) {
@@ -325,6 +412,17 @@ class FooterConfig extends Model
             if (in_array(strtolower($cell), ['null', 'false', 'none'], true)) {
                 $cell = '';
             }
+
+            // Case-insensitive mapping for aliases
+            $cell = match (strtolower(str_replace(['-', '_', ' '], '', $cell))) {
+                'about', 'aboutus' => 'about',
+                'services', 'ourservices' => 'services',
+                'quicklinks', 'links' => 'quickLinks',
+                'contact', 'contactus', 'getintouch' => 'contact',
+                '' => '',
+                default => $cell,
+            };
+
             if (! in_array($cell, static::$validSections, true)) {
                 return [
                     'ok'    => false,
@@ -340,9 +438,10 @@ class FooterConfig extends Model
             if ($cell !== '') {
                 $seen[] = $cell;
             }
+            $normalizedSections[] = $cell;
         }
 
-        return ['ok' => true];
+        return ['ok' => true, 'sections' => $normalizedSections];
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -455,6 +554,7 @@ class FooterConfig extends Model
                 'css'     => (string) ($custom['css']  ?? ''),
                 'js'      => (string) ($custom['js']   ?? ''),
             ],
+            'bottom' => $this->getBottomPayload(false),
         ];
     }
 
@@ -478,7 +578,7 @@ class FooterConfig extends Model
             'columns' => $this->buildColumns($activeItems),
             'items'   => $activeItems,
             'contact' => static::defaultContact(),
-            'bottom'  => static::defaultBottom(),
+            'bottom'  => $this->getBottomPayload(true),
         ]);
     }
 
@@ -499,7 +599,7 @@ class FooterConfig extends Model
             'columns'          => $this->buildColumns($allItems),
             'items'            => $allItems,
             'contact'          => static::defaultContact(),
-            'bottom'           => static::defaultBottom(),
+            'bottom'           => $this->getBottomPayload(false),
         ]);
     }
 }

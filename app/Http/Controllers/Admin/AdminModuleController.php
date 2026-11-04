@@ -649,11 +649,13 @@ class AdminModuleController extends Controller
     {
         $layoutRecord = Layout::find('footerLayout');
         $footer = \App\Models\FooterConfig::getSingleton();
+        $adminPayload = $footer->toAdminPayload();
 
         return response()->json([
             'success' => true,
             'module'  => 'footer',
-            'data'    => array_merge($footer->toAdminPayload(), [
+            'bottom'  => $adminPayload['bottom'] ?? $footer->getBottomPayload(false),
+            'data'    => array_merge($adminPayload, [
                 'layout' => [
                     'key'        => 'footerLayout',
                     'templateId' => $layoutRecord?->templateId ?? 'layout1',

@@ -27,6 +27,7 @@ use App\Http\Controllers\StatController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\TopbarController;
+use App\Http\Controllers\TrustController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -55,6 +56,8 @@ Route::get('footer', [FooterController::class, 'showPublic']);
 Route::get('floating-button', [FloatingButtonController::class, 'showPublic']);
 Route::get('floating-cta', [FloatingButtonController::class, 'showPublic']);
 Route::get('stats', [StatController::class, 'indexPublic']);
+Route::get('trust', [TrustController::class, 'showPublic']);
+Route::get('trusted-by', [TrustController::class, 'showPublic']);
 Route::get('dashboard', [DashboardController::class, 'index']);
 
 // ═══════════════════════════════════════════════════════════
@@ -76,6 +79,8 @@ Route::get('footer', [FooterController::class, 'showPublic']);
 Route::get('floating-button', [FloatingButtonController::class, 'showPublic']);
 Route::get('floating-cta', [FloatingButtonController::class, 'showPublic']);
 Route::get('stats', [StatController::class, 'indexPublic']);
+Route::get('trust', [TrustController::class, 'showPublic']);
+Route::get('trusted-by', [TrustController::class, 'showPublic']);
 Route::get('dashboard', [DashboardController::class, 'index']);
     // Layouts
     Route::get('layouts', [LayoutController::class, 'index']);
@@ -84,9 +89,12 @@ Route::get('dashboard', [DashboardController::class, 'index']);
 
     // Module 12: Footer
     Route::get('footer', [FooterController::class, 'showPublic']);
+    Route::get('footer/bottom', [FooterController::class, 'getBottomPublic']);
 Route::get('floating-button', [FloatingButtonController::class, 'showPublic']);
 Route::get('floating-cta', [FloatingButtonController::class, 'showPublic']);
 Route::get('stats', [StatController::class, 'indexPublic']);
+Route::get('trust', [TrustController::class, 'showPublic']);
+Route::get('trusted-by', [TrustController::class, 'showPublic']);
 Route::get('dashboard', [DashboardController::class, 'index']);
 
     // Module: About Page
@@ -456,6 +464,8 @@ Route::prefix('admin')->group(function () {
         Route::match(['put', 'post', 'patch'], 'footer/grid', [FooterController::class, 'updateGrid']);
         Route::get('footer/custom-code', [FooterController::class, 'getCustomCode']);
         Route::match(['put', 'post', 'patch'], 'footer/custom-code', [FooterController::class, 'updateCustomCode']);
+        Route::get('footer/bottom', [FooterController::class, 'getBottom']);
+        Route::match(['put', 'post', 'patch'], 'footer/bottom', [FooterController::class, 'updateBottom']);
         Route::match(['post', 'put', 'get'], 'footer/reset', [FooterController::class, 'reset']);
 
         // Floating Button (Floating CTA Settings)
@@ -474,6 +484,20 @@ Route::prefix('admin')->group(function () {
         Route::match(['patch', 'put', 'post'], 'stats/{id}/visibility', [StatController::class, 'toggleVisibility'])->whereNumber('id');
         Route::match(['put', 'patch', 'post'], 'stats/{id}', [StatController::class, 'update'])->whereNumber('id');
         Route::delete('stats/{id}', [StatController::class, 'destroy'])->whereNumber('id');
+
+        // Trust / Clients Section CRUD
+        Route::get('trust', [TrustController::class, 'showAdmin']);
+        Route::get('trusted-by', [TrustController::class, 'showAdmin']);
+        Route::match(['put', 'post', 'patch'], 'trust', [TrustController::class, 'updateSection']);
+        Route::match(['put', 'post', 'patch'], 'trusted-by', [TrustController::class, 'updateSection']);
+        Route::get('trust/clients', [TrustController::class, 'getClients']);
+        Route::post('trust/clients', [TrustController::class, 'storeClient']);
+        Route::match(['put', 'patch', 'post'], 'trust/clients/reorder', [TrustController::class, 'reorder']);
+        Route::get('trust/clients/{id}', [TrustController::class, 'showClient']);
+        Route::match(['put', 'patch', 'post'], 'trust/clients/{id}', [TrustController::class, 'updateClient']);
+        Route::match(['patch', 'put', 'post'], 'trust/clients/{id}/visibility', [TrustController::class, 'toggleVisibility']);
+        Route::delete('trust/clients/{id}', [TrustController::class, 'destroyClient']);
+        Route::match(['post', 'put', 'get'], 'trust/reset', [TrustController::class, 'reset']);
 
         // Module 13: Careers CRUD
         Route::get('careers', [CareerController::class, 'indexAdmin']);

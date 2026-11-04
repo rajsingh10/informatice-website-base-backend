@@ -228,6 +228,7 @@ class LayoutController extends Controller
                 'grid'       => is_array($footer->grid) ? $footer->grid : \App\Models\FooterConfig::defaultGrid(),
                 'cta'        => is_array($footer->cta) ? $footer->cta : \App\Models\FooterConfig::defaultCta(),
                 'customCode' => is_array($footer->customCode) ? $footer->customCode : \App\Models\FooterConfig::defaultCustomCode(),
+                'bottom'     => $footer->getBottomPayload(false),
                 'allowed'    => $allowed,
             ];
         } else {
@@ -443,6 +444,18 @@ class LayoutController extends Controller
             if ($request->has('grid') && is_array($request->input('grid'))) {
                 $footer->grid = $request->input('grid');
             }
+            if ($request->has('bottom')) {
+                $bIn = $request->input('bottom');
+                if (is_string($bIn)) {
+                    $bIn = json_decode($bIn, true);
+                }
+                if (is_array($bIn)) {
+                    $footer->bottom = \App\Models\FooterConfig::normalizeBottom($bIn);
+                }
+            }
+            if ($request->has('customCode') && is_array($request->input('customCode'))) {
+                $footer->customCode = $request->input('customCode');
+            }
             $footer->save();
         }
 
@@ -473,6 +486,7 @@ class LayoutController extends Controller
                 'grid'       => is_array($footer->grid) ? $footer->grid : \App\Models\FooterConfig::defaultGrid(),
                 'cta'        => is_array($footer->cta) ? $footer->cta : \App\Models\FooterConfig::defaultCta(),
                 'customCode' => is_array($footer->customCode) ? $footer->customCode : \App\Models\FooterConfig::defaultCustomCode(),
+                'bottom'     => $footer->getBottomPayload(false),
             ];
         } else {
             $responseData = [
@@ -546,11 +560,24 @@ class LayoutController extends Controller
             $footer = \App\Models\FooterConfig::getSingleton();
             if (isset($footData['items']) && is_array($footData['items'])) {
                 $footer->links = $footData['items'];
-                $footer->save();
             } elseif (isset($footData['links']) && is_array($footData['links'])) {
                 $footer->links = $footData['links'];
-                $footer->save();
             }
+            if (isset($footData['cta']) && is_array($footData['cta'])) {
+                $footer->cta = $footData['cta'];
+            }
+            if (isset($footData['grid']) && is_array($footData['grid'])) {
+                $footer->grid = $footData['grid'];
+            }
+            if (isset($footData['bottom'])) {
+                $bIn = $footData['bottom'];
+                if (is_string($bIn)) $bIn = json_decode($bIn, true);
+                if (is_array($bIn)) $footer->bottom = \App\Models\FooterConfig::normalizeBottom($bIn);
+            }
+            if (isset($footData['customCode']) && is_array($footData['customCode'])) {
+                $footer->customCode = $footData['customCode'];
+            }
+            $footer->save();
         }
 
         if ($request->has('items') && is_array($request->input('items'))) {

@@ -313,6 +313,15 @@
                         </span>
                         <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">6</span>
                     </button>
+
+                    <!-- Trust & Clients (CRUD) -->
+                    <button onclick="switchTab('trust')" id="tab-trust" class="tab-btn w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left text-slate-600 hover:bg-slate-50 transition">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-handshake-simple text-blue-600"></i>
+                            <span class="font-bold text-blue-900">Trust (Clients CRUD)</span>
+                        </span>
+                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">7</span>
+                    </button>
                 </nav>
 
                 <div class="mt-6 pt-4 border-t border-slate-100">
@@ -3762,6 +3771,24 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Bottom Settings (copyrightText & legal links) -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-1">Bottom Bar (Copyright & Legal Links)</h4>
+                            <p class="text-[11px] text-slate-500 mb-2">Configure <code class="font-mono bg-white px-1 py-0.5 rounded border">copyrightText</code> (supports <code class="font-mono">{year}</code> and <code class="font-mono">{siteName}</code>) and <code class="font-mono bg-white px-1 py-0.5 rounded border">links</code>.</p>
+                            <div class="mb-2">
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Copyright Text</label>
+                                <input id="footer-bottom-copyright" type="text" value="© {year} {siteName}. All rights reserved." class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 bg-white outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Bottom Links (JSON array of { id, label, url, enabled })</label>
+                                <textarea id="footer-bottom-links-json" rows="4" class="w-full text-xs font-mono border border-slate-200 rounded p-2 bg-white outline-none">[
+  { "id": "legal-disclaimer", "label": "Disclaimer", "url": "/disclaimer", "enabled": true },
+  { "id": "legal-privacy", "label": "Privacy Policy", "url": "/privacy", "enabled": true },
+  { "id": "legal-terms", "label": "Terms of Usage", "url": "/terms", "enabled": true }
+]</textarea>
+                            </div>
+                        </div>
                     </div>
 
                     <button onclick="testUpdateFooter()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
@@ -5029,6 +5056,178 @@
                         <i class="fa-solid fa-arrows-up-down"></i>
                         <span>Apply New Sequence (Reorder)</span>
                     </button>
+                </div>
+
+            </div>
+
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <!-- TRUST / CLIENTS SECTION CRUD APIS -->
+            <!-- ══════════════════════════════════════════════════════════ -->
+            <div id="section-trust" class="space-y-4 hidden">
+
+                <!-- 1. GET /api/admin/trust & /api/public/trust -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-get">GET</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/trust & /api/public/trust</span>
+                        </div>
+                        <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold">Public / Admin</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Fetch Trust / Clients section. Public view returns active/visible clients; Admin view returns all clients and pre-fills editor.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <button onclick="testAdminTrust()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            <span>Fetch All (Admin View)</span>
+                        </button>
+                        <button onclick="testPublicTrust()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-eye"></i>
+                            <span>Fetch Visible (Public View)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. PUT /api/admin/trust — Save Header Section Settings -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/trust</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Admin Auth</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Update Trust section header titles, eyebrow, description, CTA button, and background image.</p>
+                    <div class="space-y-3 mb-4">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Eyebrow</label>
+                                <input id="trust-edit-eyebrow" type="text" placeholder="e.g. OUR PARTNERS" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Title *</label>
+                                <input id="trust-edit-title" type="text" value="Trusted by Industry Leaders" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Description</label>
+                            <textarea id="trust-edit-desc" rows="2" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">Partnering with forward-thinking companies to deliver exceptional digital solutions</textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Button Text</label>
+                                <input id="trust-edit-btntext" type="text" placeholder="View All Partners" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Button URL</label>
+                                <input id="trust-edit-btnurl" type="text" placeholder="/clients" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Background Image URL</label>
+                            <input id="trust-edit-bgimage" type="text" value="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=80" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                        </div>
+                    </div>
+                    <button onclick="testUpdateTrustSection()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>Save Trust Section Settings</span>
+                    </button>
+                </div>
+
+                <!-- 3. POST /api/admin/trust/clients — Add New Client -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-post">POST</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/trust/clients</span>
+                        </div>
+                        <span class="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded font-bold">Add Client</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mb-3">Add a new client partner with logo, altText, and link.</p>
+                    <div class="space-y-3 mb-4">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Client ID</label>
+                                <input id="trust-add-id" type="text" placeholder="e.g. acme-corp" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Client Name *</label>
+                                <input id="trust-add-name" type="text" placeholder="Acme Corp" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Logo URL</label>
+                                <input id="trust-add-logo" type="text" placeholder="https://..." class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Alt Text</label>
+                                <input id="trust-add-alt" type="text" placeholder="Acme Corp Logo" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="col-span-2">
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Website URL</label>
+                                <input id="trust-add-url" type="text" placeholder="https://acme.com" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Order</label>
+                                <input id="trust-add-order" type="number" value="7" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="testAddTrustClient()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-sm flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Add Client Partner</span>
+                    </button>
+                </div>
+
+                <!-- 4. Client Actions (Update, Toggle Visibility, Delete) -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="method-badge badge-put">PUT</span>
+                            <span class="method-badge badge-patch">PATCH</span>
+                            <span class="method-badge badge-del">DELETE</span>
+                            <span class="font-mono text-sm font-semibold text-slate-800">/api/admin/trust/clients/:id</span>
+                        </div>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded font-bold">Manage Single</span>
+                    </div>
+                    <div class="space-y-3 mb-4">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Target Client ID</label>
+                                <input id="trust-manage-id" type="text" value="techvista" class="w-full text-xs border border-slate-200 rounded p-2 outline-none font-mono font-bold">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Updated Name</label>
+                                <input id="trust-manage-name" type="text" value="TechVista Global" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Updated Logo URL</label>
+                                <input id="trust-manage-logo" type="text" value="https://placehold.co/150x60/3b82f6/ffffff?text=TechVista" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-500 font-bold uppercase block mb-1">Updated Website URL</label>
+                                <input id="trust-manage-url" type="text" value="" class="w-full text-xs border border-slate-200 rounded p-2 outline-none">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="testUpdateTrustClient()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Update</span>
+                        </button>
+                        <button onclick="testToggleTrustClientVisibility()" class="bg-amber-600 hover:bg-amber-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-eye-slash"></i>
+                            <span>Toggle Visible</span>
+                        </button>
+                        <button onclick="testDeleteTrustClient()" class="bg-rose-600 hover:bg-rose-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
+                            <i class="fa-solid fa-trash"></i>
+                            <span>Delete</span>
+                        </button>
+                    </div>
                 </div>
 
             </div>
@@ -6706,6 +6905,14 @@
                     document.getElementById('footer-code-css').value = d.customCode.css || '';
                     document.getElementById('footer-code-js').value = d.customCode.js || '';
                 }
+                if (d.bottom) {
+                    if (d.bottom.copyrightText || d.bottom.copyright) {
+                        document.getElementById('footer-bottom-copyright').value = d.bottom.copyrightText || d.bottom.copyright;
+                    }
+                    if (d.bottom.links) {
+                        document.getElementById('footer-bottom-links-json').value = JSON.stringify(d.bottom.links, null, 2);
+                    }
+                }
             }
         }
 
@@ -6728,6 +6935,14 @@
                 return;
             }
 
+            let bottomLinks = [];
+            try {
+                bottomLinks = JSON.parse(document.getElementById('footer-bottom-links-json').value);
+            } catch (e) {
+                alert('Invalid JSON in Bottom Links: ' + e.message);
+                return;
+            }
+
             const cta = {
                 enabled: document.getElementById('footer-cta-enabled').value === '1',
                 label: document.getElementById('footer-cta-label').value,
@@ -6741,11 +6956,18 @@
                 js: document.getElementById('footer-code-js').value,
             };
 
+            const bottom = {
+                copyrightText: document.getElementById('footer-bottom-copyright').value,
+                copyright: document.getElementById('footer-bottom-copyright').value,
+                links: bottomLinks
+            };
+
             await sendApi('PUT', '/api/admin/footer', {
                 grid: { columns: cols, rows: rows, sections: sections },
                 cta: cta,
                 links: links,
                 customCode: customCode,
+                bottom: bottom
             }, true);
         }
 
@@ -7050,6 +7272,136 @@
             if (!id) return alert('Enter a Stat ID');
             if (!confirm(`Delete counter ID ${id}?`)) return;
             await sendApi('DELETE', `/api/admin/stats/${id}`, null, true);
+        }
+
+        // ─── Trust (Clients CRUD) ───
+        async function testAdminTrust() {
+            const res = await sendApi('GET', '/api/admin/trust', null, true);
+            if (res && res.data) {
+                populateTrustForm(res.data);
+            }
+        }
+
+        async function testPublicTrust() {
+            await sendApi('GET', '/api/public/trust');
+        }
+
+        function populateTrustForm(d) {
+            if (!d) return;
+            if (document.getElementById('trust-edit-eyebrow')) document.getElementById('trust-edit-eyebrow').value = d.eyebrow || '';
+            if (document.getElementById('trust-edit-title')) document.getElementById('trust-edit-title').value = d.title || '';
+            if (document.getElementById('trust-edit-desc')) document.getElementById('trust-edit-desc').value = d.description || '';
+            if (document.getElementById('trust-edit-btntext')) document.getElementById('trust-edit-btntext').value = d.buttonText || '';
+            if (document.getElementById('trust-edit-btnurl')) document.getElementById('trust-edit-btnurl').value = d.buttonUrl || '';
+            if (document.getElementById('trust-edit-bgimage')) document.getElementById('trust-edit-bgimage').value = d.backgroundImage || '';
+            if (d.clients && Array.isArray(d.clients) && d.clients.length > 0) {
+                populateTrustClientManage(d.clients[0]);
+            }
+        }
+
+        function populateTrustClientManage(c) {
+            if (!c) return;
+            if (document.getElementById('trust-client-edit-id')) document.getElementById('trust-client-edit-id').value = c.id || '';
+            if (document.getElementById('trust-client-edit-name')) document.getElementById('trust-client-edit-name').value = c.name || '';
+            if (document.getElementById('trust-client-edit-logo')) document.getElementById('trust-client-edit-logo').value = c.logo || '';
+            if (document.getElementById('trust-client-edit-alt')) document.getElementById('trust-client-edit-alt').value = c.altText || '';
+            if (document.getElementById('trust-client-edit-url')) document.getElementById('trust-client-edit-url').value = c.url || '';
+            if (document.getElementById('trust-client-edit-order')) document.getElementById('trust-client-edit-order').value = c.order || 1;
+            if (document.getElementById('trust-client-edit-visible')) document.getElementById('trust-client-edit-visible').checked = c.isVisible !== false;
+            if (document.getElementById('trust-client-toggle-id')) document.getElementById('trust-client-toggle-id').value = c.id || '';
+        }
+
+        async function testUpdateTrustSection() {
+            const eyebrow = document.getElementById('trust-edit-eyebrow').value;
+            const title = document.getElementById('trust-edit-title').value;
+            const description = document.getElementById('trust-edit-desc').value;
+            const buttonText = document.getElementById('trust-edit-btntext').value;
+            const buttonUrl = document.getElementById('trust-edit-btnurl').value;
+            const backgroundImage = document.getElementById('trust-edit-bgimage').value;
+
+            await sendApi('PUT', '/api/admin/trust', {
+                eyebrow,
+                title,
+                description,
+                buttonText,
+                buttonUrl,
+                backgroundImage
+            }, true);
+        }
+
+        async function testResetTrust() {
+            if (!confirm('Are you sure you want to reset Trust / Clients section to default settings?')) return;
+            const res = await sendApi('POST', '/api/admin/trust/reset', null, true);
+            if (res && res.data) {
+                populateTrustForm(res.data);
+            }
+        }
+
+        async function testAddTrustClient() {
+            const id = document.getElementById('trust-client-create-id').value.trim();
+            const name = document.getElementById('trust-client-create-name').value.trim();
+            const logo = document.getElementById('trust-client-create-logo').value.trim();
+            const altText = document.getElementById('trust-client-create-alt').value.trim();
+            const url = document.getElementById('trust-client-create-url').value.trim();
+            const order = parseInt(document.getElementById('trust-client-create-order').value || 1);
+            const isVisible = document.getElementById('trust-client-create-visible').checked;
+
+            if (!name) return alert('Client Name is required');
+
+            await sendApi('POST', '/api/admin/trust/clients', {
+                id,
+                name,
+                logo,
+                altText,
+                url,
+                order,
+                isVisible
+            }, true);
+        }
+
+        async function testLoadTrustClient() {
+            const id = document.getElementById('trust-client-edit-id').value.trim();
+            if (!id) return alert('Enter Client ID to load');
+            const res = await sendApi('GET', `/api/admin/trust/clients/${id}`, null, true);
+            if (res && res.data) {
+                populateTrustClientManage(res.data);
+            }
+        }
+
+        async function testUpdateTrustClient() {
+            const id = document.getElementById('trust-client-edit-id').value.trim();
+            if (!id) return alert('Client ID is required');
+            const name = document.getElementById('trust-client-edit-name').value.trim();
+            const logo = document.getElementById('trust-client-edit-logo').value.trim();
+            const altText = document.getElementById('trust-client-edit-alt').value.trim();
+            const url = document.getElementById('trust-client-edit-url').value.trim();
+            const order = parseInt(document.getElementById('trust-client-edit-order').value || 1);
+            const isVisible = document.getElementById('trust-client-edit-visible').checked;
+
+            await sendApi('PUT', `/api/admin/trust/clients/${id}`, {
+                name,
+                logo,
+                altText,
+                url,
+                order,
+                isVisible
+            }, true);
+        }
+
+        async function testToggleTrustClientVisibility() {
+            const id = document.getElementById('trust-client-toggle-id').value.trim();
+            if (!id) return alert('Client ID is required');
+            const isVisible = document.getElementById('trust-client-toggle-val').value === 'true';
+
+            await sendApi('PATCH', `/api/admin/trust/clients/${id}/visibility`, { isVisible }, true);
+        }
+
+        async function testDeleteTrustClient() {
+            const id = document.getElementById('trust-client-edit-id').value.trim();
+            if (!id) return alert('Client ID is required');
+            if (!confirm(`Are you sure you want to delete client "${id}"?`)) return;
+
+            await sendApi('DELETE', `/api/admin/trust/clients/${id}`, null, true);
         }
 
         initLayoutSelects();
