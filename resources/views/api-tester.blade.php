@@ -4567,13 +4567,20 @@
                                     <input id="settings-address" type="text" value="100 Innovation Way, Silicon Valley, CA" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-2">
+                            <div class="grid grid-cols-3 gap-2">
                                 <div>
                                     <label class="text-[11px] font-medium text-slate-600">Logo Position / Alignment</label>
                                     <select id="settings-logoposition" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white">
                                         <option value="left" selected>Left (Standard Classic Navbar)</option>
                                         <option value="center">Center (Centered Brand Navbar)</option>
                                         <option value="right">Right</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-medium text-slate-600">Maintenance Mode</label>
+                                    <select id="settings-maintenancemode" class="w-full text-xs border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white font-semibold">
+                                        <option value="false" selected>Disabled (false)</option>
+                                        <option value="true">Active / Maintenance (true)</option>
                                     </select>
                                 </div>
                                 <div>
@@ -6997,6 +7004,7 @@
                 setVal('settings-phone', d.phone);
                 setVal('settings-address', d.address);
                 setVal('settings-logoposition', d.logoPosition || d.logoAlignment || 'left');
+                setVal('settings-maintenancemode', d.maintenanceMode ? 'true' : 'false');
                 setVal('settings-logourl', d.logoUrl);
 
                 // Spacing
@@ -7042,6 +7050,7 @@
                 address: getVal('settings-address'),
                 logoPosition: getVal('settings-logoposition'),
                 logoAlignment: getVal('settings-logoposition'),
+                maintenanceMode: document.getElementById('settings-maintenancemode')?.value === 'true',
                 logoUrl: getVal('settings-logourl'),
 
                 // Spacing
