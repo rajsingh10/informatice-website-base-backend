@@ -24,6 +24,8 @@ class AboutPage extends Model
         'milestones',
         'stats',
         'images',
+        'valuesImages',
+        'differentiatorsImages',
         'teamSectionEnabled',
         'differentiatorsFeatured',
         'storyFeatured',
@@ -35,6 +37,8 @@ class AboutPage extends Model
         'milestones'              => 'array',
         'stats'                   => 'array',
         'images'                  => 'array',
+        'valuesImages'            => 'array',
+        'differentiatorsImages'   => 'array',
         'teamSectionEnabled'      => 'boolean',
         'differentiatorsFeatured' => 'boolean',
         'storyFeatured'           => 'boolean',
@@ -141,6 +145,26 @@ class AboutPage extends Model
                     'alt'  => 'Team workshop fostering technical innovation and creative problem solving',
                 ],
             ],
+            'valuesImages' => [
+                [
+                    'url' => 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80',
+                    'alt' => 'Team meeting',
+                ],
+                [
+                    'url' => 'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=800&q=80',
+                    'alt' => 'Collaboration',
+                ],
+            ],
+            'differentiatorsImages' => [
+                [
+                    'url' => 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80',
+                    'alt' => 'Client Success',
+                ],
+                [
+                    'url' => 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80',
+                    'alt' => 'Agile Sprints',
+                ],
+            ],
             'teamSectionEnabled'      => true,
             'differentiatorsFeatured' => true,
             'storyFeatured'           => true,
@@ -153,6 +177,23 @@ class AboutPage extends Model
      */
     public static function getSingleton(): static
     {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('about_pages')) {
+                if (! \Illuminate\Support\Facades\Schema::hasColumn('about_pages', 'valuesImages')) {
+                    \Illuminate\Support\Facades\Schema::table('about_pages', function (\Illuminate\Database\Schema\Blueprint $table) {
+                        $table->longText('valuesImages')->nullable()->after('images');
+                    });
+                }
+                if (! \Illuminate\Support\Facades\Schema::hasColumn('about_pages', 'differentiatorsImages')) {
+                    \Illuminate\Support\Facades\Schema::table('about_pages', function (\Illuminate\Database\Schema\Blueprint $table) {
+                        $table->longText('differentiatorsImages')->nullable()->after('valuesImages');
+                    });
+                }
+            }
+        } catch (\Throwable $e) {
+            // ignore
+        }
+
         $about = static::first();
         if (! $about) {
             $about = static::create(static::defaults());
@@ -179,6 +220,24 @@ class AboutPage extends Model
             foreach ($this->images as $img) {
                 if (is_array($img) && ! empty($img['slot']) && ! empty($img['alt'])) {
                     $map[(string) $img['slot']] = (string) $img['alt'];
+                }
+            }
+        }
+
+        if (is_array($this->valuesImages)) {
+            foreach ($this->valuesImages as $i => $img) {
+                if (is_array($img) && ! empty($img['alt'])) {
+                    $slot = 'img-about-values-' . ($i + 1);
+                    $map[$slot] = (string) $img['alt'];
+                }
+            }
+        }
+
+        if (is_array($this->differentiatorsImages)) {
+            foreach ($this->differentiatorsImages as $i => $img) {
+                if (is_array($img) && ! empty($img['alt'])) {
+                    $slot = 'img-about-diff-' . ($i + 1);
+                    $map[$slot] = (string) $img['alt'];
                 }
             }
         }
@@ -243,6 +302,50 @@ class AboutPage extends Model
         }
 
         return null;
+    }
+
+    /**
+     * Normalize a gallery of image objects [{ url, alt }].
+     */
+    public static function normalizeImageGallery(mixed $items): array
+    {
+        if (empty($items)) {
+            return [];
+        }
+        if (is_string($items)) {
+            $decoded = json_decode($items, true);
+            if (is_array($decoded)) {
+                $items = $decoded;
+            } else {
+                $url = trim($items);
+                return $url !== '' ? [['url' => $url, 'alt' => '']] : [];
+            }
+        }
+        if (! is_array($items)) {
+            return [];
+        }
+        $out = [];
+        foreach ($items as $item) {
+            if (is_string($item)) {
+                $u = trim($item);
+                if ($u !== '') {
+                    $out[] = [
+                        'url' => $u,
+                        'alt' => '',
+                    ];
+                }
+            } elseif (is_array($item)) {
+                $u = (string) ($item['url'] ?? $item['image'] ?? $item['src'] ?? '');
+                if (trim($u) !== '') {
+                    $alt = (string) ($item['alt'] ?? $item['imageAlt'] ?? $item['caption'] ?? $item['title'] ?? '');
+                    $out[] = [
+                        'url' => $u,
+                        'alt' => $alt,
+                    ];
+                }
+            }
+        }
+        return array_values($out);
     }
 
     /**
@@ -417,6 +520,10 @@ class AboutPage extends Model
             'milestones'         => is_array($this->milestones) ? $this->milestones : $defaults['milestones'],
             'stats'              => is_array($this->stats) ? $this->stats : $defaults['stats'],
             'images'             => $this->getNormalizedImages(),
+            'valuesImages'       => is_array($this->valuesImages) ? $this->valuesImages : (is_array($defaults['valuesImages'] ?? null) ? $defaults['valuesImages'] : []),
+            'differentiatorsImages' => is_array($this->differentiatorsImages) ? $this->differentiatorsImages : (is_array($defaults['differentiatorsImages'] ?? null) ? $defaults['differentiatorsImages'] : []),
+            'values_images'      => is_array($this->valuesImages) ? $this->valuesImages : (is_array($defaults['valuesImages'] ?? null) ? $defaults['valuesImages'] : []),
+            'differentiators_images' => is_array($this->differentiatorsImages) ? $this->differentiatorsImages : (is_array($defaults['differentiatorsImages'] ?? null) ? $defaults['differentiatorsImages'] : []),
             'imageAltMap'             => (object) $altMap,
             'teamSectionEnabled'      => (bool) $this->teamSectionEnabled,
             'differentiatorsFeatured' => (bool) ($this->differentiatorsFeatured ?? true),

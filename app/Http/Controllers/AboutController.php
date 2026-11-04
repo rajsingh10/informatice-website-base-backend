@@ -59,6 +59,10 @@ class AboutController extends Controller
             'milestones'              => 'nullable|array',
             'stats'                   => 'nullable|array',
             'images'                  => 'nullable',
+            'valuesImages'            => 'nullable',
+            'values_images'           => 'nullable',
+            'differentiatorsImages'   => 'nullable',
+            'differentiators_images'  => 'nullable',
             'teamSectionEnabled'      => 'nullable|boolean',
             'differentiatorsFeatured' => 'nullable|boolean',
             'storyFeatured'           => 'nullable|boolean',
@@ -108,6 +112,20 @@ class AboutController extends Controller
             unset($validated['images']);
         }
 
+        // Handle valuesImages
+        if ($request->has('valuesImages') || $request->has('values_images')) {
+            $rawValuesImages = $request->input('valuesImages', $request->input('values_images'));
+            $about->valuesImages = AboutPage::normalizeImageGallery($rawValuesImages);
+            unset($validated['valuesImages'], $validated['values_images']);
+        }
+
+        // Handle differentiatorsImages
+        if ($request->has('differentiatorsImages') || $request->has('differentiators_images')) {
+            $rawDiffImages = $request->input('differentiatorsImages', $request->input('differentiators_images'));
+            $about->differentiatorsImages = AboutPage::normalizeImageGallery($rawDiffImages);
+            unset($validated['differentiatorsImages'], $validated['differentiators_images']);
+        }
+
         $about->fill($validated);
 
         if ($request->has('differentiatorsFeatured') || $request->has('differentiators_featured')) {
@@ -148,8 +166,12 @@ class AboutController extends Controller
             'heroImage'     => 'nullable|string|max:1024',
             'heroImageAlt'  => 'nullable|string|max:255',
             'storyImage'    => 'nullable|string|max:1024',
-            'storyImageAlt' => 'nullable|string|max:255',
-            'images'        => 'nullable',
+            'storyImageAlt'           => 'nullable|string|max:255',
+            'images'                  => 'nullable',
+            'valuesImages'            => 'nullable',
+            'values_images'           => 'nullable',
+            'differentiatorsImages'   => 'nullable',
+            'differentiators_images'  => 'nullable',
         ]);
 
         $about = AboutPage::getSingleton();
@@ -187,6 +209,16 @@ class AboutController extends Controller
             }
         }
 
+        if ($request->has('valuesImages') || $request->has('values_images')) {
+            $rawValuesImages = $request->input('valuesImages', $request->input('values_images'));
+            $about->valuesImages = AboutPage::normalizeImageGallery($rawValuesImages);
+        }
+
+        if ($request->has('differentiatorsImages') || $request->has('differentiators_images')) {
+            $rawDiffImages = $request->input('differentiatorsImages', $request->input('differentiators_images'));
+            $about->differentiatorsImages = AboutPage::normalizeImageGallery($rawDiffImages);
+        }
+
         $about->save();
 
         // Synchronize to PageSeo
@@ -202,12 +234,16 @@ class AboutController extends Controller
             'success' => true,
             'message' => 'About page images and ALT attributes updated successfully.',
             'data'    => [
-                'heroImage'    => $about->heroImage,
-                'heroImageAlt' => $about->heroImageAlt,
-                'storyImage'   => $about->storyImage,
-                'storyImageAlt'=> $about->storyImageAlt,
-                'images'       => $about->getNormalizedImages(),
-                'imageAltMap'  => (object) $altMap,
+                'heroImage'             => $about->heroImage,
+                'heroImageAlt'          => $about->heroImageAlt,
+                'storyImage'            => $about->storyImage,
+                'storyImageAlt'         => $about->storyImageAlt,
+                'images'                => $about->getNormalizedImages(),
+                'valuesImages'          => is_array($about->valuesImages) ? $about->valuesImages : [],
+                'differentiatorsImages' => is_array($about->differentiatorsImages) ? $about->differentiatorsImages : [],
+                'values_images'         => is_array($about->valuesImages) ? $about->valuesImages : [],
+                'differentiators_images'=> is_array($about->differentiatorsImages) ? $about->differentiatorsImages : [],
+                'imageAltMap'           => (object) $altMap,
             ],
         ], 200);
     }

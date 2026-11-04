@@ -1913,6 +1913,16 @@
                                 <span>valuesFeatured</span>
                             </label>
                         </div>
+                        <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+                            <div>
+                                <label class="text-[11px] font-medium text-slate-600 block">Values Images (JSON Array: [{url, alt}])</label>
+                                <textarea id="about-values-images" rows="3" class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white" placeholder='[{"url":"...","alt":"Team meeting"}]'></textarea>
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-medium text-slate-600 block">Differentiators Images (JSON Array: [{url, alt}])</label>
+                                <textarea id="about-diff-images" rows="3" class="w-full text-xs font-mono border border-slate-200 rounded p-1.5 mt-0.5 outline-none bg-white" placeholder='[{"url":"...","alt":"Client Success"}]'></textarea>
+                            </div>
+                        </div>
                     </div>
                     <button onclick="testUpdateAbout()" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm flex items-center justify-center space-x-1">
                         <i class="fa-solid fa-floppy-disk mr-1"></i> Save About Page Content
@@ -5883,6 +5893,12 @@
                 if (document.getElementById('about-featured-values')) {
                     document.getElementById('about-featured-values').checked = d.valuesFeatured !== false;
                 }
+                if (document.getElementById('about-values-images')) {
+                    document.getElementById('about-values-images').value = JSON.stringify(d.valuesImages || [], null, 2);
+                }
+                if (document.getElementById('about-diff-images')) {
+                    document.getElementById('about-diff-images').value = JSON.stringify(d.differentiatorsImages || [], null, 2);
+                }
             }
         }
 
@@ -5904,6 +5920,27 @@
                 storyFeatured: document.getElementById('about-featured-story').checked,
                 valuesFeatured: document.getElementById('about-featured-values').checked,
             };
+
+            const valImgText = document.getElementById('about-values-images')?.value.trim();
+            if (valImgText) {
+                try {
+                    payload.valuesImages = JSON.parse(valImgText);
+                } catch(e) {
+                    alert('Invalid JSON in Values Images: ' + e.message);
+                    return;
+                }
+            }
+
+            const diffImgText = document.getElementById('about-diff-images')?.value.trim();
+            if (diffImgText) {
+                try {
+                    payload.differentiatorsImages = JSON.parse(diffImgText);
+                } catch(e) {
+                    alert('Invalid JSON in Differentiators Images: ' + e.message);
+                    return;
+                }
+            }
+
             await sendApi('PUT', '/api/admin/about', payload, true);
         }
 
