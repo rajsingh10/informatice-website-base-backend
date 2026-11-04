@@ -130,8 +130,9 @@ class SiteSettingController extends Controller
             'backgroundColor' => 'sometimes|nullable|string|max:255',
 
             // Header / Logo
-            'logoPosition'  => 'sometimes|nullable|string|max:50',
-            'logoAlignment' => 'sometimes|nullable|string|max:50',
+            'logoPosition'    => 'sometimes|nullable|string|max:50',
+            'logoAlignment'   => 'sometimes|nullable|string|max:50',
+            'maintenanceMode' => 'sometimes|nullable',
         ]);
 
         if ($validator->fails()) {
@@ -182,12 +183,19 @@ class SiteSettingController extends Controller
             'backgroundColor',
             'logoPosition',
             'logoAlignment',
+            'maintenanceMode',
         ];
 
         foreach ($fillable as $key) {
             if (array_key_exists($key, $input)) {
                 $data[$key] = $input[$key];
             }
+        }
+
+        if (array_key_exists('maintenanceMode', $input)) {
+            $data['maintenanceMode'] = filter_var($input['maintenanceMode'], FILTER_VALIDATE_BOOLEAN);
+        } elseif (array_key_exists('maintenance_mode', $input)) {
+            $data['maintenanceMode'] = filter_var($input['maintenance_mode'], FILTER_VALIDATE_BOOLEAN);
         }
 
         if (array_key_exists('map_embed_url', $input) && ! array_key_exists('mapEmbedUrl', $data)) {

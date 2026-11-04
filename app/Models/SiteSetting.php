@@ -57,17 +57,19 @@ class SiteSetting extends Model
         // Header / Logo alignment
         'logoPosition',
         'logoAlignment',
+        'maintenanceMode',
     ];
 
     protected $casts = [
-        'offices'      => 'array',
-        'socials'      => 'array',
-        'announcement' => 'array',
-        'spacing'      => 'array',
-        'textDesign'   => 'array',
-        'buttonStyle'  => 'array',
-        'advanced'     => 'array',
-        'branding'     => 'array',
+        'offices'         => 'array',
+        'socials'         => 'array',
+        'announcement'    => 'array',
+        'spacing'         => 'array',
+        'textDesign'      => 'array',
+        'buttonStyle'     => 'array',
+        'advanced'        => 'array',
+        'branding'        => 'array',
+        'maintenanceMode' => 'boolean',
     ];
 
     /**
@@ -123,6 +125,7 @@ class SiteSetting extends Model
             'mapEmbedUrl'  => '',
             'logoPosition' => 'left',
             'logoAlignment' => 'left',
+            'maintenanceMode' => false,
             'offices'      => [
                 [
                     'name'    => 'HQ',
@@ -184,6 +187,18 @@ class SiteSetting extends Model
      */
     public static function getSingleton(): static
     {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('site_settings')) {
+                if (! \Illuminate\Support\Facades\Schema::hasColumn('site_settings', 'maintenanceMode')) {
+                    \Illuminate\Support\Facades\Schema::table('site_settings', function (\Illuminate\Database\Schema\Blueprint $table) {
+                        $table->boolean('maintenanceMode')->default(false);
+                    });
+                }
+            }
+        } catch (\Throwable $e) {
+            // ignore if schema table not ready
+        }
+
         $setting = static::first();
         if (! $setting) {
             $setting = static::create(static::defaults());
@@ -250,8 +265,9 @@ class SiteSetting extends Model
             'phone'        => (string) ($this->phone ?? ''),
             'address'      => (string) ($this->address ?? ''),
             'mapEmbedUrl'  => (string) ($this->mapEmbedUrl ?? ''),
-            'logoPosition' => 'left',
-            'logoAlignment' => 'left',
+            'logoPosition' => (string) ($this->logoPosition ?? 'left'),
+            'logoAlignment' => (string) ($this->logoAlignment ?? ($this->logoPosition ?? 'left')),
+            'maintenanceMode' => (bool) ($this->maintenanceMode ?? false),
             'offices'      => is_array($this->offices) ? $this->offices : $defaults['offices'],
             'socials'      => is_array($this->socials) ? array_merge($defaults['socials'], $this->socials) : $defaults['socials'],
             'announcement' => is_array($this->announcement) ? array_merge($defaults['announcement'], $this->announcement) : $defaults['announcement'],
